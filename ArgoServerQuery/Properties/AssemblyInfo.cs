@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ArgoServerQuery")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("CS:GO Game Server Query for the /r/GlobalOffensive mod team running our weekly Community Nights. Written by w^rlord (/u/zebradolphin5).")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ArgoServerQuery")]
