@@ -7,37 +7,81 @@ using System.Threading.Tasks;
 using QueryMaster;
 using QueryMaster.GameServer;
 using Newtonsoft.Json.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Windows.Forms;
 
 namespace ArgoServerQuery
 {
     class Query
     {
         // private static Game appId;
-        static int appId = 730;
-        static int retries = 0;
+        private static int appId = 730;
+        private static int retries = 0;
+        private const int timeout = 2000;
 
 
         // Helper function to split the address into string-IP and UInt16-port for 
         // using with the server methods
         public static Tuple<string, UInt16> splitAddr(string address)
         {
-
             string[] split = address.Split(':');
             if (split.Length != 2)
             {
-                // Could be just one part, or more than 2...
-                // throw an exception or whatever
+                throw new FormatException("Invalid address");
             }
-            string hostIP = split[0];
-            ushort hostPort = Convert.ToUInt16(split[1]);
+            else
+            {
+                string hostIP = split[0];
+                ushort hostPort = Convert.ToUInt16(split[1]);
 
-            return Tuple.Create(hostIP, hostPort);
-
+                return Tuple.Create(hostIP, hostPort);
+            }
         }
-
 
         // This method is used by our background worker to query each server on the 
         // background thread and update the server info in the list
+        public static List<Updates> bgUpdater(List<string> addresses)
+        {
+            List<Updates> results = new List<Updates>();
+            string pw = decryptRcon();
+
+            foreach (string address in addresses)
+            {
+                Tuple<string, UInt16> addr = splitAddr(address);
+                string addrIP = addr.Item1;
+                string score;
+                UInt16 port = addr.Item2;
+
+                using (var server = ServerQuery.GetServerInstance(
+                (Game)appId,
+                addrIP,
+                port,
+                throwExceptions: false,
+                retries: retries,
+                sendTimeout: timeout,
+                receiveTimeout: timeout))
+                {
+
+                    var serverInfo = server.GetInfo();
+
+                    if (!String.IsNullOrEmpty(pw))
+                    {
+                        score = getPugScore(address, "getpugscore", pw);
+                    }
+                    else
+                    {
+                        score = "RCON Error";
+                    }
+
+                    results.Add(new Updates(serverInfo, score));
+                }
+            };
+
+            return results;
+        }
+
+        // This method is used for general queries
         public static object sendQuery(string address, string pw)
         {
 
@@ -45,7 +89,6 @@ namespace ArgoServerQuery
             string addrIP = addr.Item1;
             string score;
             UInt16 port = addr.Item2;
-            ScoreUpdate su = new ScoreUpdate();
 
             using (var server = ServerQuery.GetServerInstance(
                 (Game)appId,
@@ -65,23 +108,20 @@ namespace ArgoServerQuery
                     score = "Bad RCON PW";
                 }
 
-                su.mainUpdate = serverInfo;
-                su.rconResp = score;
-
+                Updates su = new Updates(serverInfo, score);
                 return su;
                 // return serverInfo;
             };
         }
 
-
-        public static string sendRcon(string address, string cmd, string pw)
+        public static string sendRcon(string address, string cmd)
         {
-
             Tuple<string, UInt16> addr = splitAddr(address);
             string addrIP = addr.Item1;
             UInt16 port = addr.Item2;
+            string pw = decryptRcon();
             string response;
-            string separator = string.Format("{0}{0}-----{0}{0}", Environment.NewLine);
+            const string separator = "\n\n-----\n\n";
 
             var server = ServerQuery.GetServerInstance(
                 (Game)appId,
@@ -95,15 +135,39 @@ namespace ArgoServerQuery
             if (server.GetControl(pw))
             {
                 response = server.Rcon.SendCommand(cmd);
-                
+                server.Dispose();
+                return response + separator;
             }
             else
             {
-                response = "Invalid RCON Password.";
+                server.Dispose();
+                return "";
             }
+        }
 
-            server.Dispose();
-            return response + separator;
+        internal static string decryptRcon()
+        {
+            try
+            {
+                using (RijndaelManaged aesDecrypt = new RijndaelManaged())
+                {
+                    aesDecrypt.Key = Convert.FromBase64String(Properties.Settings.Default.key);
+                    aesDecrypt.IV = Convert.FromBase64String(Properties.Settings.Default.IV);
+                    byte[] encrypted = Convert.FromBase64String(Properties.Settings.Default.rconPW);
+
+                    return PasswordStorage.DecryptStringFromBytes(encrypted, aesDecrypt.Key, aesDecrypt.IV);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: {0}", ex.Message);
+                string message = $"Error attempting to delete the server list. \n\nINFO: {ex.Message} \n\nSRC: {ex.Source}";
+                string cap = "Error";
+                MessageBoxIcon icon = MessageBoxIcon.Error;
+                MessageBoxButtons btn = MessageBoxButtons.OK;
+                MessageBox.Show(message, cap, btn, icon);
+                return "";
+            }
         }
 
         public static string getPugScore(string address, string cmd, string pw)
@@ -164,44 +228,44 @@ namespace ArgoServerQuery
             }
             else
             {
-                playerJSON = playerInfo.ToString();
+                playerJSON = Convert.ToString(playerInfo);
                 ja = JArray.Parse(playerJSON);
                 server.Dispose();
                 return ja;
             }
         }
 
-        public static string kickPlayer(string address, string player, string pw, string reason = "")
+        public static string kickPlayer(string address, string player, string reason = "")
         {
             string fullCmd = "";
 
             if (!String.IsNullOrEmpty(reason))
             {
-                fullCmd = string.Format("sm_kick {0} {1}", player, reason);
+                fullCmd = $"sm_kick {player} {reason}";
             }
             else if (String.IsNullOrEmpty(reason))
             {
-                fullCmd = string.Format("sm_kick {0}", player);
+                fullCmd = $"sm_kick {player}";
             }
             
-            string response = sendRcon(address, fullCmd, pw);
+            string response = sendRcon(address, fullCmd);
             return response;
         }
 
-        public static string banPlayerFromServer(string address, string player, string pw, string length, string reason = "")
+        public static string banPlayerFromServer(string address, string player, string length, string reason = "")
         {
             string fullCmd = "";
 
             if (!String.IsNullOrEmpty(reason))
             {
-                fullCmd = string.Format("sm_banip {0} {1} {2}", player, length, reason);
+                fullCmd = $"sm_banip {player} {length} {reason}";
             }
             else if (String.IsNullOrEmpty(reason))
             {
-                fullCmd = string.Format("sm_banip {0} {1}", player, length);
+                fullCmd = $"sm_banip {player} {length}";
             }
 
-            string response = sendRcon(address, fullCmd, pw);
+            string response = sendRcon(address, fullCmd);
             return response;
         }
     }

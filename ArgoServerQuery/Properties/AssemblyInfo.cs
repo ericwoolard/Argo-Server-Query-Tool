@@ -5,11 +5,14 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ArgoServerQuery")]
-[assembly: AssemblyDescription("CS:GO Game Server Query for the /r/GlobalOffensive mod team running our weekly Community Nights. Written by w^rlord (/u/zebradolphin5).")]
+[assembly: AssemblyTitle("Argo Server Query Tool")]
+[assembly: AssemblyDescription("ASQT was originally created for the GlobalOffensive\r\nsubreddit modteam " +
+                               "as a replacement for HLSW and \r\nto assist with our weekly community night " +
+                               "10-mans, \r\nwhere we playtest new maps created by members of \r\nthe community. " +
+                               "\r\n\r\nIt can be used to query info and send RCON\r\ncommands to any server running CS:GO. ")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ArgoServerQuery")]
+[assembly: AssemblyCompany("Created by: Eric Woolard")]
+[assembly: AssemblyProduct("Argo Server Query Tool")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

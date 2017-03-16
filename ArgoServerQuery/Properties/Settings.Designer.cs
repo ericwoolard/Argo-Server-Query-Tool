@@ -33,5 +33,113 @@ namespace ArgoServerQuery.Properties {
                 this["ServerList"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string rconPW {
+            get {
+                return ((string)(this["rconPW"]));
+            }
+            set {
+                this["rconPW"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ts3Addr {
+            get {
+                return ((string)(this["ts3Addr"]));
+            }
+            set {
+                this["ts3Addr"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ts3SQUser {
+            get {
+                return ((string)(this["ts3SQUser"]));
+            }
+            set {
+                this["ts3SQUser"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ts3SQPW {
+            get {
+                return ((string)(this["ts3SQPW"]));
+            }
+            set {
+                this["ts3SQPW"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ts3SQPort {
+            get {
+                return ((string)(this["ts3SQPort"]));
+            }
+            set {
+                this["ts3SQPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string key {
+            get {
+                return ((string)(this["key"]));
+            }
+            set {
+                this["key"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string IV {
+            get {
+                return ((string)(this["IV"]));
+            }
+            set {
+                this["IV"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string keyTS {
+            get {
+                return ((string)(this["keyTS"]));
+            }
+            set {
+                this["keyTS"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string IVTS {
+            get {
+                return ((string)(this["IVTS"]));
+            }
+            set {
+                this["IVTS"] = value;
+            }
+        }
     }
 }
