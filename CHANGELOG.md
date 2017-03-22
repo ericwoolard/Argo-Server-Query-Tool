@@ -24,4 +24,4 @@
 
 ### Commits
 
-[[`3f2d82c`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/3f2d82c)
+[[`3f2d82c`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/3f2d82c)]
