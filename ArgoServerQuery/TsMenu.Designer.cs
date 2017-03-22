@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.picTS = new System.Windows.Forms.PictureBox();
             this.lblTsConfig = new System.Windows.Forms.Label();
             this.lblTsAddress = new System.Windows.Forms.Label();
@@ -42,6 +43,7 @@
             this.lblDefaultPort = new System.Windows.Forms.Label();
             this.btnTsSave = new System.Windows.Forms.Button();
             this.lblTsSaved = new System.Windows.Forms.Label();
+            this.tsToolTip = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.picTS)).BeginInit();
             this.SuspendLayout();
             // 
@@ -83,6 +85,7 @@
             this.txtTsAddress.Name = "txtTsAddress";
             this.txtTsAddress.Size = new System.Drawing.Size(185, 22);
             this.txtTsAddress.TabIndex = 3;
+            this.tsToolTip.SetToolTip(this.txtTsAddress, "IP or hostname of TS3 server");
             // 
             // lblServerQuery
             // 
@@ -111,6 +114,7 @@
             this.txtSQUser.Name = "txtSQUser";
             this.txtSQUser.Size = new System.Drawing.Size(111, 22);
             this.txtSQUser.TabIndex = 6;
+            this.tsToolTip.SetToolTip(this.txtSQUser, "Your server query user");
             // 
             // lblSQPassword
             // 
@@ -148,16 +152,17 @@
             this.txtSQPort.Name = "txtSQPort";
             this.txtSQPort.Size = new System.Drawing.Size(111, 22);
             this.txtSQPort.TabIndex = 10;
+            this.tsToolTip.SetToolTip(this.txtSQPort, "Server query port");
             // 
             // lblDefaultPort
             // 
             this.lblDefaultPort.AutoSize = true;
-            this.lblDefaultPort.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDefaultPort.Location = new System.Drawing.Point(185, 332);
+            this.lblDefaultPort.Font = new System.Drawing.Font("Segoe UI", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDefaultPort.Location = new System.Drawing.Point(157, 332);
             this.lblDefaultPort.Name = "lblDefaultPort";
-            this.lblDefaultPort.Size = new System.Drawing.Size(62, 13);
+            this.lblDefaultPort.Size = new System.Drawing.Size(123, 13);
             this.lblDefaultPort.TabIndex = 11;
-            this.lblDefaultPort.Text = "(def. 10011)";
+            this.lblDefaultPort.Text = "Do not use port 10011!";
             // 
             // btnTsSave
             // 
@@ -166,6 +171,7 @@
             this.btnTsSave.Size = new System.Drawing.Size(75, 23);
             this.btnTsSave.TabIndex = 12;
             this.btnTsSave.Text = "Save Config";
+            this.tsToolTip.SetToolTip(this.btnTsSave, "Save TS3 config");
             this.btnTsSave.UseVisualStyleBackColor = true;
             this.btnTsSave.Click += new System.EventHandler(this.btnTsSave_Click);
             // 
@@ -179,6 +185,10 @@
             this.lblTsSaved.TabIndex = 13;
             this.lblTsSaved.Text = "✔ Config Saved";
             this.lblTsSaved.Visible = false;
+            // 
+            // tsToolTip
+            // 
+            this.tsToolTip.AutomaticDelay = 750;
             // 
             // TsMenu
             // 
@@ -223,5 +233,6 @@
         private System.Windows.Forms.Label lblDefaultPort;
         private System.Windows.Forms.Button btnTsSave;
         private System.Windows.Forms.Label lblTsSaved;
+        private System.Windows.Forms.ToolTip tsToolTip;
     }
 }

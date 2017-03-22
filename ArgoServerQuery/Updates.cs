@@ -8,7 +8,7 @@ using QueryMaster.GameServer;
 
 namespace ArgoServerQuery
 {
-    public class Updates
+    class Updates
     {
         public ServerInfo serverInfo { get; set; }
         public string score;

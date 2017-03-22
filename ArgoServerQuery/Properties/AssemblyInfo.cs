@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
                                "10-mans, \r\nwhere we playtest new maps created by members of \r\nthe community. " +
                                "\r\n\r\nIt can be used to query info and send RCON\r\ncommands to any server running CS:GO. ")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Created by: Eric Woolard")]
+[assembly: AssemblyCompany("ASQT")]
 [assembly: AssemblyProduct("Argo Server Query Tool")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
@@ -36,4 +36,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.8.1")]

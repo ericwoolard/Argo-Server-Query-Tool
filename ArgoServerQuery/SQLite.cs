@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SQLite;
-using System.Data.SqlClient;
+//---------------------------------------------------------------------------------//
+//------------- System.Data.SQLite is an ADO.NET provider for SQLite. -------------//
+// Find it at: https://system.data.sqlite.org/index.html/doc/trunk/www/index.wiki -//
+//---------------------------------------------------------------------------------//
+using System.Data.SQLite;                                                          //
+using System.Data.SqlClient;                                                       //
+//---------------------------------------------------------------------------------//
 
 namespace ArgoServerQuery
 {
@@ -18,10 +23,10 @@ namespace ArgoServerQuery
         {
             m_dbConnection?.Close();
 
-            SQLiteConnection.CreateFile($"{name}.sqlite");
+            //SQLiteConnection.CreateFile($"{name}.sqlite");
 
             //connectDB()
-            m_dbConnection = new SQLiteConnection($"Data Source={name}.sqlite;Version=3;");
+            m_dbConnection = new SQLiteConnection($"Data Source=|DataDirectory|{name}.sqlite;Version=3;");
 
             // ***REMEMBER TO CALL .Close() WHEN NEEDED***
             m_dbConnection.Open();
@@ -32,34 +37,31 @@ namespace ArgoServerQuery
 
         }
 
-        public static List<string> loadDB(string file)
+        public static Dictionary<string, string> loadDB(string file)
         {
             m_dbConnection?.Close();
 
-            m_dbConnection = new SQLiteConnection($"Data Source={file};Version=3;");
+            m_dbConnection = new SQLiteConnection($"Data Source=|DataDirectory|{file};Version=3;");
             m_dbConnection.Open();
 
-            List<string> numServers = new List<string>();
-            string numString = "SELECT Address FROM SERVERLIST";
+            //List<string> numServers = new List<string>();
+            Dictionary<string, string> ip_info = new Dictionary<string, string>();
+            string numString = "SELECT * FROM SERVERLIST";
             SQLiteCommand numCmd = new SQLiteCommand(numString, m_dbConnection);
             SQLiteDataReader reader = numCmd.ExecuteReader();
 
             while (reader.Read())
             {
-                numServers.Add(Convert.ToString(reader["Address"]));
+                //numServers.Add(Convert.ToString(reader["Address"]));
+                ip_info.Add(Convert.ToString(reader["Address"]), Convert.ToString(reader["Info"]));
             }
-            return numServers;
+            return ip_info;
         }
 
         public static void connectDB(string name)
         {
-            m_dbConnection = new SQLiteConnection($"Data Source={name}.sqlite;Version=3;");
+            m_dbConnection = new SQLiteConnection($"Data Source=|DataDirectory|{name}.sqlite;Version=3;");
             m_dbConnection.Open();
-        }
-
-        public static void createTable()
-        {
-
         }
 
         public static void addAddress(string addr)
@@ -101,7 +103,6 @@ namespace ArgoServerQuery
                 {
                     CommandText = "UPDATE SERVERLIST SET Info = @info WHERE Address = @ip"
                 };
-
                 cmdInfo.Parameters.AddWithValue("info", info);
                 cmdInfo.Parameters.AddWithValue("ip", ip);
                 cmdInfo.ExecuteNonQuery();
@@ -117,7 +118,6 @@ namespace ArgoServerQuery
                 {
                     CommandText = "DELETE FROM SERVERLIST WHERE Address = @ip"
                 };
-
                 cmdDelete.Parameters.AddWithValue("ip", ip);
                 cmdDelete.ExecuteNonQuery();
             }

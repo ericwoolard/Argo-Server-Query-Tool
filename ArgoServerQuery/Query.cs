@@ -1,24 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using QueryMaster;
-using QueryMaster.GameServer;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Windows.Forms;
+//--------------------------------------------------------------------------------//
+//- QueryMaster is a .NET library to query/control any Source/GoldSource server. -//
+//----------------- Find it at https://querymaster.codeplex.com/ -----------------//
+//--------------------------------------------------------------------------------//
+using QueryMaster;                                                                //
+using QueryMaster.GameServer;                                                     //
+//--------------------------------------------------------------------------------//
 
 namespace ArgoServerQuery
 {
     class Query
     {
         // private static Game appId;
-        private static int appId = 730;
-        private static int retries = 0;
-        private const int timeout = 2000;
+        private const int appId = 730;
+        private const int retries = -1;
+        private const int timeout = 2500;
 
 
         // Helper function to split the address into string-IP and UInt16-port for 
@@ -62,19 +68,23 @@ namespace ArgoServerQuery
                 sendTimeout: timeout,
                 receiveTimeout: timeout))
                 {
-
                     var serverInfo = server.GetInfo();
 
-                    if (!String.IsNullOrEmpty(pw))
+                    if (Properties.Settings.Default.disableScore == true)
                     {
-                        score = getPugScore(address, "getpugscore", pw);
+                        score = "Disabled";
+                        results.Add(new Updates(serverInfo, score));
+                    }
+                    else if (!String.IsNullOrEmpty(pw))
+                    {
+                        score = getPugScore(server, pw);
+                        results.Add(new Updates(serverInfo, score));
                     }
                     else
                     {
-                        score = "RCON Error";
+                        score = "No RCON PW";
+                        results.Add(new Updates(serverInfo, score));
                     }
-
-                    results.Add(new Updates(serverInfo, score));
                 }
             };
 
@@ -99,14 +109,7 @@ namespace ArgoServerQuery
 
                 var serverInfo = server.GetInfo();
 
-                if (!String.IsNullOrEmpty(pw))
-                {
-                    score = getPugScore(address, "getpugscore", pw);
-                }
-                else
-                {
-                    score = "Bad RCON PW";
-                }
+                score = !String.IsNullOrEmpty(pw) ? getPugScore(server, pw) : "Bad RCON PW";
 
                 Updates su = new Updates(serverInfo, score);
                 return su;
@@ -120,8 +123,7 @@ namespace ArgoServerQuery
             string addrIP = addr.Item1;
             UInt16 port = addr.Item2;
             string pw = decryptRcon();
-            string response;
-            const string separator = "\n\n-----\n\n";
+            string startTime = DateTime.Now.ToString("HH:mm:ss");
 
             var server = ServerQuery.GetServerInstance(
                 (Game)appId,
@@ -130,13 +132,14 @@ namespace ArgoServerQuery
                 throwExceptions: false,
                 retries: retries);
 
-            // GetControl() validates the RCON password and returns true if the 
-            // server accepted it.
+            // GetControl() validates the RCON password and returns true if the server accepts it.
             if (server.GetControl(pw))
             {
-                response = server.Rcon.SendCommand(cmd);
+                string response = server.Rcon.SendCommand(cmd);
                 server.Dispose();
-                return response + separator;
+                string endTime = DateTime.Now.ToString("HH:mm:ss");
+                string txtOutput = $"{startTime}: {cmd.ToUpper()}\n{response}\n\n";
+                return txtOutput;
             }
             else
             {
@@ -145,53 +148,16 @@ namespace ArgoServerQuery
             }
         }
 
-        internal static string decryptRcon()
+        public static string getPugScore(Server sv, string pw)
         {
-            try
-            {
-                using (RijndaelManaged aesDecrypt = new RijndaelManaged())
-                {
-                    aesDecrypt.Key = Convert.FromBase64String(Properties.Settings.Default.key);
-                    aesDecrypt.IV = Convert.FromBase64String(Properties.Settings.Default.IV);
-                    byte[] encrypted = Convert.FromBase64String(Properties.Settings.Default.rconPW);
-
-                    return PasswordStorage.DecryptStringFromBytes(encrypted, aesDecrypt.Key, aesDecrypt.IV);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: {0}", ex.Message);
-                string message = $"Error attempting to delete the server list. \n\nINFO: {ex.Message} \n\nSRC: {ex.Source}";
-                string cap = "Error";
-                MessageBoxIcon icon = MessageBoxIcon.Error;
-                MessageBoxButtons btn = MessageBoxButtons.OK;
-                MessageBox.Show(message, cap, btn, icon);
-                return "";
-            }
-        }
-
-        public static string getPugScore(string address, string cmd, string pw)
-        {
-            Tuple<string, UInt16> addr = splitAddr(address);
-            string addrIP = addr.Item1;
-            UInt16 port = addr.Item2;
-            string response;
-            string[] splitResp;
             string pugScore;
-
-            var server = ServerQuery.GetServerInstance(
-                (Game)appId,
-                addrIP,
-                port,
-                throwExceptions: false,
-                retries: retries);
 
             // GetControl() validates the RCON password and returns true if the 
             // server accepted it.
-            if (server.GetControl(pw))
+            if (sv.GetControl(pw))
             {
-                response = server.Rcon.SendCommand(cmd);
-                splitResp = response.Split('L');
+                string response = sv.Rcon.SendCommand("getpugscore");
+                var splitResp = response.Split('L');
                 pugScore = splitResp[0];
             }
             else
@@ -199,7 +165,7 @@ namespace ArgoServerQuery
                 pugScore = "Bad RCON PW.";
             }
 
-            server.Dispose();
+            sv.Dispose();
             return pugScore;
         }
 
@@ -267,6 +233,38 @@ namespace ArgoServerQuery
 
             string response = sendRcon(address, fullCmd);
             return response;
+        }
+
+        internal static string decryptRcon()
+        {
+            if (!String.IsNullOrEmpty(Properties.Settings.Default.key)
+                && !String.IsNullOrEmpty(Properties.Settings.Default.IV)
+                && !String.IsNullOrEmpty(Properties.Settings.Default.rconPW))
+            {
+                try
+                {
+                    using (RijndaelManaged aesDecrypt = new RijndaelManaged())
+                    {
+                        aesDecrypt.Key = Convert.FromBase64String(Properties.Settings.Default.key);
+                        aesDecrypt.IV = Convert.FromBase64String(Properties.Settings.Default.IV);
+                        byte[] encrypted = Convert.FromBase64String(Properties.Settings.Default.rconPW);
+
+                        return PasswordStorage.DecryptStringFromBytes(encrypted, aesDecrypt.Key, aesDecrypt.IV);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: {0}", ex.Message);
+                    string message = $"Error attempting to decrypt RCON Info. \n\nINFO: {ex.Message} \n\nSRC: {ex.Source}";
+                    string cap = "Error";
+                    MessageBoxIcon icon = MessageBoxIcon.Error;
+                    MessageBoxButtons btn = MessageBoxButtons.OK;
+                    MessageBox.Show(message, cap, btn, icon);
+                    return "";
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -84,7 +84,7 @@ namespace ArgoServerQuery.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("20011")]
         public string ts3SQPort {
             get {
                 return ((string)(this["ts3SQPort"]));
@@ -139,6 +139,53 @@ namespace ArgoServerQuery.Properties {
             }
             set {
                 this["IVTS"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool disableScore {
+            get {
+                return ((bool)(this["disableScore"]));
+            }
+            set {
+                this["disableScore"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Generic.List<System.String> cmdHistory {
+            get {
+                return ((global::System.Collections.Generic.List<System.String>)(this["cmdHistory"]));
+            }
+            set {
+                this["cmdHistory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string region {
+            get {
+                return ((string)(this["region"]));
+            }
+            set {
+                this["region"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool firstRun {
+            get {
+                return ((bool)(this["firstRun"]));
+            }
+            set {
+                this["firstRun"] = value;
             }
         }
     }

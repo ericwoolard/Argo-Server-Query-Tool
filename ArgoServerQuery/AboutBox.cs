@@ -16,8 +16,8 @@ namespace ArgoServerQuery
             InitializeComponent();
             this.Text = String.Format("About {0}", AssemblyTitle);
             this.lblName.Text = AssemblyProduct;
-            this.lblVersion.Text = String.Format("Version {0}", AssemblyVersion);
-            this.lblAuthor.Text = AssemblyCompany;
+            this.lblVersion.Text = String.Format("Version {0}", Application.ProductVersion);
+            this.lblAuthor.Text = "Eric Woolard";
             this.txtDescription.Text = AssemblyDescription;
         }
 

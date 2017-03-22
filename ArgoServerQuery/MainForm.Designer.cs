@@ -1,4 +1,6 @@
-﻿namespace ArgoServerQuery
+﻿using System.Runtime.CompilerServices;
+
+namespace ArgoServerQuery
 {
     partial class MainForm
     {
@@ -32,7 +34,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Counter-Terrorists", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Terrorists", System.Windows.Forms.HorizontalAlignment.Left);
-            this.lvMainView = new System.Windows.Forms.ListView();
+            this.lvMainView = new ArgoServerQuery.MainForm.BufferedListView();
             this.colNum = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colPing = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colAddr = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -44,11 +46,12 @@
             this.colInfo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colGetScoreToggle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuServer = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyAddrToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.addInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.delServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
-            this.txtCmd = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.txtRconPW = new System.Windows.Forms.TextBox();
             this.rconGroupBox = new System.Windows.Forms.GroupBox();
@@ -75,6 +78,8 @@
             this.openFile = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.chkTS3 = new System.Windows.Forms.CheckBox();
+            this.comboRegion = new System.Windows.Forms.ComboBox();
+            this.comboTS3 = new System.Windows.Forms.ComboBox();
             this.mnuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,18 +91,53 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuServers = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuServersAdd = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuServersAddAll = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuMainStrip = new System.Windows.Forms.MenuStrip();
+            this.mnuTools = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuToolsChat = new System.Windows.Forms.ToolStripMenuItem();
             this.BottomToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.TopToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.RightToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.LeftToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.ContentPanel = new System.Windows.Forms.ToolStripContentPanel();
+            this.lblErrors = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolBtnDeleteList = new System.Windows.Forms.ToolStripButton();
             this.toolBtnAddServer = new System.Windows.Forms.ToolStripButton();
             this.toolBtnRCONAll = new System.Windows.Forms.ToolStripButton();
-            this.lblErrors = new System.Windows.Forms.Label();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.toolBtnScoreToggle = new System.Windows.Forms.ToolStripButton();
+            this.comboCmd = new System.Windows.Forms.ComboBox();
+            this.contextMenuCmd = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.copyCmdMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pasteCmdMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparatorCmd = new System.Windows.Forms.ToolStripSeparator();
+            this.selectAllCmdMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparatorCmd2 = new System.Windows.Forms.ToolStripSeparator();
+            this.commonCmdMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.getpugscoreMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hostPlayersMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hostWkshpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.kickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.smBanMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.smBanIPMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.smPluginsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.smUnbanMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.changelevelCmdMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.de_cacheMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.de_canalsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.de_cbbleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.de_dust2MenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.de_infernoMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.de_mirageMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.de_nukeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.de_overpassMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.de_santoriniMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.de_seasonMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.de_trainMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lblRegion = new System.Windows.Forms.Label();
+            this.lblTS3 = new System.Windows.Forms.Label();
             this.tsMenu = new ArgoServerQuery.TsMenu();
             this.contextMenuServer.SuspendLayout();
             this.rconGroupBox.SuspendLayout();
@@ -105,6 +145,7 @@
             this.contextMenuPlayers.SuspendLayout();
             this.mnuMainStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            this.contextMenuCmd.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvMainView
@@ -134,7 +175,6 @@
             this.lvMainView.MultiSelect = false;
             this.lvMainView.Name = "lvMainView";
             this.lvMainView.Size = new System.Drawing.Size(1360, 367);
-            this.lvMainView.SmallImageList = this.imageList;
             this.lvMainView.TabIndex = 1;
             this.lvMainView.UseCompatibleStateImageBehavior = false;
             this.lvMainView.View = System.Windows.Forms.View.Details;
@@ -193,48 +233,52 @@
             // contextMenuServer
             // 
             this.contextMenuServer.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyAddrToolStripMenuItem,
+            this.copyMapToolStripMenuItem,
+            this.toolStripSeparator1,
             this.addInfoToolStripMenuItem,
-            this.delServerToolStripMenuItem,
-            this.toolStripSeparator1});
+            this.delServerToolStripMenuItem});
             this.contextMenuServer.Name = "contextMenuServer";
-            this.contextMenuServer.Size = new System.Drawing.Size(143, 54);
+            this.contextMenuServer.Size = new System.Drawing.Size(165, 98);
+            // 
+            // copyAddrToolStripMenuItem
+            // 
+            this.copyAddrToolStripMenuItem.Name = "copyAddrToolStripMenuItem";
+            this.copyAddrToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.copyAddrToolStripMenuItem.Text = "Copy Address";
+            this.copyAddrToolStripMenuItem.Click += new System.EventHandler(this.copyAddrToolStripMenuItem_Click);
+            // 
+            // copyMapToolStripMenuItem
+            // 
+            this.copyMapToolStripMenuItem.Name = "copyMapToolStripMenuItem";
+            this.copyMapToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.copyMapToolStripMenuItem.Text = "Copy Map Name";
+            this.copyMapToolStripMenuItem.Click += new System.EventHandler(this.copyMapToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(161, 6);
             // 
             // addInfoToolStripMenuItem
             // 
             this.addInfoToolStripMenuItem.Name = "addInfoToolStripMenuItem";
-            this.addInfoToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.addInfoToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.addInfoToolStripMenuItem.Text = "Add Info";
             this.addInfoToolStripMenuItem.Click += new System.EventHandler(this.addInfoToolStripMenuItem_Click);
             // 
             // delServerToolStripMenuItem
             // 
             this.delServerToolStripMenuItem.Name = "delServerToolStripMenuItem";
-            this.delServerToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.delServerToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.delServerToolStripMenuItem.Text = "Delete Server";
             this.delServerToolStripMenuItem.Click += new System.EventHandler(this.delServerToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(139, 6);
             // 
             // imageList
             // 
             this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
             this.imageList.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList.Images.SetKeyName(0, "trophy.png");
-            // 
-            // txtCmd
-            // 
-            this.txtCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtCmd.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtCmd.Location = new System.Drawing.Point(12, 809);
-            this.txtCmd.Name = "txtCmd";
-            this.txtCmd.Size = new System.Drawing.Size(773, 22);
-            this.txtCmd.TabIndex = 3;
-            this.txtCmd.WordWrap = false;
-            this.txtCmd.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtCmd_KeyDown);
             // 
             // btnSend
             // 
@@ -256,6 +300,7 @@
             this.txtRconPW.Name = "txtRconPW";
             this.txtRconPW.Size = new System.Drawing.Size(207, 22);
             this.txtRconPW.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.txtRconPW, "Password for all servers in current list");
             this.txtRconPW.UseSystemPasswordChar = true;
             // 
             // rconGroupBox
@@ -312,6 +357,7 @@
             // optGroupBox
             // 
             this.optGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.optGroupBox.BackColor = System.Drawing.SystemColors.ControlLight;
             this.optGroupBox.Controls.Add(this.btnUpdatePlayers);
             this.optGroupBox.Controls.Add(this.btnRestartServer);
             this.optGroupBox.Controls.Add(this.btnSendStatus);
@@ -462,12 +508,12 @@
             // lblServerList
             // 
             this.lblServerList.AutoSize = true;
-            this.lblServerList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblServerList.Location = new System.Drawing.Point(12, 33);
+            this.lblServerList.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblServerList.Location = new System.Drawing.Point(15, 35);
             this.lblServerList.Name = "lblServerList";
-            this.lblServerList.Size = new System.Drawing.Size(74, 16);
+            this.lblServerList.Size = new System.Drawing.Size(68, 17);
             this.lblServerList.TabIndex = 12;
-            this.lblServerList.Text = "Server List:";
+            this.lblServerList.Text = "Server List";
             // 
             // comboServerList
             // 
@@ -477,23 +523,24 @@
             this.comboServerList.ForeColor = System.Drawing.SystemColors.WindowText;
             this.comboServerList.FormattingEnabled = true;
             this.comboServerList.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.comboServerList.Location = new System.Drawing.Point(92, 32);
+            this.comboServerList.Location = new System.Drawing.Point(92, 34);
             this.comboServerList.MaxDropDownItems = 10;
             this.comboServerList.Name = "comboServerList";
             this.comboServerList.Size = new System.Drawing.Size(174, 21);
             this.comboServerList.TabIndex = 13;
+            this.toolTip1.SetToolTip(this.comboServerList, "Select server list");
             this.comboServerList.SelectedIndexChanged += new System.EventHandler(this.comboServerList_SelectedIndexChanged);
             this.comboServerList.SelectionChangeCommitted += new System.EventHandler(this.comboServerList_SelectionChangeCommitted);
             // 
             // btnNewServerList
             // 
             this.btnNewServerList.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNewServerList.Location = new System.Drawing.Point(275, 31);
+            this.btnNewServerList.Location = new System.Drawing.Point(275, 33);
             this.btnNewServerList.Name = "btnNewServerList";
             this.btnNewServerList.Size = new System.Drawing.Size(80, 24);
             this.btnNewServerList.TabIndex = 14;
             this.btnNewServerList.Text = "Create New";
-            this.toolTip1.SetToolTip(this.btnNewServerList, "Create a new server list");
+            this.toolTip1.SetToolTip(this.btnNewServerList, "New server list");
             this.btnNewServerList.UseVisualStyleBackColor = true;
             this.btnNewServerList.Click += new System.EventHandler(this.btnNewServerList_Click);
             // 
@@ -522,6 +569,43 @@
             this.chkTS3.UseVisualStyleBackColor = true;
             this.chkTS3.CheckedChanged += new System.EventHandler(this.chkTS3_CheckedChanged);
             // 
+            // comboRegion
+            // 
+            this.comboRegion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboRegion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboRegion.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.comboRegion.FormattingEnabled = true;
+            this.comboRegion.Items.AddRange(new object[] {
+            "EU",
+            "NA",
+            "AU/NZ"});
+            this.comboRegion.Location = new System.Drawing.Point(1008, 34);
+            this.comboRegion.MaxDropDownItems = 5;
+            this.comboRegion.Name = "comboRegion";
+            this.comboRegion.Size = new System.Drawing.Size(73, 21);
+            this.comboRegion.TabIndex = 23;
+            this.toolTip1.SetToolTip(this.comboRegion, "Choose your region");
+            this.comboRegion.SelectedIndexChanged += new System.EventHandler(this.comboRegion_SelectedIndexChanged);
+            // 
+            // comboTS3
+            // 
+            this.comboTS3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboTS3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboTS3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.comboTS3.FormattingEnabled = true;
+            this.comboTS3.Items.AddRange(new object[] {
+            "Enable Modal Message",
+            "Disable Modal Message",
+            "Move Servers Channel To Top",
+            "Mute RTP Channel",
+            "Unmute RTP Channel"});
+            this.comboTS3.Location = new System.Drawing.Point(1135, 34);
+            this.comboTS3.Name = "comboTS3";
+            this.comboTS3.Size = new System.Drawing.Size(175, 21);
+            this.comboTS3.TabIndex = 26;
+            this.toolTip1.SetToolTip(this.comboTS3, "TS3 Command List");
+            this.comboTS3.SelectedIndexChanged += new System.EventHandler(this.comboTS3_SelectedIndexChanged);
+            // 
             // mnuFile
             // 
             this.mnuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -539,6 +623,7 @@
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
             this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.btnNewServerList_Click);
             // 
             // openToolStripMenuItem
             // 
@@ -591,7 +676,8 @@
             // mnuServers
             // 
             this.mnuServers.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuServersAdd});
+            this.mnuServersAdd,
+            this.mnuServersAddAll});
             this.mnuServers.Name = "mnuServers";
             this.mnuServers.Size = new System.Drawing.Size(56, 20);
             this.mnuServers.Text = "&Servers";
@@ -599,9 +685,16 @@
             // mnuServersAdd
             // 
             this.mnuServersAdd.Name = "mnuServersAdd";
-            this.mnuServersAdd.Size = new System.Drawing.Size(131, 22);
+            this.mnuServersAdd.Size = new System.Drawing.Size(132, 22);
             this.mnuServersAdd.Text = "Add Server";
             this.mnuServersAdd.Click += new System.EventHandler(this.mnuServersAdd_Click);
+            // 
+            // mnuServersAddAll
+            // 
+            this.mnuServersAddAll.Name = "mnuServersAddAll";
+            this.mnuServersAddAll.Size = new System.Drawing.Size(132, 22);
+            this.mnuServersAddAll.Text = "Auto-Build";
+            this.mnuServersAddAll.Click += new System.EventHandler(this.mnuServersAddAll_Click);
             // 
             // mnuMainStrip
             // 
@@ -609,13 +702,29 @@
             this.mnuFile,
             this.mnuEdit,
             this.mnuView,
-            this.mnuServers});
+            this.mnuServers,
+            this.mnuTools});
             this.mnuMainStrip.Location = new System.Drawing.Point(0, 0);
             this.mnuMainStrip.MinimumSize = new System.Drawing.Size(1384, 24);
             this.mnuMainStrip.Name = "mnuMainStrip";
             this.mnuMainStrip.Size = new System.Drawing.Size(1384, 24);
             this.mnuMainStrip.TabIndex = 0;
             this.mnuMainStrip.Text = "menuStrip1";
+            // 
+            // mnuTools
+            // 
+            this.mnuTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuToolsChat});
+            this.mnuTools.Name = "mnuTools";
+            this.mnuTools.Size = new System.Drawing.Size(47, 20);
+            this.mnuTools.Text = "Tools";
+            // 
+            // mnuToolsChat
+            // 
+            this.mnuToolsChat.Name = "mnuToolsChat";
+            this.mnuToolsChat.Size = new System.Drawing.Size(134, 22);
+            this.mnuToolsChat.Text = "Server Chat";
+            this.mnuToolsChat.Click += new System.EventHandler(this.mnuToolsChat_Click);
             // 
             // BottomToolStripPanel
             // 
@@ -657,6 +766,27 @@
             // 
             this.ContentPanel.Size = new System.Drawing.Size(150, 130);
             // 
+            // lblErrors
+            // 
+            this.lblErrors.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblErrors.Font = new System.Drawing.Font("Segoe UI", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblErrors.ForeColor = System.Drawing.Color.Red;
+            this.lblErrors.Location = new System.Drawing.Point(9, 838);
+            this.lblErrors.Name = "lblErrors";
+            this.lblErrors.Size = new System.Drawing.Size(776, 23);
+            this.lblErrors.TabIndex = 19;
+            this.lblErrors.Visible = false;
+            // 
+            // progressBar
+            // 
+            this.progressBar.Location = new System.Drawing.Point(12, 838);
+            this.progressBar.MarqueeAnimationSpeed = 17;
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(159, 16);
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar.TabIndex = 21;
+            this.progressBar.Visible = false;
+            // 
             // toolStrip1
             // 
             this.toolStrip1.BackColor = System.Drawing.Color.Transparent;
@@ -667,11 +797,12 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolBtnDeleteList,
             this.toolBtnAddServer,
-            this.toolBtnRCONAll});
+            this.toolBtnRCONAll,
+            this.toolBtnScoreToggle});
             this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.toolStrip1.Location = new System.Drawing.Point(365, 31);
+            this.toolStrip1.Location = new System.Drawing.Point(365, 33);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(82, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(136, 25);
             this.toolStrip1.TabIndex = 16;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -694,6 +825,7 @@
             this.toolBtnAddServer.Name = "toolBtnAddServer";
             this.toolBtnAddServer.Size = new System.Drawing.Size(23, 22);
             this.toolBtnAddServer.ToolTipText = "Add server";
+            this.toolBtnAddServer.Click += new System.EventHandler(this.mnuServersAdd_Click);
             // 
             // toolBtnRCONAll
             // 
@@ -705,32 +837,275 @@
             this.toolBtnRCONAll.ToolTipText = "Send RCON command to all servers";
             this.toolBtnRCONAll.Click += new System.EventHandler(this.toolBtnRCONAll_Click);
             // 
-            // lblErrors
+            // toolBtnScoreToggle
             // 
-            this.lblErrors.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblErrors.Font = new System.Drawing.Font("Segoe UI", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblErrors.ForeColor = System.Drawing.Color.Red;
-            this.lblErrors.Location = new System.Drawing.Point(9, 838);
-            this.lblErrors.Name = "lblErrors";
-            this.lblErrors.Size = new System.Drawing.Size(776, 23);
-            this.lblErrors.TabIndex = 19;
-            this.lblErrors.Visible = false;
+            this.toolBtnScoreToggle.CheckOnClick = true;
+            this.toolBtnScoreToggle.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolBtnScoreToggle.Image = global::ArgoServerQuery.Properties.Resources.trophy;
+            this.toolBtnScoreToggle.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolBtnScoreToggle.Name = "toolBtnScoreToggle";
+            this.toolBtnScoreToggle.Size = new System.Drawing.Size(23, 22);
+            this.toolBtnScoreToggle.ToolTipText = "Toggle score updates on/off";
+            this.toolBtnScoreToggle.Click += new System.EventHandler(this.toolBtnScoreToggle_Click);
             // 
-            // progressBar
+            // comboCmd
             // 
-            this.progressBar.Location = new System.Drawing.Point(12, 838);
-            this.progressBar.MarqueeAnimationSpeed = 17;
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(159, 16);
-            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBar.TabIndex = 21;
-            this.progressBar.Visible = false;
+            this.comboCmd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboCmd.ContextMenuStrip = this.contextMenuCmd;
+            this.comboCmd.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboCmd.FormattingEnabled = true;
+            this.comboCmd.Location = new System.Drawing.Point(12, 808);
+            this.comboCmd.Name = "comboCmd";
+            this.comboCmd.Size = new System.Drawing.Size(773, 23);
+            this.comboCmd.TabIndex = 22;
+            this.comboCmd.KeyDown += new System.Windows.Forms.KeyEventHandler(this.comboCmd_KeyDown);
+            // 
+            // contextMenuCmd
+            // 
+            this.contextMenuCmd.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyCmdMenuItem,
+            this.pasteCmdMenuItem,
+            this.toolStripSeparatorCmd,
+            this.selectAllCmdMenuItem,
+            this.toolStripSeparatorCmd2,
+            this.commonCmdMenuItem,
+            this.changelevelCmdMenuItem});
+            this.contextMenuCmd.Name = "contextMenuCmd";
+            this.contextMenuCmd.Size = new System.Drawing.Size(191, 126);
+            // 
+            // copyCmdMenuItem
+            // 
+            this.copyCmdMenuItem.Name = "copyCmdMenuItem";
+            this.copyCmdMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.copyCmdMenuItem.Text = "Copy";
+            this.copyCmdMenuItem.Click += new System.EventHandler(this.copyCmdMenuItem_Click);
+            // 
+            // pasteCmdMenuItem
+            // 
+            this.pasteCmdMenuItem.Name = "pasteCmdMenuItem";
+            this.pasteCmdMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.pasteCmdMenuItem.Text = "Paste";
+            this.pasteCmdMenuItem.Click += new System.EventHandler(this.pasteCmdMenuItem_Click);
+            // 
+            // toolStripSeparatorCmd
+            // 
+            this.toolStripSeparatorCmd.Name = "toolStripSeparatorCmd";
+            this.toolStripSeparatorCmd.Size = new System.Drawing.Size(187, 6);
+            // 
+            // selectAllCmdMenuItem
+            // 
+            this.selectAllCmdMenuItem.Name = "selectAllCmdMenuItem";
+            this.selectAllCmdMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.selectAllCmdMenuItem.Text = "Select All";
+            this.selectAllCmdMenuItem.Click += new System.EventHandler(this.selectAllCmdMenuItem_Click);
+            // 
+            // toolStripSeparatorCmd2
+            // 
+            this.toolStripSeparatorCmd2.Name = "toolStripSeparatorCmd2";
+            this.toolStripSeparatorCmd2.Size = new System.Drawing.Size(187, 6);
+            // 
+            // commonCmdMenuItem
+            // 
+            this.commonCmdMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.getpugscoreMenuItem,
+            this.hostPlayersMenuItem,
+            this.hostWkshpMenuItem,
+            this.kickMenuItem,
+            this.smBanMenuItem,
+            this.smBanIPMenuItem,
+            this.smPluginsMenuItem,
+            this.smUnbanMenuItem,
+            this.statusMenuItem});
+            this.commonCmdMenuItem.Name = "commonCmdMenuItem";
+            this.commonCmdMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.commonCmdMenuItem.Text = "Common Commands";
+            // 
+            // getpugscoreMenuItem
+            // 
+            this.getpugscoreMenuItem.Name = "getpugscoreMenuItem";
+            this.getpugscoreMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.getpugscoreMenuItem.Text = "getpugscore";
+            this.getpugscoreMenuItem.Click += new System.EventHandler(this.commonCommands_Click);
+            // 
+            // hostPlayersMenuItem
+            // 
+            this.hostPlayersMenuItem.Name = "hostPlayersMenuItem";
+            this.hostPlayersMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.hostPlayersMenuItem.Text = "host_players_show ";
+            this.hostPlayersMenuItem.Click += new System.EventHandler(this.commonCommands_Click);
+            // 
+            // hostWkshpMenuItem
+            // 
+            this.hostWkshpMenuItem.Name = "hostWkshpMenuItem";
+            this.hostWkshpMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.hostWkshpMenuItem.Text = "host_workshop_map ";
+            this.hostWkshpMenuItem.Click += new System.EventHandler(this.commonCommands_Click);
+            // 
+            // kickMenuItem
+            // 
+            this.kickMenuItem.Name = "kickMenuItem";
+            this.kickMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.kickMenuItem.Text = "kick";
+            this.kickMenuItem.Click += new System.EventHandler(this.commonCommands_Click);
+            // 
+            // smBanMenuItem
+            // 
+            this.smBanMenuItem.Name = "smBanMenuItem";
+            this.smBanMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.smBanMenuItem.Text = "sm_ban ";
+            this.smBanMenuItem.Click += new System.EventHandler(this.commonCommands_Click);
+            // 
+            // smBanIPMenuItem
+            // 
+            this.smBanIPMenuItem.Name = "smBanIPMenuItem";
+            this.smBanIPMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.smBanIPMenuItem.Text = "sm_banip ";
+            this.smBanIPMenuItem.Click += new System.EventHandler(this.commonCommands_Click);
+            // 
+            // smPluginsMenuItem
+            // 
+            this.smPluginsMenuItem.Name = "smPluginsMenuItem";
+            this.smPluginsMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.smPluginsMenuItem.Text = "sm plugins list";
+            this.smPluginsMenuItem.Click += new System.EventHandler(this.commonCommands_Click);
+            // 
+            // smUnbanMenuItem
+            // 
+            this.smUnbanMenuItem.Name = "smUnbanMenuItem";
+            this.smUnbanMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.smUnbanMenuItem.Text = "sm_unban ";
+            this.smUnbanMenuItem.Click += new System.EventHandler(this.commonCommands_Click);
+            // 
+            // statusMenuItem
+            // 
+            this.statusMenuItem.Name = "statusMenuItem";
+            this.statusMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.statusMenuItem.Text = "status";
+            this.statusMenuItem.Click += new System.EventHandler(this.commonCommands_Click);
+            // 
+            // changelevelCmdMenuItem
+            // 
+            this.changelevelCmdMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.de_cacheMenuItem,
+            this.de_canalsMenuItem,
+            this.de_cbbleMenuItem,
+            this.de_dust2MenuItem,
+            this.de_infernoMenuItem,
+            this.de_mirageMenuItem,
+            this.de_nukeMenuItem,
+            this.de_overpassMenuItem,
+            this.de_santoriniMenuItem,
+            this.de_seasonMenuItem,
+            this.de_trainMenuItem});
+            this.changelevelCmdMenuItem.Name = "changelevelCmdMenuItem";
+            this.changelevelCmdMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.changelevelCmdMenuItem.Text = "changelevel";
+            // 
+            // de_cacheMenuItem
+            // 
+            this.de_cacheMenuItem.Name = "de_cacheMenuItem";
+            this.de_cacheMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.de_cacheMenuItem.Text = "de_cache";
+            this.de_cacheMenuItem.Click += new System.EventHandler(this.changelevel_Click);
+            // 
+            // de_canalsMenuItem
+            // 
+            this.de_canalsMenuItem.Name = "de_canalsMenuItem";
+            this.de_canalsMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.de_canalsMenuItem.Text = "de_canals";
+            this.de_canalsMenuItem.Click += new System.EventHandler(this.changelevel_Click);
+            // 
+            // de_cbbleMenuItem
+            // 
+            this.de_cbbleMenuItem.Name = "de_cbbleMenuItem";
+            this.de_cbbleMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.de_cbbleMenuItem.Text = "de_cbble";
+            this.de_cbbleMenuItem.Click += new System.EventHandler(this.changelevel_Click);
+            // 
+            // de_dust2MenuItem
+            // 
+            this.de_dust2MenuItem.Name = "de_dust2MenuItem";
+            this.de_dust2MenuItem.Size = new System.Drawing.Size(138, 22);
+            this.de_dust2MenuItem.Text = "de_dust2";
+            this.de_dust2MenuItem.Click += new System.EventHandler(this.changelevel_Click);
+            // 
+            // de_infernoMenuItem
+            // 
+            this.de_infernoMenuItem.Name = "de_infernoMenuItem";
+            this.de_infernoMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.de_infernoMenuItem.Text = "de_inferno";
+            this.de_infernoMenuItem.Click += new System.EventHandler(this.changelevel_Click);
+            // 
+            // de_mirageMenuItem
+            // 
+            this.de_mirageMenuItem.Name = "de_mirageMenuItem";
+            this.de_mirageMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.de_mirageMenuItem.Text = "de_mirage";
+            this.de_mirageMenuItem.Click += new System.EventHandler(this.changelevel_Click);
+            // 
+            // de_nukeMenuItem
+            // 
+            this.de_nukeMenuItem.Name = "de_nukeMenuItem";
+            this.de_nukeMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.de_nukeMenuItem.Text = "de_nuke";
+            this.de_nukeMenuItem.Click += new System.EventHandler(this.changelevel_Click);
+            // 
+            // de_overpassMenuItem
+            // 
+            this.de_overpassMenuItem.Name = "de_overpassMenuItem";
+            this.de_overpassMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.de_overpassMenuItem.Text = "de_overpass";
+            this.de_overpassMenuItem.Click += new System.EventHandler(this.changelevel_Click);
+            // 
+            // de_santoriniMenuItem
+            // 
+            this.de_santoriniMenuItem.Name = "de_santoriniMenuItem";
+            this.de_santoriniMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.de_santoriniMenuItem.Text = "de_santorini";
+            this.de_santoriniMenuItem.Click += new System.EventHandler(this.changelevel_Click);
+            // 
+            // de_seasonMenuItem
+            // 
+            this.de_seasonMenuItem.Name = "de_seasonMenuItem";
+            this.de_seasonMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.de_seasonMenuItem.Text = "de_season";
+            this.de_seasonMenuItem.Click += new System.EventHandler(this.changelevel_Click);
+            // 
+            // de_trainMenuItem
+            // 
+            this.de_trainMenuItem.Name = "de_trainMenuItem";
+            this.de_trainMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.de_trainMenuItem.Text = "de_train";
+            this.de_trainMenuItem.Click += new System.EventHandler(this.changelevel_Click);
+            // 
+            // lblRegion
+            // 
+            this.lblRegion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblRegion.AutoSize = true;
+            this.lblRegion.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRegion.Location = new System.Drawing.Point(955, 35);
+            this.lblRegion.Name = "lblRegion";
+            this.lblRegion.Size = new System.Drawing.Size(49, 17);
+            this.lblRegion.TabIndex = 24;
+            this.lblRegion.Text = "Region";
+            // 
+            // lblTS3
+            // 
+            this.lblTS3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTS3.AutoSize = true;
+            this.lblTS3.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTS3.Location = new System.Drawing.Point(1102, 35);
+            this.lblTS3.Name = "lblTS3";
+            this.lblTS3.Size = new System.Drawing.Size(29, 17);
+            this.lblTS3.TabIndex = 25;
+            this.lblTS3.Text = "TS3";
             // 
             // tsMenu
             // 
             this.tsMenu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tsMenu.BackColor = System.Drawing.Color.Gray;
-            this.tsMenu.Location = new System.Drawing.Point(1072, 65);
+            this.tsMenu.Location = new System.Drawing.Point(1084, 65);
             this.tsMenu.Name = "tsMenu";
             this.tsMenu.Size = new System.Drawing.Size(300, 390);
             this.tsMenu.TabIndex = 20;
@@ -738,8 +1113,13 @@
             // 
             // MainForm
             // 
-            this.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.BackColor = System.Drawing.Color.Gainsboro;
             this.ClientSize = new System.Drawing.Size(1384, 861);
+            this.Controls.Add(this.comboTS3);
+            this.Controls.Add(this.lblTS3);
+            this.Controls.Add(this.lblRegion);
+            this.Controls.Add(this.comboRegion);
+            this.Controls.Add(this.comboCmd);
             this.Controls.Add(this.tsMenu);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.lvMainView);
@@ -754,15 +1134,14 @@
             this.Controls.Add(this.optGroupBox);
             this.Controls.Add(this.rconGroupBox);
             this.Controls.Add(this.btnSend);
-            this.Controls.Add(this.txtCmd);
             this.Controls.Add(this.mnuMainStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.mnuMainStrip;
             this.MinimumSize = new System.Drawing.Size(1400, 900);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Argo CS:GO Server Query Tool";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.contextMenuServer.ResumeLayout(false);
             this.rconGroupBox.ResumeLayout(false);
             this.rconGroupBox.PerformLayout();
@@ -772,6 +1151,7 @@
             this.mnuMainStrip.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.contextMenuCmd.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -779,7 +1159,6 @@
 
 
         #endregion
-        private System.Windows.Forms.ListView lvMainView;
         private System.Windows.Forms.ColumnHeader colNum;
         private System.Windows.Forms.ColumnHeader colAddr;
         private System.Windows.Forms.ColumnHeader colName;
@@ -788,7 +1167,6 @@
         private System.Windows.Forms.ColumnHeader colPlayers;
         private System.Windows.Forms.ColumnHeader colVersion;
         private System.Windows.Forms.ColumnHeader colPing;
-        private System.Windows.Forms.TextBox txtCmd;
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.ContextMenuStrip contextMenuServer;
         private System.Windows.Forms.ColumnHeader colScore;
@@ -827,11 +1205,6 @@
         private System.Windows.Forms.ToolStripMenuItem mnuServers;
         private System.Windows.Forms.ToolStripMenuItem mnuServersAdd;
         private System.Windows.Forms.MenuStrip mnuMainStrip;
-        private System.Windows.Forms.ToolStripPanel BottomToolStripPanel;
-        private System.Windows.Forms.ToolStripPanel TopToolStripPanel;
-        private System.Windows.Forms.ToolStripPanel RightToolStripPanel;
-        private System.Windows.Forms.ToolStripPanel LeftToolStripPanel;
-        private System.Windows.Forms.ToolStripContentPanel ContentPanel;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton toolBtnDeleteList;
         private System.Windows.Forms.ToolStripButton toolBtnRCONAll;
@@ -846,6 +1219,51 @@
         private System.Windows.Forms.ColumnHeader colGetScoreToggle;
         private System.Windows.Forms.ImageList imageList;
         private System.Windows.Forms.ToolStripButton toolBtnAddServer;
+        private System.Windows.Forms.ComboBox comboCmd;
+        private System.Windows.Forms.ToolStripPanel BottomToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel TopToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel RightToolStripPanel;
+        private System.Windows.Forms.ToolStripPanel LeftToolStripPanel;
+        private System.Windows.Forms.ToolStripContentPanel ContentPanel;
+        private System.Windows.Forms.ComboBox comboRegion;
+        private System.Windows.Forms.Label lblRegion;
+        private System.Windows.Forms.Label lblTS3;
+        private System.Windows.Forms.ComboBox comboTS3;
+        private System.Windows.Forms.ToolStripMenuItem mnuTools;
+        private System.Windows.Forms.ToolStripMenuItem mnuToolsChat;
+        private BufferedListView lvMainView;
+        private System.Windows.Forms.ToolStripMenuItem mnuServersAddAll;
+        private System.Windows.Forms.ToolStripMenuItem copyAddrToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyMapToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuCmd;
+        private System.Windows.Forms.ToolStripMenuItem commonCmdMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem getpugscoreMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hostPlayersMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hostWkshpMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem kickMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem smBanMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem smBanIPMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem smPluginsMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem smUnbanMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem statusMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem changelevelCmdMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem de_cacheMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem de_canalsMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem de_cbbleMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem de_dust2MenuItem;
+        private System.Windows.Forms.ToolStripMenuItem de_infernoMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem de_mirageMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem de_nukeMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem de_overpassMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem de_santoriniMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem de_seasonMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem de_trainMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyCmdMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pasteCmdMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparatorCmd;
+        private System.Windows.Forms.ToolStripMenuItem selectAllCmdMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparatorCmd2;
+        private System.Windows.Forms.ToolStripButton toolBtnScoreToggle;
     }
 }
 

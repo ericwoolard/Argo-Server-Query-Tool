@@ -5,55 +5,57 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using QueryMaster;
-using QueryMaster.GameServer;
 using System.Collections.Specialized;
-using System.Configuration;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
+using System.Windows.Forms.VisualStyles;
 
 namespace ArgoServerQuery
 {
     public partial class MainForm : Form
     {
-        // TODO: Figure out why the toolstrip keeps resetting to the default renderer, or say fuck it and remember to add 'this.toolStrip1.Renderer = new ToolStripRenderer()' before releasing
+        // This list is used to persist the command history by saving to Settings.Default
+        List<string> commandHistory = new List<string>();
 
-        // This dict can be accessed by our bgworker to query a server and update its UI info 
-        private Dictionary<string, string> dict_ServerInfo = new Dictionary<string, string>();
-
-        // Create an instance of the BackgroundWorker class to update the server info on a background thread
+        // This instance of BackgroundWorker is used to update server info in the UI on a background thread
         private BackgroundWorker bgWorker = new BackgroundWorker();
 
         // Path to programs base directory
-        private string _APP_PATH = AppDomain.CurrentDomain.BaseDirectory;
+        // private string _APP_PATH = AppDomain.CurrentDomain.BaseDirectory;
+        private string _APP_PATH = Application.LocalUserAppDataPath;
+
+
 
         public MainForm()
         {
             InitializeComponent();
 
-            if (Properties.Settings.Default.ServerList != null)
-            {
-                //create a new collection again
-                StringCollection collection = new StringCollection();
-                //set the collection from the settings variable
-                collection = Properties.Settings.Default.ServerList;
-                //convert the collection back to a list
-                List<string> serversToLoad = collection.Cast<string>().ToList();
-                //populate the listview again from the new list
-                int i = 0;
-                int index = 0;
-                foreach (var item in serversToLoad)
-                {
-                    i++;
+            AppDomain.CurrentDomain.SetData("DataDirectory", Application.LocalUserAppDataPath);
 
-                    dict_ServerInfo["addr"] = item;
-                    string[] addrInsert = { "", item, "", "", "", "", "", "" };
-                    lvMainView.Items.Add(Convert.ToString(i));
-                    lvMainView.Items[index].SubItems.AddRange(addrInsert);
-                    index++;
+            string version = Application.ProductVersion;
+            this.Text = $"Argo CS:GO Server Query Tool v{version}";
+
+            // Use our own ToolStripRenderer to remove the ugly bottom border in the .NET tool strip
+            toolStrip1.Renderer = new ToolStripRenderer();
+            
+            // Get any saved server lists in our app directory and add them to comboServerList
+            string[] files = Directory.GetFiles(_APP_PATH, "*.sqlite");
+            foreach (string file in files)
+            {
+                if (file != null)
+                {
+                    comboServerList.Items.Add(Path.GetFileName(file));
+                }
+            }
+
+            // Get history of commands used and add them to comboCmd
+            if (Properties.Settings.Default.cmdHistory != null)
+            {
+                foreach (string command in Properties.Settings.Default.cmdHistory)
+                {
+                    comboCmd.Items.Insert(0, command);
                 }
             }
 
@@ -67,25 +69,58 @@ namespace ArgoServerQuery
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            string[] files = Directory.GetFiles(_APP_PATH, "*.sqlite");
-            foreach (string file in files)
-            {
-                comboServerList.Items.Add(Path.GetFileName(file));
-            }
-
             if (!String.IsNullOrEmpty(Properties.Settings.Default.rconPW) 
                 && !String.IsNullOrEmpty(Properties.Settings.Default.key) 
                 && !String.IsNullOrEmpty(Properties.Settings.Default.IV))
             {
                 txtRconPW.Text = Query.decryptRcon();
             }
+
+            if (!String.IsNullOrEmpty(Properties.Settings.Default.region))
+            {
+                string region = Properties.Settings.Default.region;
+                switch (region)
+                {
+                    case "EU":
+                        comboRegion.SelectedItem = "EU";
+                        break;
+                    case "NA":
+                        comboRegion.SelectedItem = "NA";
+                        break;
+                    case "AU/NZ":
+                        comboRegion.SelectedItem = "AU/NZ";
+                        break;
+                }
+            }  
         }
 
-        // This event handler does our work asynchronously in the background thread. Making calls to our
-        // GUI controls in this method is not thread-safe and will throw an exception. Once this finishes
-        // updating the server info, it will fire the RunWorkerCompleted() event.
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            // For the lolz, only show on the first run. 'firstRun' is initialized to true in settings.
+            if (Properties.Settings.Default.firstRun == true)
+            {
+                string text = "Hi, I am an Albanian virus but because of poor technology in my country, " +
+                              "unfortunately I am not able to harm your computer. Please be so kind to " +
+                              "delete one of your important files yourself and then forward me to other " +
+                              "users. Many thank for your cooperation! Best regards, Albanian virus.";
+                string caption = "Virus Alert!";
+                MessageBoxButtons button = MessageBoxButtons.OK;
+                MessageBoxIcon icon = MessageBoxIcon.Warning;
+                DialogResult result = MessageBox.Show(text, caption, button, icon);
+
+                Properties.Settings.Default.firstRun = false;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        //-------------------------------------------------------------------------------------------------//
+        //- This event handler does our work asynchronously in the background thread. Making calls to our -//
+        //- GUI controls in this method is not thread-safe and will throw an exception. Once this finishes //
+        //------------- updating the server info, it will fire the RunWorkerCompleted() event. ------------//
+        //-------------------------------------------------------------------------------------------------//
         void bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
+            // SQLite.bgUpdates() returns a list of all server IP's in the current server list
             List<string> toUpdate = SQLite.bgUpdates();
 
             if (!toUpdate.Any())
@@ -95,15 +130,16 @@ namespace ArgoServerQuery
             }
             else
             {
-                e.Result = Query.bgUpdater(toUpdate);
-                Thread.Sleep(1500);
+                e.Result = Query.bgUpdater(toUpdate); // Query.bgUpdater() sends queries to each server in the list and
+                Thread.Sleep(1500);                   // returns all updated info to bgWorker_RunWorkerCompleted()
             }
         }
 
-
-        // This event is called on the main thread that created our GUI, so calling our controls
-        // here is thread-safe. Report the results of our background work and use it to update
-        // the server listView object with the updated server info.
+        //-----------------------------------------------------------------------------------------//
+        //- This event is called on the main thread that created our GUI, so calling our controls -//
+        //- here is thread-safe. Report the results of our background work and use it to update ---//
+        //--------------- the server listView object with the updated server info. ----------------//
+        //-----------------------------------------------------------------------------------------//
         void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Error != null)
@@ -112,14 +148,14 @@ namespace ArgoServerQuery
             }
             else if (lvMainView.Items.Count != 0)
             {
-                // Explicitly cast the list of Updates objects holding new server info
-                // back to its correct type after returning from DoWorkEventArgs
+                // Explicitly cast the list of Updates objects holding new
+                // server info after returning from DoWorkEventArgs
                 List<Updates> castObj = (List<Updates>)e.Result;
                 if (castObj != null)
                 {
                     int pos = 0;
-                    // Iterate over each instance of the Updates class in the castObj List
-                    // and update the server list with new info from properties of each
+                    // Iterate over each instance of Updates in castObj and update
+                    // the server list with new info from properties of each
                     foreach (Updates server in castObj)
                     {
                         try
@@ -138,7 +174,12 @@ namespace ArgoServerQuery
                             lvMainView.Items[pos].SubItems[1].Text = Convert.ToString(server.serverInfo.Ping) + "ms";
                             lvMainView.Items[pos].SubItems[4].ForeColor = Color.Red;
                             lvMainView.Items[pos].SubItems[4].Text = server.serverInfo.Map;
-                            lvMainView.Items[pos].SubItems[5].Text = $@"{server.serverInfo.Players}/{server.serverInfo.MaxPlayers}";
+
+                            if (server.serverInfo.Players > 0)
+                            {
+                                lvMainView.Items[pos].SubItems[5].ForeColor = Color.ForestGreen;
+                            }
+                            lvMainView.Items[pos].SubItems[5].Text = $"{server.serverInfo.Players}/{server.serverInfo.MaxPlayers}";
 
                             if (server.serverInfo.GameVersion != lvMainView.Items[pos].SubItems[6].Text)
                             {
@@ -164,11 +205,10 @@ namespace ArgoServerQuery
             }
 
             bgWorker.RunWorkerAsync(); // Start the bgWorker again after its finished updating the server list
-
         }
 
         
-        private int slot = 0;
+        private int slot;
 
         // Event handler for adding a new server to the server list
         private void mnuServersAdd_Click(object sender, EventArgs e)
@@ -181,13 +221,12 @@ namespace ArgoServerQuery
                 string caption = "No Server List Loaded";
                 MessageBoxButtons button = MessageBoxButtons.OK;
                 MessageBoxIcon icon = MessageBoxIcon.Warning;
-                DialogResult result = MessageBox.Show(text, caption, button, icon);
-
+                MessageBox.Show(text, caption, button, icon);
                 return;
             }
 
             string addr = Microsoft.VisualBasic.Interaction.InputBox("Enter server IP followed by port e.g. '123.45.67.890:12345'", 
-                "Add Server", "104.206.97.211:27060", -1, -1);
+                "Add Server");
 
             if (String.IsNullOrEmpty(addr))
             {
@@ -205,7 +244,7 @@ namespace ArgoServerQuery
                 if (result == DialogResult.OK)
                 {
                     addr = Microsoft.VisualBasic.Interaction.InputBox("Enter server IP followed by port e.g. '123.45.67.890:12345'",
-                    "Add Server", "104.206.97.211:27060", -1, -1);
+                    "Add Server");
                     if (String.IsNullOrEmpty(addr))
                     {
                         return;
@@ -237,11 +276,76 @@ namespace ArgoServerQuery
             }
         }
 
+        private void mnuServersAddAll_Click(object sender, EventArgs e)
+        {
+            if (comboRegion.SelectedItem == null)
+            {
+                string txt = "Choose your region before using auto build.";
+                string cap = "No Region Selected";
+                MessageBoxButtons btn = MessageBoxButtons.OK;
+                MessageBoxIcon ico = MessageBoxIcon.Warning;
+                MessageBox.Show(txt, cap, btn, ico);
+                return;
+            }
+
+            if (comboServerList.SelectedIndex == -1)
+            {
+                string text = "Create a new server list before using auto build.";
+                string caption = "No Server List Loaded";
+                MessageBoxButtons button = MessageBoxButtons.OK;
+                MessageBoxIcon icon = MessageBoxIcon.Warning;
+                MessageBox.Show(text, caption, button, icon);
+                return;
+            }
+
+            if (lvMainView.Items.Count > 0)
+            {
+                string text = "Auto build can only be used on new server lists.";
+                string caption = "Auto Build Error";
+                MessageBoxButtons button = MessageBoxButtons.OK;
+                MessageBoxIcon icon = MessageBoxIcon.Warning;
+                MessageBox.Show(text, caption, button, icon);
+                return;
+            }
+
+            List<string> loadout = new List<string>();
+            string region = comboRegion.SelectedItem.ToString();
+            switch (region)
+            {
+                case "EU":
+                    loadout = RegionsStruct.regions.EU;
+                    break;
+                case "NA":
+                    loadout = RegionsStruct.regions.NA;
+                    break;
+                case "AU/NZ":
+                    loadout = RegionsStruct.regions.AU;
+                    break;
+            }
+
+            int count = new int();
+            foreach (string ip in loadout)
+            {
+                count++;
+                string[] addrInsert = { "", ip, "", "", "", "", "", "" };
+                lvMainView.Items.Add(Convert.ToString(count)).SubItems.AddRange(addrInsert);
+                SQLite.addAddress(ip);
+            }
+        }
+
         private void btnSend_Click(object sender, EventArgs e)
         {
-            if (lvMainView.SelectedItems.Count == 1 && !String.IsNullOrEmpty(txtCmd.Text))
+            if (lvMainView.SelectedItems.Count == 1 && !String.IsNullOrEmpty(comboCmd.Text))
             {
-                string cmd = txtCmd.Text;
+                string cmd = comboCmd.Text;
+
+                comboCmd.Items.Insert(0, cmd);
+                commandHistory.Add(comboCmd.Text);
+                Properties.Settings.Default.cmdHistory = commandHistory;
+                Properties.Settings.Default.Save();
+                comboCmd.SelectAll();
+
+                
                 string rconAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
                 const string err = "RCON Error! Authentication failed. Make sure the RCON password is correct.";
                 string rconResp = Query.sendRcon(rconAddr, cmd);
@@ -257,7 +361,7 @@ namespace ArgoServerQuery
             }
         }
 
-        private void txtCmd_KeyDown(object sender, KeyEventArgs e)
+        private void comboCmd_KeyDown(object sender, KeyEventArgs e)
         {
             // Allow pressing the enter key to send commands from the textbox
             if (e.KeyCode == Keys.Enter)
@@ -265,6 +369,72 @@ namespace ArgoServerQuery
                 e.SuppressKeyPress = true;
                 btnSend_Click(this, new EventArgs());
             }
+        }
+
+        private void copyCmdMenuItem_Click(object sender, EventArgs e)
+        {
+            if (comboCmd.SelectedText.Length > 0)
+            {
+                string text = comboCmd.SelectedText;
+                System.Windows.Forms.Clipboard.SetText(text);
+            }
+        }
+
+        private void pasteCmdMenuItem_Click(object sender, EventArgs e)
+        {
+            if (comboCmd.Text.Length > 0)
+            {
+                string paste = System.Windows.Forms.Clipboard.GetText();
+                string existing = comboCmd.Text;
+                comboCmd.Text = existing + paste;
+                comboCmd.SelectionStart = comboCmd.Text.Length;
+            }
+            else
+            {
+                string paste = System.Windows.Forms.Clipboard.GetText();
+                comboCmd.Text = paste;
+                comboCmd.SelectionStart = comboCmd.Text.Length;
+            }
+        }
+
+        private void selectAllCmdMenuItem_Click(object sender, EventArgs e)
+        {
+            if (comboCmd.Text.Length > 0)
+            {
+                comboCmd.SelectAll();
+            }
+        }
+
+        private void commonCommands_Click(object sender, EventArgs e)
+        {
+            string cmd = Convert.ToString(sender);
+            comboCmd.Text = cmd;
+            comboCmd.SelectionStart = comboCmd.Text.Length;
+        }
+
+        private void changelevel_Click(object sender, EventArgs e)
+        {
+            switch (Convert.ToString(sender))
+            {
+                case "de_santorini":
+                {
+                    string cmd = "host_workshop_map 546623875";
+                    comboCmd.Text = cmd;
+                    comboCmd.SelectionStart = comboCmd.Text.Length;
+                    return;
+                }
+                case "de_season":
+                {
+                    string cmd = "host_workshop_map 322837144";
+                    comboCmd.Text = cmd;
+                    comboCmd.SelectionStart = comboCmd.Text.Length;
+                    return;
+                }
+            }
+
+            string map = Convert.ToString(sender);
+            comboCmd.Text = "changelevel " + map;
+            comboCmd.SelectionStart = comboCmd.Text.Length;
         }
 
         private void btnSendStatus_Click(object sender, EventArgs e)
@@ -287,18 +457,21 @@ namespace ArgoServerQuery
             }
         }
 
-        private void lvMainView_MouseClick(object sender, MouseEventArgs e)
+        private void copyAddrToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            ListView listView = sender as ListView;
-            if (e.Button == MouseButtons.Right)
+            if (lvMainView.SelectedItems.Count == 1)
             {
-                ListViewItem item = listView.GetItemAt(e.X, e.Y);
-                if (item != null)
-                {
-                    item.Selected = true;
-                    contextMenuServer.Show(listView, e.Location);
-                }
+                string addr = lvMainView.SelectedItems[0].SubItems[2].Text;
+                System.Windows.Forms.Clipboard.SetText(addr);
+            }
+        }
+
+        private void copyMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lvMainView.SelectedItems.Count == 1)
+            {
+                string map = lvMainView.SelectedItems[0].SubItems[4].Text;
+                System.Windows.Forms.Clipboard.SetText(map);
             }
         }
 
@@ -307,16 +480,11 @@ namespace ArgoServerQuery
             if (lvMainView.SelectedItems.Count == 1)
             {
                 string info = Microsoft.VisualBasic.Interaction.InputBox("Enter server color info or whatever the hell you want here. I DONT CARE JUST SOMETHING.",
-                "Add Info", "", -1, -1);
+                "Add Info");
                 string ip = lvMainView.SelectedItems[0].SubItems[2].Text;
                 lvMainView.SelectedItems[0].SubItems[8].Text = info;
                 SQLite.addInfo(ip, info);
             }
-        }
-
-        private void scoreToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void delServerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -375,7 +543,7 @@ namespace ArgoServerQuery
         private void btnRestartServer_Click(object sender, EventArgs e)
         {
             string svAddr = Microsoft.VisualBasic.Interaction.InputBox("Enter the address of the server you wish to restart.",
-                "Restart Server", "123.45.67.890:12345", -1, -1);
+                "Restart Server", "123.45.67.890:12345");
 
             ServerTools.serverList(svAddr);
         }
@@ -388,6 +556,7 @@ namespace ArgoServerQuery
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            /*
             // Create a list to store each address for the servers in the server list
             List<string> serverList = new List<string>();
 
@@ -404,6 +573,7 @@ namespace ArgoServerQuery
             Properties.Settings.Default.ServerList = collection;
             // Save the state and make persistent
             Properties.Settings.Default.Save();
+            */
         }
 
         private void btnUpdatePlayers_Click(object sender, EventArgs e)
@@ -417,8 +587,9 @@ namespace ArgoServerQuery
                 {
                     playersListView.Items.Clear();
 
-                    foreach (JObject player in playerInfo)
+                    foreach (var jToken in playerInfo)
                     {
+                        var player = (JObject) jToken;
                         string name = Convert.ToString(player["Name"]);
 
                         string rawTime = Convert.ToString(player["Time"]);
@@ -491,15 +662,13 @@ namespace ArgoServerQuery
 
         private void kickPlayerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Regex regex = new Regex(@"^[0-9]+$");
-
             if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)
             {
                 string player = playersListView.SelectedItems[0].Text;
                 string addr = lvMainView.SelectedItems[0].SubItems[2].Text;
 
                 string kickReason = Microsoft.VisualBasic.Interaction.InputBox("Tell 'em why they were kicked, or leave blank to skip.",
-                "Kick Reason", "", -1, -1);
+                "Kick Reason");
 
                 if (!String.IsNullOrEmpty(kickReason))
                 {
@@ -514,98 +683,111 @@ namespace ArgoServerQuery
 
         private void btnNewServerList_Click(object sender, EventArgs e)
         {
+            Regex regex = new Regex(@"^[a-zA-Z0-9()_-]+$");
             string slName = Microsoft.VisualBasic.Interaction.InputBox("Enter a name for the new server list.",
-                "New Server List", "", -1, -1);
+                "New Server List");
 
             if (!String.IsNullOrEmpty(slName))
             {
-                if (File.Exists(_APP_PATH + $"{slName}.sqlite"))
+                if (regex.IsMatch(slName))
                 {
-                    string text = "A server list with that name already exists. Do you wish to overwrite?";
-                    string caption = "File already exists";
-                    MessageBoxButtons btn = MessageBoxButtons.OKCancel;
-                    MessageBoxIcon icon = MessageBoxIcon.Warning;
-                    DialogResult result = MessageBox.Show(text, caption, btn, icon);
-
-                    if (result == DialogResult.OK)
+                    if (File.Exists(_APP_PATH + $"{slName}.sqlite"))
                     {
-                        // If user decides to overwrite existing SQLite db, close current SQLite connection, then
-                        // try to delete the local db and remove the file from the combobox before rebuilding
-                        SQLite.closeConnection();
+                        string text = "A server list with that name already exists. Do you wish to overwrite?";
+                        string caption = "File already exists";
+                        MessageBoxButtons btn = MessageBoxButtons.OKCancel;
+                        MessageBoxIcon icon = MessageBoxIcon.Warning;
+                        DialogResult result = MessageBox.Show(text, caption, btn, icon);
 
-                        try
+                        if (result == DialogResult.OK)
                         {
-                            File.Delete(_APP_PATH + $"{slName}.sqlite");
-                            lvMainView.Items.Clear();
-                            comboServerList.Items.Remove(Path.GetFileName($"{slName}.sqlite"));
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex);
-                            string msg = $"Error attempting to delete the server list. \n\nINFO: {ex.Message} \n\nSRC: {ex.Source}";
-                            string cap = "Error";
-                            MessageBoxButtons ok = MessageBoxButtons.OK;
-                            MessageBoxIcon ico = MessageBoxIcon.Error;
-                            MessageBox.Show(msg, cap, ok, ico);
-                            return;
-                        }
+                            // If user decides to overwrite existing SQLite db, close current SQLite connection, then
+                            // try to delete the local db and remove the file from the combobox before rebuilding
+                            SQLite.closeConnection();
 
-                        SQLite.createDB(slName);
+                            try
+                            {
+                                File.Delete(_APP_PATH + $"{slName}.sqlite");
+                                lvMainView.Items.Clear();
+                                comboServerList.Items.Remove(Path.GetFileName($"{slName}.sqlite"));
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex);
+                                string msg = $"Error attempting to delete the server list. \n\nINFO: {ex.Message} \n\nSRC: {ex.Source}";
+                                string cap = "Error";
+                                MessageBoxButtons ok = MessageBoxButtons.OK;
+                                MessageBoxIcon ico = MessageBoxIcon.Error;
+                                MessageBox.Show(msg, cap, ok, ico);
+                                return;
+                            }
 
-                        string[] owFiles = Directory.GetFiles(_APP_PATH, $"{slName}.sqlite");
-                        comboServerList.Items.Add(Path.GetFileName(owFiles[0]));
-                        comboServerList.SelectedItem = Path.GetFileName(owFiles[0]);
+                            SQLite.createDB(slName);
 
-                        List<string> populate = SQLite.loadDB(Convert.ToString(comboServerList.SelectedItem));
-                        int i = 1;
+                            string[] owFiles = Directory.GetFiles(_APP_PATH, $"{slName}.sqlite");
+                            comboServerList.Items.Add(Path.GetFileName(owFiles[0]));
+                            comboServerList.SelectedItem = Path.GetFileName(owFiles[0]);
 
-                        foreach (string addr in populate)
-                        {
-                            string[] addrInsert = { "", addr, "", "", "", "", "", "" };
-                            lvMainView.Items.Add(Convert.ToString(i)).SubItems.AddRange(addrInsert);
-                            i++;
+                            Dictionary<string, string> dict = SQLite.loadDB(Convert.ToString(comboServerList.SelectedItem));
+                            int i = 1;
+
+                            foreach (KeyValuePair<string, string> addr_info in dict)
+                            {
+                                string[] addrInsert = { "", addr_info.Key, "", "", "", "", "", addr_info.Value };
+                                lvMainView.Items.Add(Convert.ToString(i)).SubItems.AddRange(addrInsert);
+                                i++;
+                            }
                         }
                     }
                     else
                     {
-                        return;
+                        SQLite.createDB(slName);
+                        lvMainView.Items.Clear();
+
+                        string[] files = Directory.GetFiles(_APP_PATH, $"{slName}.sqlite");
+                        comboServerList.Items.Add(Path.GetFileName(files[0]));
+                        comboServerList.SelectedItem = Path.GetFileName(files[0]);
+
+                        Dictionary<string, string> dict = SQLite.loadDB(Convert.ToString(comboServerList.SelectedItem));
+                        int i = 1;
+
+                        foreach (KeyValuePair<string, string> addr_info in dict)
+                        {
+                            string[] addrInsert = { "", addr_info.Key, "", "", "", "", "", addr_info.Value };
+                            lvMainView.Items.Add(Convert.ToString(i)).SubItems.AddRange(addrInsert);
+                            i++;
+                        }
                     }
                 }
                 else
                 {
-                    SQLite.createDB(slName);
-                    lvMainView.Items.Clear();
-
-                    string[] files = Directory.GetFiles(_APP_PATH, $"{slName}.sqlite");
-                    comboServerList.Items.Add(Path.GetFileName(files[0]));
-                    comboServerList.SelectedItem = Path.GetFileName(files[0]);
-
-                    List<string> populate = SQLite.loadDB(Convert.ToString(comboServerList.SelectedItem));
-                    int i = 1;
-
-                    foreach (string addr in populate)
-                    {
-                        string[] addrInsert = { "", addr, "", "", "", "", "", "" };
-                        lvMainView.Items.Add(Convert.ToString(i)).SubItems.AddRange(addrInsert);
-                        i++;
-                    }
+                    string msg = $"Could not create server list \"{slName}\" because it contains an illegal character.";
+                    string cap = "Illegal Character";
+                    MessageBoxButtons ok = MessageBoxButtons.OK;
+                    MessageBoxIcon ico = MessageBoxIcon.Error;
+                    MessageBox.Show(msg, cap, ok, ico);
+                    return;
                 }
             }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            OpenFileDialog openFile = new OpenFileDialog();
+            openFile.InitialDirectory = _APP_PATH;
+            openFile.Filter = "sqlite database | *.sqlite";
+            openFile.Title = "Open Server List";
             DialogResult db_SQLite = openFile.ShowDialog();
 
             if (db_SQLite == DialogResult.OK)
             {
                 lvMainView.Items.Clear();
-                List<string> populate = SQLite.loadDB(openFile.FileName);
+                Dictionary<string, string> dict = SQLite.loadDB(Convert.ToString(openFile.FileName));
                 int i = 1;
 
-                foreach (string addr in populate)
+                foreach (KeyValuePair<string, string> addr_info in dict)
                 {
-                    string[] addrInsert = { "", addr, "", "", "", "", "", "" };
+                    string[] addrInsert = { "", addr_info.Key, "", "", "", "", "", addr_info.Value };
                     lvMainView.Items.Add(Convert.ToString(i)).SubItems.AddRange(addrInsert);
                     i++;
                 }
@@ -624,12 +806,12 @@ namespace ArgoServerQuery
             // loading or creating a new SQLite DB) will not call this under most circumstances.
 
             lvMainView.Items.Clear();
-            List<string> populate = SQLite.loadDB(Convert.ToString(comboServerList.SelectedItem));
+            Dictionary<string, string> dict = SQLite.loadDB(Convert.ToString(comboServerList.SelectedItem));
             int i = 1;
 
-            foreach (string addr in populate)
+            foreach (KeyValuePair<string, string> addr_info in dict)
             {
-                string[] addrInsert = { "", addr, "", "", "", "", "", "" };
+                string[] addrInsert = { "", addr_info.Key, "", "", "", "", "", addr_info.Value };
                 lvMainView.Items.Add(Convert.ToString(i)).SubItems.AddRange(addrInsert);
                 i++;
             }
@@ -640,13 +822,14 @@ namespace ArgoServerQuery
             if (lvMainView.Items.Count != 0)
             {
                 string strRCONAll = Microsoft.VisualBasic.Interaction.InputBox("Type a command to send to all servers in the list:",
-                "RCON2All", "", -1, -1);
+                "RCON2All");
+                progressBar.Value = 0;
+                progressBar.Step = 100 / lvMainView.Items.Count;
 
                 if (!String.IsNullOrEmpty(strRCONAll))
                 {
-                    int num = 0;
-                    progressBar.Step = 100 / lvMainView.Items.Count;
                     progressBar.Show();
+                    int num = 0;
 
                     for (int i=0; i < lvMainView.Items.Count; i++)
                     {
@@ -662,13 +845,25 @@ namespace ArgoServerQuery
             }
         }
 
+        private void toolBtnScoreToggle_Click(object sender, EventArgs e)
+        {
+            if (toolBtnScoreToggle.Checked)
+            {
+                Properties.Settings.Default.disableScore = true;
+                Properties.Settings.Default.Save();
+            }
+            else
+            {
+                Properties.Settings.Default.disableScore = false;
+                Properties.Settings.Default.Save();
+            }
+        }
+
         private void toolBtnDeleteList_Click(object sender, EventArgs e)
         {
             string msg;
             string cap;
-            string queuedList;
             MessageBoxIcon ico;
-            DialogResult result;
 
             if (comboServerList.SelectedIndex == -1)
             {
@@ -680,12 +875,12 @@ namespace ArgoServerQuery
             }
             else
             {
-                queuedList = comboServerList.SelectedItem.ToString();
+                string queuedList = comboServerList.SelectedItem.ToString();
                 msg = $"The server list \"{queuedList}\" will be permanently deleted. Do you wish to proceed?";
                 cap = $"Delete \"{queuedList}\"?";
                 MessageBoxButtons yesNo = MessageBoxButtons.YesNo;
                 ico = MessageBoxIcon.Exclamation;
-                result = MessageBox.Show(msg, cap, yesNo, ico);
+                DialogResult result = MessageBox.Show(msg, cap, yesNo, ico);
 
                 if (result == DialogResult.Yes)
                 {
@@ -744,7 +939,15 @@ namespace ArgoServerQuery
         private void btnRconSave_Click(object sender, EventArgs e)
         {
             string pw = txtRconPW.Text;
-            if (!String.IsNullOrEmpty(pw))
+
+            if (String.IsNullOrEmpty(pw))
+            {
+                Properties.Settings.Default.key = null;
+                Properties.Settings.Default.IV = null;
+                Properties.Settings.Default.rconPW = null;
+                Properties.Settings.Default.Save();
+            }
+            else
             {
                 try
                 {
@@ -789,15 +992,80 @@ namespace ArgoServerQuery
             txtRconPW.UseSystemPasswordChar = !chkRconShow.Checked;
         }
 
+        private void comboRegion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboRegion.SelectedItem != null)
+            {
+                string region = comboRegion.SelectedItem.ToString();
+                Properties.Settings.Default.region = region;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void comboTS3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboTS3.SelectedItem != null)
+            {
+                if (comboRegion.SelectedItem != null)
+                {
+                    string selection = comboTS3.SelectedItem.ToString();
+                    string region = comboRegion.SelectedItem.ToString();
+                    bool chState = new bool();
+                    bool msgMode = new bool();
+
+                    switch (selection)
+                    {
+                        case "Enable Modal Message":
+                            TS3Query.modalMessage(msgMode = true);
+                            break;
+                        case "Disable Modal Message":
+                            TS3Query.modalMessage(msgMode);
+                            break;
+                        case "Move Servers Channel To Top":
+                            TS3Query.moveSvParent(region);
+                            break;
+                        case "Mute RTP Channel":
+                            TS3Query.muteUnmuteRTP(chState = true);
+                            break;
+                        case "Unmute RTP Channel":
+                            TS3Query.muteUnmuteRTP(chState);
+                            break;
+                    }
+                    comboTS3.SelectedIndex = -1;
+                }
+                else
+                {
+                    string msg = "You must select a region before issuing TS commands.";
+                    string cap = "Choose region";
+                    MessageBoxIcon icon = MessageBoxIcon.Warning;
+                    MessageBoxButtons btn = MessageBoxButtons.OK;
+                    MessageBox.Show(msg, cap, btn, icon);
+                }
+            }
+        }
+
+        private void mnuToolsChat_Click(object sender, EventArgs e)
+        {
+            if (lvMainView.SelectedItems.Count == 1 
+                && !String.IsNullOrEmpty(Properties.Settings.Default.key)
+                && !String.IsNullOrEmpty(Properties.Settings.Default.IV)
+                && !String.IsNullOrEmpty(Properties.Settings.Default.rconPW))
+            {
+                string addr = lvMainView.SelectedItems[0].SubItems[2].Text;
+                //AdminChat.getChats(addr, txtOutput);
+            }
+        }
 
 
 
 
-
-
-
-
-
+        public class BufferedListView : ListView
+        {
+            public BufferedListView()
+            {
+                SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            }
+        }
 
         public void showErrors(string str)
         {
