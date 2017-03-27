@@ -9,7 +9,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("ASQT was originally created for the GlobalOffensive\r\nsubreddit modteam " +
                                "as a replacement for HLSW and \r\nto assist with our weekly community night " +
                                "10-mans, \r\nwhere we playtest new maps created by members of \r\nthe community. " +
-                               "\r\n\r\nIt can be used to query info and send RCON\r\ncommands to any server running CS:GO. ")]
+                               "\r\nIt can be used to query info and send RCON\r\ncommands to any server running CS:GO. " +
+                               "If you have any questions or issues with ASQT, feel free to contact me! \r\n" +
+                               "Steam: /warlordtv \r\nReddit: /u/zebradolphin5")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ASQT")]
 [assembly: AssemblyProduct("Argo Server Query Tool")]
@@ -36,4 +38,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.8.1")]
+[assembly: AssemblyFileVersion("1.0.8.2")]
