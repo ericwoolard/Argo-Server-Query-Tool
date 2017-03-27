@@ -9,9 +9,9 @@
 
 ### Commits
 
-[[`1657e82`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/1657e82fcaf7a0d4f210ce8c30e04764303c8beb)] - Updated IP's for new NA network
-[[`a52a02a`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/a52a02aad4a90f853c07ff1c4b3a98643c5d07f9)] - See changelog v1.0.8.2
-[[`b560186`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b5601867ec40f68f8d1f12581dddfdb061e0404b)] - Updated assembly description
+* [[`1657e82`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/1657e82fcaf7a0d4f210ce8c30e04764303c8beb)] - Updated IP's for new NA network
+* [[`a52a02a`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/a52a02aad4a90f853c07ff1c4b3a98643c5d07f9)] - See changelog v1.0.8.2
+* [[`b560186`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b5601867ec40f68f8d1f12581dddfdb061e0404b)] - Updated assembly description
 
 
 <a id="1.0.8.1"></a>
