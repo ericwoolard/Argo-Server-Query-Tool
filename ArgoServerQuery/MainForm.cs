@@ -17,22 +17,29 @@ namespace ArgoServerQuery
     public partial class MainForm : Form
     {
         // This list is used to persist the command history by saving to Settings.Default
-        List<string> commandHistory = new List<string>();
+        //List<string> commandHistory = new List<string>();
 
         // This instance of BackgroundWorker is used to update server info in the UI on a background thread
         private BackgroundWorker bgWorker = new BackgroundWorker();
 
-        // Path to programs base directory
-        // private string _APP_PATH = AppDomain.CurrentDomain.BaseDirectory;
-        private string _APP_PATH = Application.LocalUserAppDataPath;
+        // Path to programs base directory in Local AppData
+        private static string _APP_PATH = Application.LocalUserAppDataPath;
 
+        // Set a path to a new folder in local appdata for saving server lists. This avoids having
+        // to copy server lists from folders of previous versions whenever the program is updated.
+        private static string folderBase = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        private static string _SL_PATH = $@"{folderBase}\{"ASQT"}\{"ServerLists"}\";
+        
 
-
-        public MainForm()
+    public MainForm()
         {
             InitializeComponent();
 
-            AppDomain.CurrentDomain.SetData("DataDirectory", Application.LocalUserAppDataPath);
+            if (!Directory.Exists(_SL_PATH))
+            {
+                Directory.CreateDirectory(_SL_PATH);
+            }
+            AppDomain.CurrentDomain.SetData("DataDirectory", _SL_PATH);
 
             string version = Application.ProductVersion;
             this.Text = $"Argo CS:GO Server Query Tool v{version}";
@@ -41,7 +48,7 @@ namespace ArgoServerQuery
             toolStrip1.Renderer = new ToolStripRenderer();
             
             // Get any saved server lists in our app directory and add them to comboServerList
-            string[] files = Directory.GetFiles(_APP_PATH, "*.sqlite");
+            string[] files = Directory.GetFiles(_SL_PATH, "*.sqlite");
             foreach (string file in files)
             {
                 if (file != null)
@@ -338,13 +345,27 @@ namespace ArgoServerQuery
             if (lvMainView.SelectedItems.Count == 1 && !String.IsNullOrEmpty(comboCmd.Text))
             {
                 string cmd = comboCmd.Text;
+                List<string> commandHistory = Properties.Settings.Default.cmdHistory;
 
-                comboCmd.Items.Insert(0, cmd);
-                commandHistory.Add(comboCmd.Text);
-                Properties.Settings.Default.cmdHistory = commandHistory;
-                Properties.Settings.Default.Save();
+                if (comboCmd.Items.OfType<string>().Any(cbi => cbi.Contains(cmd)) == false)
+                {
+                    comboCmd.Items.Insert(0, cmd);
+                    commandHistory.Add(cmd);
+                    Properties.Settings.Default.cmdHistory = commandHistory;
+                    Properties.Settings.Default.Save();
+                }
+                else if (comboCmd.Items.OfType<string>().Any(cbi => cbi.Contains(cmd)) == true)
+                {
+                    int oldIndex = comboCmd.Items.IndexOf(cmd);
+                    comboCmd.Items.RemoveAt(oldIndex);
+                    comboCmd.Items.Insert(0, cmd);
+                    commandHistory.Remove(cmd);
+                    commandHistory.Add(cmd);
+                    Properties.Settings.Default.cmdHistory = commandHistory;
+                    Properties.Settings.Default.Save();
+                }
+
                 comboCmd.SelectAll();
-
                 
                 string rconAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
                 const string err = "RCON Error! Authentication failed. Make sure the RCON password is correct.";
@@ -691,7 +712,7 @@ namespace ArgoServerQuery
             {
                 if (regex.IsMatch(slName))
                 {
-                    if (File.Exists(_APP_PATH + $"{slName}.sqlite"))
+                    if (File.Exists(_SL_PATH + $"{slName}.sqlite"))
                     {
                         string text = "A server list with that name already exists. Do you wish to overwrite?";
                         string caption = "File already exists";
@@ -707,7 +728,7 @@ namespace ArgoServerQuery
 
                             try
                             {
-                                File.Delete(_APP_PATH + $"{slName}.sqlite");
+                                File.Delete(_SL_PATH + $"{slName}.sqlite");
                                 lvMainView.Items.Clear();
                                 comboServerList.Items.Remove(Path.GetFileName($"{slName}.sqlite"));
                             }
@@ -724,7 +745,7 @@ namespace ArgoServerQuery
 
                             SQLite.createDB(slName);
 
-                            string[] owFiles = Directory.GetFiles(_APP_PATH, $"{slName}.sqlite");
+                            string[] owFiles = Directory.GetFiles(_SL_PATH, $"{slName}.sqlite");
                             comboServerList.Items.Add(Path.GetFileName(owFiles[0]));
                             comboServerList.SelectedItem = Path.GetFileName(owFiles[0]);
 
@@ -744,7 +765,7 @@ namespace ArgoServerQuery
                         SQLite.createDB(slName);
                         lvMainView.Items.Clear();
 
-                        string[] files = Directory.GetFiles(_APP_PATH, $"{slName}.sqlite");
+                        string[] files = Directory.GetFiles(_SL_PATH, $"{slName}.sqlite");
                         comboServerList.Items.Add(Path.GetFileName(files[0]));
                         comboServerList.SelectedItem = Path.GetFileName(files[0]);
 
@@ -774,7 +795,7 @@ namespace ArgoServerQuery
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFile = new OpenFileDialog();
-            openFile.InitialDirectory = _APP_PATH;
+            openFile.InitialDirectory = _SL_PATH;
             openFile.Filter = "sqlite database | *.sqlite";
             openFile.Title = "Open Server List";
             DialogResult db_SQLite = openFile.ShowDialog();
@@ -850,12 +871,12 @@ namespace ArgoServerQuery
             if (toolBtnScoreToggle.Checked)
             {
                 Properties.Settings.Default.disableScore = true;
-                Properties.Settings.Default.Save();
+                //Properties.Settings.Default.Save();
             }
             else
             {
                 Properties.Settings.Default.disableScore = false;
-                Properties.Settings.Default.Save();
+                //Properties.Settings.Default.Save();
             }
         }
 
@@ -888,11 +909,11 @@ namespace ArgoServerQuery
                     lvMainView.Items.Clear();
                     comboServerList.Items.Clear();
 
-                    if (File.Exists(_APP_PATH + queuedList))
+                    if (File.Exists(_SL_PATH + queuedList))
                     {
                         try
                         {
-                            File.Delete(_APP_PATH + queuedList);
+                            File.Delete(_SL_PATH + queuedList);
                             msg = "Server list deleted successfully.";
                             cap = "Success";
                             ico = MessageBoxIcon.None;
@@ -916,7 +937,7 @@ namespace ArgoServerQuery
                         MessageBox.Show(msg, cap, btnOK, ico);
                     }
 
-                    string[] files = Directory.GetFiles(_APP_PATH, "*.sqlite");
+                    string[] files = Directory.GetFiles(_SL_PATH, "*.sqlite");
                     foreach (string file in files)
                     {
                         comboServerList.Items.Add(Path.GetFileName(file));

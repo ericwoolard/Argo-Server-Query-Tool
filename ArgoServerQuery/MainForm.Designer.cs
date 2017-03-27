@@ -119,7 +119,7 @@ namespace ArgoServerQuery
             this.hostPlayersMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hostWkshpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.kickMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.smBanMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.smAddBanMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.smBanIPMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.smPluginsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.smUnbanMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -722,7 +722,7 @@ namespace ArgoServerQuery
             // mnuToolsChat
             // 
             this.mnuToolsChat.Name = "mnuToolsChat";
-            this.mnuToolsChat.Size = new System.Drawing.Size(134, 22);
+            this.mnuToolsChat.Size = new System.Drawing.Size(152, 22);
             this.mnuToolsChat.Text = "Server Chat";
             this.mnuToolsChat.Click += new System.EventHandler(this.mnuToolsChat_Click);
             // 
@@ -802,7 +802,7 @@ namespace ArgoServerQuery
             this.toolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.toolStrip1.Location = new System.Drawing.Point(365, 33);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(136, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(105, 25);
             this.toolStrip1.TabIndex = 16;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -872,7 +872,7 @@ namespace ArgoServerQuery
             this.commonCmdMenuItem,
             this.changelevelCmdMenuItem});
             this.contextMenuCmd.Name = "contextMenuCmd";
-            this.contextMenuCmd.Size = new System.Drawing.Size(191, 126);
+            this.contextMenuCmd.Size = new System.Drawing.Size(191, 148);
             // 
             // copyCmdMenuItem
             // 
@@ -912,7 +912,7 @@ namespace ArgoServerQuery
             this.hostPlayersMenuItem,
             this.hostWkshpMenuItem,
             this.kickMenuItem,
-            this.smBanMenuItem,
+            this.smAddBanMenuItem,
             this.smBanIPMenuItem,
             this.smPluginsMenuItem,
             this.smUnbanMenuItem,
@@ -949,12 +949,12 @@ namespace ArgoServerQuery
             this.kickMenuItem.Text = "kick";
             this.kickMenuItem.Click += new System.EventHandler(this.commonCommands_Click);
             // 
-            // smBanMenuItem
+            // smAddBanMenuItem
             // 
-            this.smBanMenuItem.Name = "smBanMenuItem";
-            this.smBanMenuItem.Size = new System.Drawing.Size(186, 22);
-            this.smBanMenuItem.Text = "sm_ban ";
-            this.smBanMenuItem.Click += new System.EventHandler(this.commonCommands_Click);
+            this.smAddBanMenuItem.Name = "smAddBanMenuItem";
+            this.smAddBanMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.smAddBanMenuItem.Text = "sm_addban ";
+            this.smAddBanMenuItem.Click += new System.EventHandler(this.commonCommands_Click);
             // 
             // smBanIPMenuItem
             // 
@@ -1241,7 +1241,7 @@ namespace ArgoServerQuery
         private System.Windows.Forms.ToolStripMenuItem hostPlayersMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hostWkshpMenuItem;
         private System.Windows.Forms.ToolStripMenuItem kickMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem smBanMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem smAddBanMenuItem;
         private System.Windows.Forms.ToolStripMenuItem smBanIPMenuItem;
         private System.Windows.Forms.ToolStripMenuItem smPluginsMenuItem;
         private System.Windows.Forms.ToolStripMenuItem smUnbanMenuItem;
