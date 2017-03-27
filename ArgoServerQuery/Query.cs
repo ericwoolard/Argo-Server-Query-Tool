@@ -23,7 +23,7 @@ namespace ArgoServerQuery
     {
         // private static Game appId;
         private const int appId = 730;
-        private const int retries = -1;
+        private const int retries = 0;
         private const int timeout = 2500;
 
 
