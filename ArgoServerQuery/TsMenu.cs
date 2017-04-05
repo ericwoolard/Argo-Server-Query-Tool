@@ -66,51 +66,48 @@ namespace ArgoServerQuery
             string pw = txtSQPassword.Text;
             string port = txtSQPort.Text;
 
-            if (!String.IsNullOrEmpty(addr) && !String.IsNullOrEmpty(user) && !String.IsNullOrEmpty(pw) && !String.IsNullOrEmpty(port))
+            try
             {
-                try
+                // Create a new instance of the RijndaelManaged class and generate
+                // a new key and initialization vector.
+                using (RijndaelManaged aesCipherTS = new RijndaelManaged())
                 {
-                    // Create a new instance of the RijndaelManaged class and generate
-                    // a new key and initialization vector.
-                    using (RijndaelManaged aesCipherTS = new RijndaelManaged())
+                    aesCipherTS.GenerateKey();
+                    aesCipherTS.GenerateIV();
+                    string keyb64 = Convert.ToBase64String(aesCipherTS.Key);
+                    string ivb64 = Convert.ToBase64String(aesCipherTS.IV);
+                    Properties.Settings.Default.keyTS = keyb64;
+                    Properties.Settings.Default.IVTS = ivb64;
+
+                    // Encrypt the string to an array of bytes
+                    byte[] encrypted = PasswordStorage.EncryptStringToBytes(pw, aesCipherTS.Key, aesCipherTS.IV);
+                    string base64 = Convert.ToBase64String(encrypted);
+
+                    Properties.Settings.Default.ts3SQPW = base64;
+                    Properties.Settings.Default.ts3Addr = addr;
+                    Properties.Settings.Default.ts3SQUser = user;
+                    Properties.Settings.Default.ts3SQPort = port;
+                    Properties.Settings.Default.Save();
+
+                    lblTsSaved.Show();
+                    var timer = new Timer { Interval = 1800 };
+                    timer.Tick += (start, end) =>
                     {
-                        aesCipherTS.GenerateKey();
-                        aesCipherTS.GenerateIV();
-                        string keyb64 = Convert.ToBase64String(aesCipherTS.Key);
-                        string ivb64 = Convert.ToBase64String(aesCipherTS.IV);
-                        Properties.Settings.Default.keyTS = keyb64;
-                        Properties.Settings.Default.IVTS = ivb64;
-
-                        // Encrypt the string to an array of bytes
-                        byte[] encrypted = PasswordStorage.EncryptStringToBytes(pw, aesCipherTS.Key, aesCipherTS.IV);
-                        string base64 = Convert.ToBase64String(encrypted);
-
-                        Properties.Settings.Default.ts3SQPW = base64;
-                        Properties.Settings.Default.ts3Addr = addr;
-                        Properties.Settings.Default.ts3SQUser = user;
-                        Properties.Settings.Default.ts3SQPort = port;
-                        Properties.Settings.Default.Save();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error: {0}", ex.Message);
-                    string message = $"ERROR: Unable to encrypt or store SQ password. \n\nINFO: {ex.Message} \n\nSRC: {ex.Source}";
-                    string cap = "Error";
-                    MessageBoxIcon icon = MessageBoxIcon.Error;
-                    MessageBoxButtons btn = MessageBoxButtons.OK;
-                    MessageBox.Show(message, cap, btn, icon);
+                        lblTsSaved.Hide();
+                        timer.Stop();
+                    };
+                    timer.Start();
                 }
             }
-
-            lblTsSaved.Show();
-            var timer = new Timer {Interval = 1800};
-            timer.Tick += (start, end) =>
+            catch (Exception ex)
             {
-                lblTsSaved.Hide();
-                timer.Stop();
-            };
-            timer.Start();
+                Console.WriteLine("Error: {0}", ex.Message);
+                string message = $"ERROR: Unable to encrypt or store SQ password. \n\nINFO: {ex.Message} \n\nSRC: {ex.Source}";
+                string cap = "Error";
+                MessageBoxIcon icon = MessageBoxIcon.Error;
+                MessageBoxButtons btn = MessageBoxButtons.OK;
+                MessageBox.Show(message, cap, btn, icon);
+            }
         }
     }
 }
