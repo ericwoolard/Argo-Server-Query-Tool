@@ -392,7 +392,7 @@ namespace ArgoServerQuery
             {
                 Console.WriteLine(ex);
                 string msg = "This is the error that I need info about. Show me info mr program. thank. " +
-                             $"\n\nINFO: {ex.Message} \n\nSRC: {ex.Source} \n\nCODE: {ex.HResult}";
+                             $"\n\nINFO: {ex.Message} \n\nSRC: {ex.Source} \n\nCODE: {ex.HResult} \n\nSTACK: {ex.StackTrace}";
                 string cap = "Error";
                 MessageBoxButtons ok = MessageBoxButtons.OK;
                 MessageBoxIcon ico = MessageBoxIcon.Error;
@@ -474,6 +474,23 @@ namespace ArgoServerQuery
             string map = Convert.ToString(sender);
             comboCmd.Text = "changelevel " + map;
             comboCmd.SelectionStart = comboCmd.Text.Length;
+        }
+
+        private void clearCmdMenuItem_Click(object sender, EventArgs e)
+        {
+            string text = "Are you sure you want to clear the command history?";
+            string caption = "Clear command history";
+            MessageBoxButtons button = MessageBoxButtons.YesNo;
+            MessageBoxIcon icon = MessageBoxIcon.Question;
+            DialogResult result = MessageBox.Show(text, caption, button, icon);
+
+            if (result == DialogResult.Yes)
+            {
+                Properties.Settings.Default.cmdHistory.Clear();
+                Properties.Settings.Default.Save();
+                comboCmd.Items.Clear();
+                comboCmd.Text = "";
+            }
         }
 
         private void btnSendStatus_Click(object sender, EventArgs e)
