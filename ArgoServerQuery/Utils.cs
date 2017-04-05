@@ -19,6 +19,7 @@ namespace ArgoServerQuery
             Blend
         }
 
+        // Animates the TS config panel and slides it into view
         public static void Animate(Control ctl, Effect effect, int msec, int angle)
         {
             int flags = effmap[(int)effect];
