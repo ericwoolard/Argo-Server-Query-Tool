@@ -24,7 +24,7 @@ namespace ArgoServerQuery
         // private static Game appId;
         private const int appId = 730;
         private const int retries = 0;
-        private const int timeout = 2500;
+        private const int timeout = 500;
 
 
         // Helper function to split the address into string-IP and UInt16-port for 
@@ -132,20 +132,28 @@ namespace ArgoServerQuery
                 throwExceptions: false,
                 retries: retries);
 
-            // GetControl() validates the RCON password and returns true if the server accepts it.
-            if (server.GetControl(pw))
+            try
             {
-                string response = server.Rcon.SendCommand(cmd);
+                if (server.GetControl(pw))
+                {
+                    string response = server.Rcon.SendCommand(cmd);
+                    server.Dispose();
+
+                    if (!String.IsNullOrEmpty(response))
+                    {
+                        string endTime = DateTime.Now.ToString("HH:mm:ss");
+                        string txtOutput = $"{startTime}: {cmd.ToUpper()}\n{response}\n\n";
+                        return txtOutput;
+                    }
+                }
                 server.Dispose();
-                string endTime = DateTime.Now.ToString("HH:mm:ss");
-                string txtOutput = $"{startTime}: {cmd.ToUpper()}\n{response}\n\n";
-                return txtOutput;
+                return null;
             }
-            else
+            catch (Exception exception)
             {
-                server.Dispose();
-                return "";
-            }
+                Console.WriteLine(exception);
+                return null;
+            } 
         }
 
         public static string getPugScore(Server sv, string pw)
@@ -156,9 +164,17 @@ namespace ArgoServerQuery
             // server accepted it.
             if (sv.GetControl(pw))
             {
-                string response = sv.Rcon.SendCommand("getpugscore");
-                var splitResp = response.Split('L');
-                pugScore = splitResp[0];
+                try
+                {
+                    string response = sv.Rcon.SendCommand("getpugscore");
+                    var splitResp = response.Split('L');
+                    pugScore = splitResp[0];
+                }
+                catch (NullReferenceException ex)
+                {
+                    Console.WriteLine(ex);
+                    pugScore = "Error";
+                }
             }
             else
             {
