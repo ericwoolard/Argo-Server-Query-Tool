@@ -186,6 +186,11 @@ namespace ArgoServerQuery
                             {
                                 lvMainView.Items[pos].SubItems[5].ForeColor = Color.ForestGreen;
                             }
+                            else
+                            {
+                                lvMainView.Items[pos].SubItems[5].ForeColor = Color.Empty;
+                            }
+
                             lvMainView.Items[pos].SubItems[5].Text = $"{server.serverInfo.Players}/{server.serverInfo.MaxPlayers}";
 
                             if (server.serverInfo.GameVersion != lvMainView.Items[pos].SubItems[6].Text)
@@ -342,43 +347,56 @@ namespace ArgoServerQuery
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-            if (lvMainView.SelectedItems.Count == 1 && !String.IsNullOrEmpty(comboCmd.Text))
+            try
             {
-                string cmd = comboCmd.Text;
-                List<string> commandHistory = Properties.Settings.Default.cmdHistory;
+                if (lvMainView.SelectedItems.Count == 1 && !String.IsNullOrEmpty(comboCmd.Text))
+                {
+                    string cmd = comboCmd.Text;
+                    List<string> commandHistory = Properties.Settings.Default.cmdHistory;
 
-                if (comboCmd.Items.OfType<string>().Any(cbi => cbi.Contains(cmd)) == false)
-                {
-                    comboCmd.Items.Insert(0, cmd);
-                    commandHistory.Add(cmd);
-                    Properties.Settings.Default.cmdHistory = commandHistory;
-                    Properties.Settings.Default.Save();
-                }
-                else if (comboCmd.Items.OfType<string>().Any(cbi => cbi.Contains(cmd)) == true)
-                {
-                    int oldIndex = comboCmd.Items.IndexOf(cmd);
-                    comboCmd.Items.RemoveAt(oldIndex);
-                    comboCmd.Items.Insert(0, cmd);
-                    commandHistory.Remove(cmd);
-                    commandHistory.Add(cmd);
-                    Properties.Settings.Default.cmdHistory = commandHistory;
-                    Properties.Settings.Default.Save();
-                }
+                    if (comboCmd.Items.OfType<string>().Any(cbi => cbi.Contains(cmd)) == false)
+                    {
+                        comboCmd.Items.Insert(0, cmd);
+                        commandHistory.Add(cmd);
+                        Properties.Settings.Default.cmdHistory = commandHistory;
+                        Properties.Settings.Default.Save();
+                    }
+                    else if (comboCmd.Items.OfType<string>().Any(cbi => cbi.Contains(cmd)) == true)
+                    {
+                        int oldIndex = comboCmd.Items.IndexOf(cmd);
+                        comboCmd.Items.RemoveAt(oldIndex);
+                        comboCmd.Items.Insert(0, cmd);
+                        commandHistory.Remove(cmd);
+                        commandHistory.Add(cmd);
+                        Properties.Settings.Default.cmdHistory = commandHistory;
+                        Properties.Settings.Default.Save();
+                    }
 
-                comboCmd.SelectAll();
-                
-                string rconAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
-                const string err = "RCON Error! Authentication failed. Make sure the RCON password is correct.";
-                string rconResp = Query.sendRcon(rconAddr, cmd);
+                    comboCmd.SelectAll();
 
-                if (String.IsNullOrEmpty(rconResp))
-                {
-                    showErrors(err);
+                    string rconAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
+                    const string err = "RCON Error! Authentication failed. Make sure the RCON password is correct.";
+                    string rconResp = Query.sendRcon(rconAddr, cmd);
+
+                    if (String.IsNullOrEmpty(rconResp))
+                    {
+                        showErrors(err);
+                    }
+                    else
+                    {
+                        txtOutput.AppendText(rconResp);
+                    }
                 }
-                else
-                {
-                    txtOutput.AppendText(rconResp);
-                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                string msg = "This is the error that I need info about. Show me info mr program. thank. " +
+                             $"\n\nINFO: {ex.Message} \n\nSRC: {ex.Source} \n\nCODE: {ex.HResult}";
+                string cap = "Error";
+                MessageBoxButtons ok = MessageBoxButtons.OK;
+                MessageBoxIcon ico = MessageBoxIcon.Error;
+                MessageBox.Show(msg, cap, ok, ico);
             }
         }
 
@@ -625,6 +643,15 @@ namespace ArgoServerQuery
                     string err = "Error fetching players...Make sure host_players_show is set to 2.";
                     showErrors(err);
                 }
+            }
+        }
+
+        private void copyPlayerMenuItem_Click(object sender, EventArgs e)
+        {
+            if (playersListView.SelectedItems.Count == 1)
+            {
+                string playerName = playersListView.SelectedItems[0].SubItems[0].Text;
+                System.Windows.Forms.Clipboard.SetText(playerName);
             }
         }
 
@@ -954,7 +981,7 @@ namespace ArgoServerQuery
 
         private void chkTS3_CheckedChanged(object sender, EventArgs e)
         {
-            tsMenu.Visible = chkTS3.Checked;
+            Utils.Animate(tsMenu, Utils.Effect.Slide, 150, 180);
         }
 
         private void btnRconSave_Click(object sender, EventArgs e)
@@ -1077,17 +1104,6 @@ namespace ArgoServerQuery
             }
         }
 
-
-
-
-        public class BufferedListView : ListView
-        {
-            public BufferedListView()
-            {
-                SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            }
-        }
-
         public void showErrors(string str)
         {
             lblErrors.Text = str;
@@ -1100,6 +1116,16 @@ namespace ArgoServerQuery
                 timer.Stop();
             };
             timer.Start();
+        }
+
+
+
+        public class BufferedListView : ListView
+        {
+            public BufferedListView()
+            {
+                SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            }
         }
     }
 }

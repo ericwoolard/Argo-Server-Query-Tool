@@ -94,6 +94,7 @@ namespace ArgoServerQuery
             this.mnuServersAddAll = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuMainStrip = new System.Windows.Forms.MenuStrip();
             this.mnuTools = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRconAll = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuToolsChat = new System.Windows.Forms.ToolStripMenuItem();
             this.BottomToolStripPanel = new System.Windows.Forms.ToolStripPanel();
             this.TopToolStripPanel = new System.Windows.Forms.ToolStripPanel();
@@ -139,6 +140,8 @@ namespace ArgoServerQuery
             this.lblRegion = new System.Windows.Forms.Label();
             this.lblTS3 = new System.Windows.Forms.Label();
             this.tsMenu = new ArgoServerQuery.TsMenu();
+            this.mnuPlayerListSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.copyPlayerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuServer.SuspendLayout();
             this.rconGroupBox.SuspendLayout();
             this.optGroupBox.SuspendLayout();
@@ -478,11 +481,13 @@ namespace ArgoServerQuery
             // contextMenuPlayers
             // 
             this.contextMenuPlayers.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.copyPlayerMenuItem,
+            this.mnuPlayerListSeparator,
             this.banPlayerToolStripMenuItem,
             this.banServersTSToolStripMenuItem,
             this.kickPlayerToolStripMenuItem});
             this.contextMenuPlayers.Name = "contextMenuPlayers";
-            this.contextMenuPlayers.Size = new System.Drawing.Size(205, 70);
+            this.contextMenuPlayers.Size = new System.Drawing.Size(205, 120);
             // 
             // banPlayerToolStripMenuItem
             // 
@@ -714,15 +719,23 @@ namespace ArgoServerQuery
             // mnuTools
             // 
             this.mnuTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuRconAll,
             this.mnuToolsChat});
             this.mnuTools.Name = "mnuTools";
             this.mnuTools.Size = new System.Drawing.Size(47, 20);
             this.mnuTools.Text = "Tools";
             // 
+            // mnuRconAll
+            // 
+            this.mnuRconAll.Name = "mnuRconAll";
+            this.mnuRconAll.Size = new System.Drawing.Size(134, 22);
+            this.mnuRconAll.Text = "RCON2All";
+            this.mnuRconAll.Click += new System.EventHandler(this.toolBtnRCONAll_Click);
+            // 
             // mnuToolsChat
             // 
             this.mnuToolsChat.Name = "mnuToolsChat";
-            this.mnuToolsChat.Size = new System.Drawing.Size(152, 22);
+            this.mnuToolsChat.Size = new System.Drawing.Size(134, 22);
             this.mnuToolsChat.Text = "Server Chat";
             this.mnuToolsChat.Click += new System.EventHandler(this.mnuToolsChat_Click);
             // 
@@ -872,7 +885,7 @@ namespace ArgoServerQuery
             this.commonCmdMenuItem,
             this.changelevelCmdMenuItem});
             this.contextMenuCmd.Name = "contextMenuCmd";
-            this.contextMenuCmd.Size = new System.Drawing.Size(191, 148);
+            this.contextMenuCmd.Size = new System.Drawing.Size(191, 126);
             // 
             // copyCmdMenuItem
             // 
@@ -1111,6 +1124,18 @@ namespace ArgoServerQuery
             this.tsMenu.TabIndex = 20;
             this.tsMenu.Visible = false;
             // 
+            // mnuPlayerListSeparator
+            // 
+            this.mnuPlayerListSeparator.Name = "mnuPlayerListSeparator";
+            this.mnuPlayerListSeparator.Size = new System.Drawing.Size(201, 6);
+            // 
+            // copyPlayerMenuItem
+            // 
+            this.copyPlayerMenuItem.Name = "copyPlayerMenuItem";
+            this.copyPlayerMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.copyPlayerMenuItem.Text = "Copy Player Name";
+            this.copyPlayerMenuItem.Click += new System.EventHandler(this.copyPlayerMenuItem_Click);
+            // 
             // MainForm
             // 
             this.BackColor = System.Drawing.Color.Gainsboro;
@@ -1264,6 +1289,9 @@ namespace ArgoServerQuery
         private System.Windows.Forms.ToolStripMenuItem selectAllCmdMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparatorCmd2;
         private System.Windows.Forms.ToolStripButton toolBtnScoreToggle;
+        private System.Windows.Forms.ToolStripMenuItem mnuRconAll;
+        private System.Windows.Forms.ToolStripMenuItem copyPlayerMenuItem;
+        private System.Windows.Forms.ToolStripSeparator mnuPlayerListSeparator;
     }
 }
 
