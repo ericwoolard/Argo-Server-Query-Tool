@@ -1,3 +1,26 @@
+<a id="1.0.8.4"></a>
+## 2017-04-05, Version 1.0.8.4
+
+* Animated the TS config panel to slide in/out
+* Added a context menu option to the players list to copy player names
+* Added a context menu option to the command box to clear command history
+
+### Fixes
+
+* Fixed the TS config sometimes showing the saved indicator when it wasn't possible to save the config
+* Fixed green color indicator on player count not resetting when count returns to 0
+* Significantly reduced socket timeouts which previously added many seconds to an update iteration if a server was offline
+* Fixed an issue that occasionally caused a failed RCON validation to not show the error
+
+### Commits
+
+* [[`70c247d`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/70c247d34778eff3032805f388c9dc82e57368a9)] - New TS3 config panel animation
+* [[`1d1a1b2`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/1d1a1b2b1dfd3808f642c529f2e5c3b8032b89c4)] - TS3 'saved' indicator bug fix
+* [[`b7aeb24`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b7aeb24b0c39da2fe70f271dfd69899191a92995)] - Reduced socket timeout + fixed failed RCON validation bug
+* [[`81b63bc`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/81b63bc12146654151109886eaee68d56a580096)] - Added 'copy player name' to playerList context menu, fixed green player count not resetting at 0
+* [[`815453b`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/815453bd086ed6203d273c0ca490005cbfc40671)] - Added context menu option to clear command history
+
+
 <a id="1.0.8.2"></a>
 ## 2017-03-26, Version 1.0.8.2
 
