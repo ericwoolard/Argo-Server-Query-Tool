@@ -1,3 +1,7 @@
+[![forthebadge](http://forthebadge.com/images/badges/fuck-it-ship-it.svg)](http://forthebadge.com) [![forthebadge](http://forthebadge.com/images/badges/no-ragrets.svg)](http://forthebadge.com)
+
+[![forthebadge](http://forthebadge.com/images/badges/made-with-c-sharp.svg)](http://forthebadge.com)
+
 # Argo Server Query Tool (WIP)
 
 ##### Keep track of your CS:GO game servers and issue RCON commands with ease.
@@ -34,4 +38,4 @@ If you have questions, suggestions etc feel free to also contact me on [Reddit](
 
 ## License
 
-* [MIT License](https://opensource.org/licenses/MIT)
+* [GNU GPLv3](https://gitlab.com/rGlobalOffensive/Argo-Server-Query-Tool/blob/6aef726fc6134cb50a2cb9a768ef439c2e7a56e3/LICENSE)
