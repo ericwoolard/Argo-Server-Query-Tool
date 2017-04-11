@@ -33,7 +33,7 @@ If you have questions, suggestions etc feel free to also contact me on [Reddit](
 * Easily kick/ban any player from a server and/or TeamSpeak through the player list section
 * Add info to a server by right clicking>Add Info to easily keep track of your servers
 * Quick-command list by right clicking the command textbox
-* Easily view in-game chat logs and respond from ASQT
+* Easily view in-game chat logs and respond from ASQT (soon™)
 * Built-in TeamSpeak 3 commands and a TeamSpeak 3 config panel
 * *more to come!*
 
