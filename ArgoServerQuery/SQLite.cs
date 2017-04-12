@@ -34,7 +34,6 @@ namespace ArgoServerQuery
             //createTable()
             SQLiteCommand cmd = new SQLiteCommand(sqlInit, m_dbConnection);
             cmd.ExecuteNonQuery();
-
         }
 
         public static Dictionary<string, string> loadDB(string file)
@@ -92,7 +91,6 @@ namespace ArgoServerQuery
             {
                 return bgWorkerSnack;
             }
-            
         }
 
         public static void addInfo(string ip, string info)
@@ -106,7 +104,6 @@ namespace ArgoServerQuery
                 cmdInfo.Parameters.AddWithValue("info", info);
                 cmdInfo.Parameters.AddWithValue("ip", ip);
                 cmdInfo.ExecuteNonQuery();
-
             }
         }
 
