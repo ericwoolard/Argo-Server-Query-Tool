@@ -17,7 +17,7 @@ namespace ArgoServerQuery
     public partial class MainForm : Form
     {
         // This list is used to persist the command history by saving to Settings.Default
-        //List<string> commandHistory = new List<string>();
+        // List<string> commandHistory = new List<string>();
 
         // This instance of BackgroundWorker is used to update server info in the UI on a background thread
         private BackgroundWorker bgWorker = new BackgroundWorker();
@@ -54,6 +54,28 @@ namespace ArgoServerQuery
                 if (file != null)
                 {
                     comboServerList.Items.Add(Path.GetFileName(file));
+                }
+            }
+
+            if (!String.IsNullOrEmpty(Properties.Settings.Default.lastLoadedList))
+            {
+                try
+                {
+                    // Preload the last open server list 
+                    Dictionary<string, string> dict = SQLite.loadDB(Properties.Settings.Default.lastLoadedList);
+                    int loadedIndex = comboServerList.FindString(Properties.Settings.Default.lastLoadedList);
+                    comboServerList.SelectedIndex = loadedIndex;
+                    int i = 1;
+                    foreach (KeyValuePair<string, string> addr_info in dict)
+                    {
+                        string[] addrInsert = { "", addr_info.Key, "", "", "", "", "", addr_info.Value };
+                        lvMainView.Items.Add(Convert.ToString(i)).SubItems.AddRange(addrInsert);
+                        i++;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
                 }
             }
 
@@ -138,7 +160,7 @@ namespace ArgoServerQuery
             else
             {
                 e.Result = Query.bgUpdater(toUpdate); // Query.bgUpdater() sends queries to each server in the list and
-                Thread.Sleep(1500);                   // returns all updated info to bgWorker_RunWorkerCompleted()
+                Thread.Sleep(750);                   // returns all updated info to bgWorker_RunWorkerCompleted()
             }
         }
 
@@ -353,33 +375,32 @@ namespace ArgoServerQuery
                 {
                     string cmd = comboCmd.Text;
                     List<string> commandHistory = Properties.Settings.Default.cmdHistory;
+                    int findIndex = comboCmd.FindStringExact(cmd);
+                    string rconAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
 
-                    if (comboCmd.Items.OfType<string>().Any(cbi => cbi.Contains(cmd)) == false)
+                    if (findIndex == -1)
                     {
                         comboCmd.Items.Insert(0, cmd);
                         commandHistory.Add(cmd);
                         Properties.Settings.Default.cmdHistory = commandHistory;
                         Properties.Settings.Default.Save();
                     }
-                    else if (comboCmd.Items.OfType<string>().Any(cbi => cbi.Contains(cmd)) == true)
+                    else
                     {
-                        int oldIndex = comboCmd.Items.IndexOf(cmd);
-                        comboCmd.Items.RemoveAt(oldIndex);
-                        comboCmd.Items.Insert(0, cmd);
+                        comboCmd.Items.RemoveAt(findIndex);
                         commandHistory.Remove(cmd);
+                        comboCmd.Items.Insert(0, cmd);
                         commandHistory.Add(cmd);
                         Properties.Settings.Default.cmdHistory = commandHistory;
                         Properties.Settings.Default.Save();
                     }
 
                     comboCmd.SelectAll();
-
-                    string rconAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
-                    const string err = "RCON Error! Authentication failed. Make sure the RCON password is correct.";
                     string rconResp = Query.sendRcon(rconAddr, cmd);
 
                     if (String.IsNullOrEmpty(rconResp))
                     {
+                        const string err = "RCON Error! Authentication failed. Make sure the RCON password is correct.";
                         showErrors(err);
                     }
                     else
@@ -486,7 +507,8 @@ namespace ArgoServerQuery
 
             if (result == DialogResult.Yes)
             {
-                Properties.Settings.Default.cmdHistory.Clear();
+                List<string> commandHistory = new List<string>();
+                Properties.Settings.Default.cmdHistory = commandHistory;
                 Properties.Settings.Default.Save();
                 comboCmd.Items.Clear();
                 comboCmd.Text = "";
@@ -498,9 +520,9 @@ namespace ArgoServerQuery
             if (lvMainView.SelectedItems.Count == 1)
             {
                 const string cmd = "status";
-                const string err = "RCON Error! Authentication failed. Make sure the RCON password is correct.";
+                const string err = "Error! Either the server failed to respond or you've entered an invalid RCON password.";
                 string rconAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
-                string rconResp = Query.sendRcon(rconAddr, cmd);
+                string rconResp = Query.sendStatus(rconAddr, cmd);
 
                 if (String.IsNullOrEmpty(rconResp))
                 {
@@ -669,6 +691,40 @@ namespace ArgoServerQuery
             {
                 string playerName = playersListView.SelectedItems[0].SubItems[0].Text;
                 System.Windows.Forms.Clipboard.SetText(playerName);
+            }
+        }
+
+        private void copySteamIDPlayerMenuItem_Click(object sender, EventArgs e)
+        {
+            if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)
+            {
+                string playerName = Regex.Escape(playersListView.SelectedItems[0].SubItems[0].Text);
+                string svAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
+                string pattern = $"(.{playerName}.)(.STEAM_)([0-1]:[0-1]:[0-9]+)";
+
+                const string cmd = "status";
+                const string err = "Failed to reach the server...";
+                string matchErr = $"Could not find a regex match for the SteamID of \"{playerName}\" on the server.";
+                
+                string rconResp = Query.sendStatus(svAddr, cmd);
+
+                if (String.IsNullOrEmpty(rconResp))
+                {
+                    showErrors(err);
+                }
+                else
+                {
+                    var match = Regex.Match(rconResp, pattern);
+                    if (!String.IsNullOrEmpty(match.Groups[0].Value))
+                    {
+                        string copy = (match.Groups[2].Value + match.Groups[3].Value).Trim();
+                        System.Windows.Forms.Clipboard.SetText(copy);
+                    }
+                    else
+                    {
+                        showErrors(matchErr);
+                    }
+                }
             }
         }
 
@@ -848,6 +904,8 @@ namespace ArgoServerQuery
             {
                 lvMainView.Items.Clear();
                 Dictionary<string, string> dict = SQLite.loadDB(Convert.ToString(openFile.FileName));
+                Properties.Settings.Default.lastLoadedList = Convert.ToString(comboServerList.SelectedItem);
+                Properties.Settings.Default.Save();
                 int i = 1;
 
                 foreach (KeyValuePair<string, string> addr_info in dict)
@@ -872,6 +930,8 @@ namespace ArgoServerQuery
 
             lvMainView.Items.Clear();
             Dictionary<string, string> dict = SQLite.loadDB(Convert.ToString(comboServerList.SelectedItem));
+            Properties.Settings.Default.lastLoadedList = Convert.ToString(comboServerList.SelectedItem);
+            Properties.Settings.Default.Save();
             int i = 1;
 
             foreach (KeyValuePair<string, string> addr_info in dict)
@@ -895,17 +955,45 @@ namespace ArgoServerQuery
                 {
                     progressBar.Show();
                     int num = 0;
+                    int failed = 0;
+                    string result = "";
 
                     for (int i=0; i < lvMainView.Items.Count; i++)
                     {
                         progressBar.PerformStep();
-                        Query.sendRcon(lvMainView.Items[i].SubItems[2].Text, strRCONAll);
+                        string ret = Query.rcon2All(lvMainView.Items[i].SubItems[2].Text, strRCONAll);
+                        if (String.IsNullOrEmpty(ret))
+                        {
+                            failed++;
+                        }
                         num++;
                     }
 
-                    progressBar.Hide();
-                    string result = $"\"{strRCONAll}\" was sent successfully to {num} servers.";
-                    showErrors(result);
+                    if (failed > 0)
+                    {
+                        int adjusted = num - failed;
+                        string grammar = "";
+
+                        switch (failed)
+                        {
+                            case 1:
+                                grammar = "server";
+                                break;
+                           default:
+                                grammar = "servers";
+                                break;
+                        }
+
+                        progressBar.Hide();
+                        result = $"\"{strRCONAll}\" was sent successfully to {adjusted} servers. (Failed on {failed} {grammar}).";
+                        showErrors(result);
+                    }
+                    else
+                    {
+                        progressBar.Hide();
+                        result = $"\"{strRCONAll}\" was sent successfully to {num} servers.";
+                        showErrors(result);
+                    }              
                 }
             }
         }
@@ -914,13 +1002,11 @@ namespace ArgoServerQuery
         {
             if (toolBtnScoreToggle.Checked)
             {
-                Properties.Settings.Default.disableScore = true;
-                //Properties.Settings.Default.Save();
+                Properties.Settings.Default.disableScore = false;
             }
             else
             {
-                Properties.Settings.Default.disableScore = false;
-                //Properties.Settings.Default.Save();
+                Properties.Settings.Default.disableScore = true;
             }
         }
 

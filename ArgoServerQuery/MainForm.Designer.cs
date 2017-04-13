@@ -70,6 +70,7 @@ namespace ArgoServerQuery
             this.plvColTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuPlayers = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyPlayerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copySteamIDPlayerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuPlayerListSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.banPlayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.banServersTSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -139,11 +140,11 @@ namespace ArgoServerQuery
             this.de_santoriniMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.de_seasonMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.de_trainMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparatorCmd3 = new System.Windows.Forms.ToolStripSeparator();
+            this.clearCmdMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblRegion = new System.Windows.Forms.Label();
             this.lblTS3 = new System.Windows.Forms.Label();
             this.tsMenu = new ArgoServerQuery.TsMenu();
-            this.toolStripSeparatorCmd3 = new System.Windows.Forms.ToolStripSeparator();
-            this.clearCmdMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuServer.SuspendLayout();
             this.rconGroupBox.SuspendLayout();
             this.optGroupBox.SuspendLayout();
@@ -484,12 +485,13 @@ namespace ArgoServerQuery
             // 
             this.contextMenuPlayers.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyPlayerMenuItem,
+            this.copySteamIDPlayerMenuItem,
             this.mnuPlayerListSeparator,
             this.banPlayerToolStripMenuItem,
             this.banServersTSToolStripMenuItem,
             this.kickPlayerToolStripMenuItem});
             this.contextMenuPlayers.Name = "contextMenuPlayers";
-            this.contextMenuPlayers.Size = new System.Drawing.Size(205, 98);
+            this.contextMenuPlayers.Size = new System.Drawing.Size(205, 120);
             // 
             // copyPlayerMenuItem
             // 
@@ -497,6 +499,13 @@ namespace ArgoServerQuery
             this.copyPlayerMenuItem.Size = new System.Drawing.Size(204, 22);
             this.copyPlayerMenuItem.Text = "Copy Player Name";
             this.copyPlayerMenuItem.Click += new System.EventHandler(this.copyPlayerMenuItem_Click);
+            // 
+            // copySteamIDPlayerMenuItem
+            // 
+            this.copySteamIDPlayerMenuItem.Name = "copySteamIDPlayerMenuItem";
+            this.copySteamIDPlayerMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.copySteamIDPlayerMenuItem.Text = "Copy SteamID";
+            this.copySteamIDPlayerMenuItem.Click += new System.EventHandler(this.copySteamIDPlayerMenuItem_Click);
             // 
             // mnuPlayerListSeparator
             // 
@@ -901,7 +910,7 @@ namespace ArgoServerQuery
             this.toolStripSeparatorCmd3,
             this.clearCmdMenuItem});
             this.contextMenuCmd.Name = "contextMenuCmd";
-            this.contextMenuCmd.Size = new System.Drawing.Size(191, 176);
+            this.contextMenuCmd.Size = new System.Drawing.Size(191, 154);
             // 
             // copyCmdMenuItem
             // 
@@ -1108,6 +1117,18 @@ namespace ArgoServerQuery
             this.de_trainMenuItem.Text = "de_train";
             this.de_trainMenuItem.Click += new System.EventHandler(this.changelevel_Click);
             // 
+            // toolStripSeparatorCmd3
+            // 
+            this.toolStripSeparatorCmd3.Name = "toolStripSeparatorCmd3";
+            this.toolStripSeparatorCmd3.Size = new System.Drawing.Size(187, 6);
+            // 
+            // clearCmdMenuItem
+            // 
+            this.clearCmdMenuItem.Name = "clearCmdMenuItem";
+            this.clearCmdMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.clearCmdMenuItem.Text = "Clear CMD History";
+            this.clearCmdMenuItem.Click += new System.EventHandler(this.clearCmdMenuItem_Click);
+            // 
             // lblRegion
             // 
             this.lblRegion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -1139,18 +1160,6 @@ namespace ArgoServerQuery
             this.tsMenu.Size = new System.Drawing.Size(300, 390);
             this.tsMenu.TabIndex = 20;
             this.tsMenu.Visible = false;
-            // 
-            // toolStripSeparatorCmd3
-            // 
-            this.toolStripSeparatorCmd3.Name = "toolStripSeparatorCmd3";
-            this.toolStripSeparatorCmd3.Size = new System.Drawing.Size(187, 6);
-            // 
-            // clearCmdMenuItem
-            // 
-            this.clearCmdMenuItem.Name = "clearCmdMenuItem";
-            this.clearCmdMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.clearCmdMenuItem.Text = "Clear CMD History";
-            this.clearCmdMenuItem.Click += new System.EventHandler(this.clearCmdMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1312,6 +1321,7 @@ namespace ArgoServerQuery
         private System.Windows.Forms.ToolStripSeparator mnuPlayerListSeparator;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparatorCmd3;
         private System.Windows.Forms.ToolStripMenuItem clearCmdMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copySteamIDPlayerMenuItem;
     }
 }
 
