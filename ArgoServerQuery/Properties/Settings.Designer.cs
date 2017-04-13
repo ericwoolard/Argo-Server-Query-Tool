@@ -144,7 +144,7 @@ namespace ArgoServerQuery.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool disableScore {
             get {
                 return ((bool)(this["disableScore"]));
@@ -186,6 +186,18 @@ namespace ArgoServerQuery.Properties {
             }
             set {
                 this["firstRun"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string lastLoadedList {
+            get {
+                return ((string)(this["lastLoadedList"]));
+            }
+            set {
+                this["lastLoadedList"] = value;
             }
         }
     }
