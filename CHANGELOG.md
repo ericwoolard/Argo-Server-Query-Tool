@@ -20,8 +20,9 @@
 * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R697)] - Copy player SteamID to clipboard by right clicking a players name in the player list
 * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R955)] - RCON2All fix to show any failed attempts in the output
 * [[`bbcd44e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/bbcd44e796221d428aff7e5d390c8d5677239d56#diff-da89dea23b3514c02526b9280d9a0ef9R162)] - Minor adjustments to 'Send Status' button
-* [[`bbcd44e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/bbcd44e796221d428aff7e5d390c8d5677239d56#diff-da89dea23b3514c02526b9280d9a0ef9R229)] - Update Players adjustments for fetching player list's 
+* [[`bbcd44e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/bbcd44e796221d428aff7e5d390c8d5677239d56#diff-da89dea23b3514c02526b9280d9a0ef9R229)] - Update Players adjustments for fetching player list's
 
+---
 
 <a id="1.0.8.4"></a>
 ## 2017-04-05, Version 1.0.8.4
@@ -45,6 +46,7 @@
 * [[`81b63bc`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/81b63bc12146654151109886eaee68d56a580096)] - Added 'copy player name' to playerList context menu, fixed green player count not resetting at 0
 * [[`815453b`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/815453bd086ed6203d273c0ca490005cbfc40671)] - Added context menu option to clear command history
 
+---
 
 <a id="1.0.8.2"></a>
 ## 2017-03-26, Version 1.0.8.2
@@ -61,6 +63,7 @@
 * [[`a52a02a`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/a52a02aad4a90f853c07ff1c4b3a98643c5d07f9)] - See changelog v1.0.8.2
 * [[`b560186`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b5601867ec40f68f8d1f12581dddfdb061e0404b)] - Updated assembly description
 
+---
 
 <a id="1.0.8.1"></a>
 ## 2017-03-22, Version 1.0.8.1
