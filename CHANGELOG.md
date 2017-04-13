@@ -1,3 +1,28 @@
+<a id="1.0.8.6"></a>
+## 2017-04-13, Version 1.0.8.6
+
+* ASQT will now remember the last loaded server list and preload it at startup
+* Added the ability to right click a player name in the player list and copy their SteamID
+* When fetching player lists, `host_players_show` will now elevate to 2 for visibility, then return to a setting of 1
+* Score check now disabled by default to improve polling speed and prevent RCON errors for lists using a different pass
+* Polling time for server updates now slightly faster
+
+### Fixes
+
+* Fixed a bug with command history causing the send button to stop working
+* RCON2All now includes the number of failed cmd's in the output and omits them from total number of successful attempts
+* Minor adjustments to the Send Status button to prevent some cases where it wouldn't alert of an error
+
+### Commits
+
+* [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R60)] - Preload the last loaded server list at startup
+* [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R370)] - Command history bug fix 
+* [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R697)] - Copy player SteamID to clipboard by right clicking a players name in the player list
+* [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R955)] - RCON2All fix to show any failed attempts in the output
+* [[`bbcd44e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/bbcd44e796221d428aff7e5d390c8d5677239d56#diff-da89dea23b3514c02526b9280d9a0ef9R162)] - Minor adjustments to 'Send Status' button
+* [[`bbcd44e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/bbcd44e796221d428aff7e5d390c8d5677239d56#diff-da89dea23b3514c02526b9280d9a0ef9R229)] - Update Players adjustments for fetching player list's 
+
+
 <a id="1.0.8.4"></a>
 ## 2017-04-05, Version 1.0.8.4
 
