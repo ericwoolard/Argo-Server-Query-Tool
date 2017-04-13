@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace ArgoServerQuery
         // private static Game appId;
         private const int appId = 730;
         private const int retries = 0;
-        private const int timeout = 500;
+        private const int timeout = 400;
 
 
         // Helper function to split the address into string-IP and UInt16-port for 
@@ -70,6 +71,7 @@ namespace ArgoServerQuery
                 {
                     var serverInfo = server.GetInfo();
 
+                    // If score check is disabled, skip it
                     if (Properties.Settings.Default.disableScore == true)
                     {
                         score = "Disabled";
@@ -130,21 +132,22 @@ namespace ArgoServerQuery
                 addrIP,
                 port,
                 throwExceptions: false,
-                retries: retries);
+                retries: retries,
+                sendTimeout: 2000,
+                receiveTimeout: 2000);
 
             try
             {
+                // GetControl() validates the RCON password and returns true if the 
+                // server accepted it. For some reason this only works half of the time..
                 if (server.GetControl(pw))
                 {
                     string response = server.Rcon.SendCommand(cmd);
                     server.Dispose();
 
-                    if (!String.IsNullOrEmpty(response))
-                    {
-                        string endTime = DateTime.Now.ToString("HH:mm:ss");
-                        string txtOutput = $"{startTime}: {cmd.ToUpper()}\n{response}\n\n";
-                        return txtOutput;
-                    }
+                    string endTime = DateTime.Now.ToString("HH:mm:ss");
+                    string txtOutput = $"{startTime}: {cmd.ToUpper()}\n{response}\n\n";
+                    return txtOutput;
                 }
                 server.Dispose();
                 return null;
@@ -156,12 +159,50 @@ namespace ArgoServerQuery
             } 
         }
 
-        public static string getPugScore(Server sv, string pw)
+        public static string sendStatus(string address, string cmd)
+        {
+            Tuple<string, UInt16> addr = splitAddr(address);
+            string addrIP = addr.Item1;
+            UInt16 port = addr.Item2;
+            string pw = decryptRcon();
+            string startTime = DateTime.Now.ToString("HH:mm:ss");
+
+            var server = ServerQuery.GetServerInstance(
+                (Game)appId,
+                addrIP,
+                port,
+                throwExceptions: false,
+                retries: retries,
+                sendTimeout: 2000,
+                receiveTimeout: 2000);
+
+            try
+            {
+                // GetControl() validates the RCON password and returns true if the 
+                // server accepted it. For some reason this only works half of the time..
+                if (server.GetControl(pw))
+                {
+                    string response = server.Rcon.SendCommand(cmd);
+                    server.Dispose();
+                    if (String.IsNullOrEmpty(response)) { return null; }
+
+                    string endTime = DateTime.Now.ToString("HH:mm:ss");
+                    string txtOutput = $"{startTime}: {cmd.ToUpper()}\n{response}\n\n";
+                    return txtOutput;
+                }
+                server.Dispose();
+                return null;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                return null;
+            }
+        }
+
+        private static string getPugScore(Server sv, string pw)
         {
             string pugScore;
-
-            // GetControl() validates the RCON password and returns true if the 
-            // server accepted it.
             if (sv.GetControl(pw))
             {
                 try
@@ -185,6 +226,8 @@ namespace ArgoServerQuery
             return pugScore;
         }
 
+        // getPlayerInfo() used to retrieve player list + score/time for a server
+        // and display it in the playersListView
         public static JArray getPlayerInfo(string address)
         {
             Tuple<string, UInt16> addr = splitAddr(address);
@@ -200,7 +243,9 @@ namespace ArgoServerQuery
                 throwExceptions: false,
                 retries: retries);
 
+            sendRcon(address, "host_players_show 2");
             QueryMasterCollection<PlayerInfo> playerInfo = server.GetPlayers();
+            sendRcon(address, "host_players_show 1");
 
             if (playerInfo == null)
             {
@@ -214,6 +259,47 @@ namespace ArgoServerQuery
                 ja = JArray.Parse(playerJSON);
                 server.Dispose();
                 return ja;
+            }
+        }
+
+        // Same as sendRcon() minus a slightly longer timeout and the ping test
+        public static string rcon2All(string address, string cmd)
+        {
+            Tuple<string, UInt16> addr = splitAddr(address);
+            string addrIP = addr.Item1;
+            UInt16 port = addr.Item2;
+            string pw = decryptRcon();
+
+            var server = ServerQuery.GetServerInstance(
+                (Game)appId,
+                addrIP,
+                port,
+                throwExceptions: false,
+                retries: retries,
+                sendTimeout: 2000,
+                receiveTimeout: 2000);
+
+            try
+            {
+                if (server.GetControl(pw))
+                {
+                    // Ping test to make sure the server is online (-1 if timeout)
+                    long pingTest = server.Ping();
+                    if (pingTest == -1)
+                    {
+                        return null;
+                    }
+                    string response = server.Rcon.SendCommand(cmd);
+                    server.Dispose();
+                    return " " + response;
+                }
+                server.Dispose();
+                return null;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                return null;
             }
         }
 
