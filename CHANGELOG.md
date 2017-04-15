@@ -7,10 +7,10 @@
 * Score check now disabled by default to improve polling speed and prevent RCON errors for lists using a different pass
 * Polling time for server updates now slightly faster
 
- * #### Commits
- * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R60)] - Preload the last loaded server list at startup
- * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R697)] - Copy player SteamID to clipboard by right clicking a players name in the player list
- * [[`bbcd44e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/bbcd44e796221d428aff7e5d390c8d5677239d56#diff-da89dea23b3514c02526b9280d9a0ef9R229)] - Update Players adjustments for fetching player list's
+  * #### Commits
+  * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R60)] - Preload the last loaded server list at startup
+  * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R697)] - Copy player SteamID to clipboard by right clicking a players name in the player list
+  * [[`bbcd44e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/bbcd44e796221d428aff7e5d390c8d5677239d56#diff-da89dea23b3514c02526b9280d9a0ef9R229)] - Update Players adjustments for fetching player list's
 
 ### Fixes
 
@@ -18,11 +18,11 @@
 * RCON2All now includes the number of failed cmd's in the output and omits them from total number of successful attempts
 * Minor adjustments to the Send Status button to prevent some cases where it wouldn't alert of an error
 
- * ### Commits
+  * ### Commits
 
- * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R370)] - Command history bug fix 
- * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R955)] - RCON2All fix to show any failed attempts in the output
- * [[`bbcd44e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/bbcd44e796221d428aff7e5d390c8d5677239d56#diff-da89dea23b3514c02526b9280d9a0ef9R162)] - Minor adjustments to 'Send Status' button
+  * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R370)] - Command history bug fix 
+  * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R955)] - RCON2All fix to show any failed attempts in the output
+  * [[`bbcd44e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/bbcd44e796221d428aff7e5d390c8d5677239d56#diff-da89dea23b3514c02526b9280d9a0ef9R162)] - Minor adjustments to 'Send Status' button
 
 ---
 
