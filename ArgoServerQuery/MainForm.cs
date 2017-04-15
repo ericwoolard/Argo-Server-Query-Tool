@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
@@ -374,6 +375,11 @@ namespace ArgoServerQuery
                 if (lvMainView.SelectedItems.Count == 1 && !String.IsNullOrEmpty(comboCmd.Text))
                 {
                     string cmd = comboCmd.Text;
+                    string startTime = DateTime.Now.ToString("HH:mm:ss");
+                    txtOutput.SelectionColor = Color.Crimson;
+                    txtOutput.AppendText($"- {startTime}: {cmd.ToUpper()}\n");
+                    txtOutput.SelectionColor = txtOutput.ForeColor;
+
                     List<string> commandHistory = Properties.Settings.Default.cmdHistory;
                     int findIndex = comboCmd.FindStringExact(cmd);
                     string rconAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
@@ -405,7 +411,7 @@ namespace ArgoServerQuery
                     }
                     else
                     {
-                        txtOutput.AppendText(rconResp);
+                        txtOutput.AppendText($"{rconResp}\n\n");
                     }
                 }
             }
@@ -519,9 +525,15 @@ namespace ArgoServerQuery
         {
             if (lvMainView.SelectedItems.Count == 1)
             {
+                string startTime = DateTime.Now.ToString("HH:mm:ss");
                 const string cmd = "status";
+                txtOutput.SelectionColor = Color.Crimson;
+                txtOutput.AppendText($"- {startTime}: {cmd.ToUpper()}\n");
+                txtOutput.SelectionColor = txtOutput.ForeColor;
+
                 const string err = "Error! Either the server failed to respond or you've entered an invalid RCON password.";
                 string rconAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
+
                 string rconResp = Query.sendStatus(rconAddr, cmd);
 
                 if (String.IsNullOrEmpty(rconResp))
@@ -530,7 +542,7 @@ namespace ArgoServerQuery
                 }
                 else
                 {
-                    txtOutput.AppendText(rconResp);
+                    txtOutput.AppendText($"{rconResp}\n\n");
                 }
             }
         }
@@ -632,28 +644,6 @@ namespace ArgoServerQuery
             txtOutput.ScrollToCaret();
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            /*
-            // Create a list to store each address for the servers in the server list
-            List<string> serverList = new List<string>();
-
-            foreach (ListViewItem Item in lvMainView.Items)
-            {
-                serverList.Add(Convert.ToString(Item.SubItems[2].Text));
-            }
-
-            // Create a string collection from list of server addresses
-            StringCollection collection = new StringCollection();
-            collection.AddRange(serverList.ToArray());
-
-            // Set the project ServerList setting to the string collection
-            Properties.Settings.Default.ServerList = collection;
-            // Save the state and make persistent
-            Properties.Settings.Default.Save();
-            */
-        }
-
         private void btnUpdatePlayers_Click(object sender, EventArgs e)
         {
             if (lvMainView.SelectedItems.Count == 1)
@@ -733,9 +723,6 @@ namespace ArgoServerQuery
             // Regex to validate input for ban length
             Regex regex = new Regex(@"^[0-9]+$");
 
-            string banLength;
-            string banReason;
-
             if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)
             {
                 string player = playersListView.SelectedItems[0].Text;
@@ -743,7 +730,7 @@ namespace ArgoServerQuery
 
                 InputBoxItem[] items = new InputBoxItem[]
                 {
-                    new InputBoxItem("Length of ban in minutes:", ""),
+                    new InputBoxItem("Length of ban in minutes (0 for perm):", ""),
                     new InputBoxItem("Ban reason (leave blank to skip):", false)
                 };
 
@@ -751,8 +738,8 @@ namespace ArgoServerQuery
 
                 if (input.Result == InputBoxResult.OK)
                 {
-                    banLength = input.Items["Length of ban in minutes:"];
-                    banReason = input.Items["Ban reason (leave blank to skip):"];
+                    string banLength = input.Items["Length of ban in minutes (0 for perm):"];
+                    string banReason = input.Items["Ban reason (leave blank to skip):"];
 
                     if (!regex.IsMatch(banLength))
                     {
@@ -760,17 +747,50 @@ namespace ArgoServerQuery
                         string caption = "Oops";
                         MessageBoxButtons button = MessageBoxButtons.OK;
                         MessageBoxIcon icon = MessageBoxIcon.Error;
-                        DialogResult result = MessageBox.Show(text, caption, button, icon);
+                        DialogResult dialogResult = MessageBox.Show(text, caption, button, icon);
                         return;
                     }
 
-                    if (!String.IsNullOrEmpty(banReason))
+                    progressBar.Show();
+                    int num = 0;
+                    int failed = 0;
+                    string result = "";
+
+                    for (int i = 0; i < lvMainView.Items.Count; i++)
                     {
-                        txtOutput.AppendText(Query.banPlayerFromServer(addr, player, banLength, banReason));
+                        progressBar.PerformStep();
+                        string res = Query.banPlayerFromServer(lvMainView.Items[i].SubItems[2].Text, player, banLength, banReason);
+                        if (String.IsNullOrEmpty(res))
+                        {
+                            failed++;
+                        }
+                        num++;
                     }
-                    else if (String.IsNullOrEmpty(banReason))
+
+                    if (failed > 0)
                     {
-                        txtOutput.AppendText(Query.banPlayerFromServer(addr, player, banLength));
+                        int adjusted = num - failed;
+                        string grammar = "";
+
+                        switch (failed)
+                        {
+                            case 1:
+                                grammar = "server";
+                                break;
+                            default:
+                                grammar = "servers";
+                                break;
+                        }
+
+                        progressBar.Hide();
+                        result = $"Successfully banned \"{player}\" from {adjusted} servers. (Failed on {failed} {grammar}).";
+                        showErrors(result);
+                    }
+                    else
+                    {
+                        progressBar.Hide();
+                        result = $"Successfully banned \"{player}\" from {num} servers.";
+                        showErrors(result);
                     }
                 }
             }
@@ -791,14 +811,10 @@ namespace ArgoServerQuery
                 string kickReason = Microsoft.VisualBasic.Interaction.InputBox("Tell 'em why they were kicked, or leave blank to skip.",
                 "Kick Reason");
 
-                if (!String.IsNullOrEmpty(kickReason))
-                {
-                    txtOutput.AppendText(Query.kickPlayer(addr, player, kickReason));
-                }
-                else if (String.IsNullOrEmpty(kickReason))
-                {
-                    txtOutput.AppendText(Query.kickPlayer(addr, player));
-                }
+                txtOutput.SelectionColor = Color.Crimson;
+                txtOutput.AppendText(Query.kickPlayer(addr, player, kickReason));
+                txtOutput.SelectionColor = txtOutput.ForeColor;
+
             }
         }
 
@@ -1080,6 +1096,25 @@ namespace ArgoServerQuery
         {
             AboutBox about = new AboutBox();
             about.Show();
+        }
+
+        private void serverListLocationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Process.Start(_SL_PATH);
+            }
+            catch (Exception ex)
+            {
+                if (ex is Win32Exception || ex is FileNotFoundException)
+                {
+                    string msg = "Couldn't find the server list location :'( \n It must not be in the right place...";
+                    string cap = "Error";
+                    MessageBoxIcon icon = MessageBoxIcon.Error;
+                    MessageBoxButtons butt = MessageBoxButtons.OK;
+                    MessageBox.Show(msg, cap, butt, icon);
+                }
+            }
         }
 
         private void chkTS3_CheckedChanged(object sender, EventArgs e)
