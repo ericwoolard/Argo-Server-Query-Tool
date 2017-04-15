@@ -1,3 +1,31 @@
+<a id="1.0.8.7"></a>
+## 2017-04-15, Version 1.0.8.7
+
+* Output box now shows the command and timestamp in red for better readability
+* Added an option to the 'View' menu to open the saved server list directory in Windows Explorer
+
+  * #### Commits -
+  * [[`4748cec`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/4748cec4ffe6dfeb74d5680fef2bf97c1c92b6b7#diff-aab2f5f19398d09ad8cc6d58bb3f8966R375)] - Show timestamps and cmd in red for better readability
+  * [[`4748cec`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/4748cec4ffe6dfeb74d5680fef2bf97c1c92b6b7#diff-aab2f5f19398d09ad8cc6d58bb3f8966R1101)] - Code to open Windows Explorer in the saved server list directory
+  * [[`4748cec`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/4748cec4ffe6dfeb74d5680fef2bf97c1c92b6b7#diff-5ee5f82cadd972571b596a3156434523R1157)] - 'View saved server list location' added to designer
+  * [[`4715c58`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/4715c58a64ccf24b9c5217d953c9574f72c778b4)] - Changes to Query.cs to accomodate colored timestamp/cmd output
+
+### Fixes
+
+* 'Ban From All Servers' menu option in player list now uses RCON2All methods and reports progress and results
+
+  * #### Commits -
+  * [[`4748cec`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/4748cec4ffe6dfeb74d5680fef2bf97c1c92b6b7#diff-aab2f5f19398d09ad8cc6d58bb3f8966R726)] - Ban From All Players update to use RCON2All methods
+
+### Misc
+
+* Cleaned up SQLite.cs and added a few comments 
+
+  * #### Commits -
+  * [[`ddf89cc`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/ddf89cc241ea52b798fec2d56f9475d8d7ca9581)]
+
+---
+
 <a id="1.0.8.6"></a>
 ## 2017-04-13, Version 1.0.8.6
 
