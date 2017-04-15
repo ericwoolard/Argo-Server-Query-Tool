@@ -125,7 +125,6 @@ namespace ArgoServerQuery
             string addrIP = addr.Item1;
             UInt16 port = addr.Item2;
             string pw = decryptRcon();
-            string startTime = DateTime.Now.ToString("HH:mm:ss");
 
             var server = ServerQuery.GetServerInstance(
                 (Game)appId,
@@ -144,10 +143,7 @@ namespace ArgoServerQuery
                 {
                     string response = server.Rcon.SendCommand(cmd);
                     server.Dispose();
-
-                    string endTime = DateTime.Now.ToString("HH:mm:ss");
-                    string txtOutput = $"{startTime}: {cmd.ToUpper()}\n{response}\n\n";
-                    return txtOutput;
+                    return response;
                 }
                 server.Dispose();
                 return null;
@@ -165,7 +161,6 @@ namespace ArgoServerQuery
             string addrIP = addr.Item1;
             UInt16 port = addr.Item2;
             string pw = decryptRcon();
-            string startTime = DateTime.Now.ToString("HH:mm:ss");
 
             var server = ServerQuery.GetServerInstance(
                 (Game)appId,
@@ -186,9 +181,7 @@ namespace ArgoServerQuery
                     server.Dispose();
                     if (String.IsNullOrEmpty(response)) { return null; }
 
-                    string endTime = DateTime.Now.ToString("HH:mm:ss");
-                    string txtOutput = $"{startTime}: {cmd.ToUpper()}\n{response}\n\n";
-                    return txtOutput;
+                    return response;
                 }
                 server.Dispose();
                 return null;
@@ -326,14 +319,14 @@ namespace ArgoServerQuery
 
             if (!String.IsNullOrEmpty(reason))
             {
-                fullCmd = $"sm_banip {player} {length} {reason}";
+                fullCmd = $"sm_ban {player} {length} {reason}";
             }
             else if (String.IsNullOrEmpty(reason))
             {
-                fullCmd = $"sm_banip {player} {length}";
+                fullCmd = $"sm_ban {player} {length}";
             }
 
-            string response = sendRcon(address, fullCmd);
+            string response = rcon2All(address, fullCmd);
             return response;
         }
 
