@@ -7,7 +7,7 @@
 * Score check now disabled by default to improve polling speed and prevent RCON errors for lists using a different pass
 * Polling time for server updates now slightly faster
 
-  * #### Commits
+  * #### Commits -
   * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R60)] - Preload the last loaded server list at startup
   * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R697)] - Copy player SteamID to clipboard by right clicking a players name in the player list
   * [[`bbcd44e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/bbcd44e796221d428aff7e5d390c8d5677239d56#diff-da89dea23b3514c02526b9280d9a0ef9R229)] - Update Players adjustments for fetching player list's
@@ -18,7 +18,7 @@
 * RCON2All now includes the number of failed cmd's in the output and omits them from total number of successful attempts
 * Minor adjustments to the Send Status button to prevent some cases where it wouldn't alert of an error
 
-  * #### Commits
+  * #### Commits -
   * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R370)] - Command history bug fix 
   * [[`b84c03e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b84c03efaf4cd174aac5822eaadf22600d525cb2#diff-aab2f5f19398d09ad8cc6d58bb3f8966R955)] - RCON2All fix to show any failed attempts in the output
   * [[`bbcd44e`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/bbcd44e796221d428aff7e5d390c8d5677239d56#diff-da89dea23b3514c02526b9280d9a0ef9R162)] - Minor adjustments to 'Send Status' button
@@ -32,7 +32,7 @@
 * Added a context menu option to the players list to copy player names
 * Added a context menu option to the command box to clear command history
 
-  * #### Commits
+  * #### Commits -
   * [[`70c247d`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/70c247d34778eff3032805f388c9dc82e57368a9)] - New TS3 config panel animation
   * [[`81b63bc`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/81b63bc12146654151109886eaee68d56a580096)] - Added 'copy player name' to playerList context menu, fixed green player count not resetting at 0
   * [[`815453b`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/815453bd086ed6203d273c0ca490005cbfc40671)] - Added context menu option to clear command history
@@ -44,7 +44,7 @@
 * Significantly reduced socket timeouts which previously added many seconds to an update iteration if a server was offline
 * Fixed an issue that occasionally caused a failed RCON validation to not show the error
 
-  * #### Commits
+  * #### Commits -
   * [[`1d1a1b2`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/1d1a1b2b1dfd3808f642c529f2e5c3b8032b89c4)] - TS3 'saved' indicator bug fix
   * [[`81b63bc`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/81b63bc12146654151109886eaee68d56a580096)] - Fixed green player count not resetting at 0
   * [[`b7aeb24`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b7aeb24b0c39da2fe70f271dfd69899191a92995)] - Reduced socket timeout + fixed failed RCON validation bug
@@ -60,7 +60,7 @@
 * Command history no longer saves duplicate entries of a particular command
 * Small tweaks to new score toggle
 
-  * #### Commits
+  * #### Commits -
   * [[`1657e82`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/1657e82fcaf7a0d4f210ce8c30e04764303c8beb)] - Updated IP's for new NA network
   * [[`a52a02a`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/a52a02aad4a90f853c07ff1c4b3a98643c5d07f9)] - See changelog v1.0.8.2
   * [[`b560186`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b5601867ec40f68f8d1f12581dddfdb061e0404b)] - Updated assembly description
