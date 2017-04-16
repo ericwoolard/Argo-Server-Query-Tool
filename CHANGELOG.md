@@ -1,10 +1,12 @@
 <a id="1.0.8.7"></a>
 ## 2017-04-15, Version 1.0.8.7
 
+* Made score checker failsafe and will disable itself after failing once to prevent rcon auto-bans
 * Output box now shows the command and timestamp in red for better readability
 * Added an option to the 'View' menu to open the saved server list directory in Windows Explorer
 
   * #### Commits -
+  * [[`8430f7f`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/8430f7f4c6acebc4dd0f6a445611750eaac6954c#diff-da89dea23b3514c02526b9280d9a0ef9R81)] - Made score checker failsafe
   * [[`4748cec`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/4748cec4ffe6dfeb74d5680fef2bf97c1c92b6b7#diff-aab2f5f19398d09ad8cc6d58bb3f8966R375)] - Show timestamps and cmd in red for better readability
   * [[`4748cec`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/4748cec4ffe6dfeb74d5680fef2bf97c1c92b6b7#diff-aab2f5f19398d09ad8cc6d58bb3f8966R1101)] - Code to open Windows Explorer in the saved server list directory
   * [[`4748cec`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/4748cec4ffe6dfeb74d5680fef2bf97c1c92b6b7#diff-5ee5f82cadd972571b596a3156434523R1157)] - 'View saved server list location' added to designer
