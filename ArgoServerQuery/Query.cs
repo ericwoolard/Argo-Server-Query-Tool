@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -26,6 +27,7 @@ namespace ArgoServerQuery
         private const int appId = 730;
         private const int retries = 0;
         private const int timeout = 400;
+        private static int rconFailCount = 0;
 
 
         // Helper function to split the address into string-IP and UInt16-port for 
@@ -65,7 +67,7 @@ namespace ArgoServerQuery
                 addrIP,
                 port,
                 throwExceptions: false,
-                retries: retries,
+                retries: 0,
                 sendTimeout: timeout,
                 receiveTimeout: timeout))
                 {
@@ -79,8 +81,29 @@ namespace ArgoServerQuery
                     }
                     else if (!String.IsNullOrEmpty(pw))
                     {
-                        score = getPugScore(server, pw);
-                        results.Add(new Updates(serverInfo, score));
+                        if (rconFailCount < 1)
+                        {
+                            score = getPugScore(server, pw);
+                            if (score.Contains("Bad"))
+                            {
+                                score = "Bad password..";
+                                Console.WriteLine("Bad pass..");
+                                rconFailCount++;
+                                results.Add(new Updates(serverInfo, score));
+                            }
+                            else
+                            {
+                                results.Add(new Updates(serverInfo, score));
+                            }
+                        }
+                        else if (rconFailCount > 0)
+                        {
+                            Properties.Settings.Default.disableScore = true;
+                            Properties.Settings.Default.Save();
+                            score = "Disabled.";
+                            results.Add(new Updates(serverInfo, score));
+                            rconFailCount = 0;
+                        }
                     }
                     else
                     {
