@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -11,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 //--------------------------------------------------------------------------------//
 //- QueryMaster is a .NET library to query/control any Source/GoldSource server. -//
 //----------------- Find it at https://querymaster.codeplex.com/ -----------------//
@@ -242,15 +245,13 @@ namespace ArgoServerQuery
             return pugScore;
         }
 
-        // getPlayerInfo() used to retrieve player list + score/time for a server
-        // and display it in the playersListView
+        // getPlayerInfo() retrieves a player list grouped by team and includes
+        // each players Kill/Death ratio.
         public static JArray getPlayerInfo(string address)
         {
             Tuple<string, UInt16> addr = splitAddr(address);
             string addrIP = addr.Item1;
             UInt16 port = addr.Item2;
-            string playerJSON;
-            JArray ja;
 
             var server = ServerQuery.GetServerInstance(
                 (Game)appId,
@@ -260,22 +261,46 @@ namespace ArgoServerQuery
                 retries: retries);
 
             sendRcon(address, "host_players_show 2");
-            QueryMasterCollection<PlayerInfo> playerInfo = server.GetPlayers();
+            //QueryMasterCollection<PlayerInfo> playerInfo = server.GetPlayers();
+            string playerInfo = sendRcon(address, "getplayers");
             sendRcon(address, "host_players_show 1");
 
-            if (playerInfo == null)
+            if (playerInfo == null || playerInfo.Contains("Unknown"))
             {
                 server.Dispose();
                 Console.WriteLine("Error fetching player information.");
                 return null;
             }
-            else
+
+            List<PlayerModel> playerList_T = new List<PlayerModel>();
+            List<PlayerModel> playerList_CT = new List<PlayerModel>();
+
+            using (StringReader reader = new StringReader(playerInfo))
             {
-                playerJSON = Convert.ToString(playerInfo);
-                ja = JArray.Parse(playerJSON);
-                server.Dispose();
-                return ja;
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] splitter = line.Split(':');
+                    switch (splitter[1])
+                    {
+                        case "T":
+                            playerList_T.Add(new PlayerModel(splitter[0], splitter[1], splitter[2], splitter[3]));
+                            break;
+                        case "CT":
+                            playerList_CT.Add(new PlayerModel(splitter[0], splitter[1], splitter[2], splitter[3]));
+                            break;
+                    }
+                }
             }
+            var playerJsonStr_T = JsonConvert.SerializeObject(playerList_T, Formatting.Indented);
+            var playerJsonStr_CT = JsonConvert.SerializeObject(playerList_CT, Formatting.Indented);
+
+            var jaT = (JArray)JsonConvert.DeserializeObject(playerJsonStr_T);
+            var jaCT = (JArray)JsonConvert.DeserializeObject(playerJsonStr_CT);
+            var jaBothTeams = new JArray(jaT, jaCT);
+
+            server.Dispose();
+            return jaBothTeams;
         }
 
         // Same as sendRcon() minus a slightly longer timeout and the ping test

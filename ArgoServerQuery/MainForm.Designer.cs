@@ -32,8 +32,8 @@ namespace ArgoServerQuery
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Counter-Terrorists", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Terrorists", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Terrorists", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Counter-Terrorists", System.Windows.Forms.HorizontalAlignment.Left);
             this.lvMainView = new ArgoServerQuery.MainForm.BufferedListView();
             this.colNum = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colPing = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -66,8 +66,8 @@ namespace ArgoServerQuery
             this.txtOutput = new System.Windows.Forms.RichTextBox();
             this.playersListView = new System.Windows.Forms.ListView();
             this.plvColPlayers = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.plvColScore = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.plvColTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.plvColKills = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.plvColDeaths = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuPlayers = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyPlayerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copySteamIDPlayerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,10 +86,12 @@ namespace ArgoServerQuery
             this.mnuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuView = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.serverListLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuServers = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuServersAdd = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuServersAddAll = new System.Windows.Forms.ToolStripMenuItem();
@@ -143,8 +145,6 @@ namespace ArgoServerQuery
             this.lblRegion = new System.Windows.Forms.Label();
             this.lblTS3 = new System.Windows.Forms.Label();
             this.tsMenu = new ArgoServerQuery.TsMenu();
-            this.fileStripSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.serverListLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuServer.SuspendLayout();
             this.rconGroupBox.SuspendLayout();
             this.optGroupBox.SuspendLayout();
@@ -370,7 +370,7 @@ namespace ArgoServerQuery
             this.optGroupBox.Controls.Add(this.btnClearOutput);
             this.optGroupBox.Location = new System.Drawing.Point(903, 495);
             this.optGroupBox.Name = "optGroupBox";
-            this.optGroupBox.Size = new System.Drawing.Size(469, 89);
+            this.optGroupBox.Size = new System.Drawing.Size(469, 60);
             this.optGroupBox.TabIndex = 8;
             this.optGroupBox.TabStop = false;
             this.optGroupBox.Text = "Options";
@@ -379,7 +379,7 @@ namespace ArgoServerQuery
             // 
             this.btnUpdatePlayers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdatePlayers.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnUpdatePlayers.Location = new System.Drawing.Point(238, 20);
+            this.btnUpdatePlayers.Location = new System.Drawing.Point(238, 19);
             this.btnUpdatePlayers.Name = "btnUpdatePlayers";
             this.btnUpdatePlayers.Size = new System.Drawing.Size(100, 26);
             this.btnUpdatePlayers.TabIndex = 2;
@@ -392,7 +392,7 @@ namespace ArgoServerQuery
             // 
             this.btnRestartServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRestartServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRestartServer.Location = new System.Drawing.Point(366, 20);
+            this.btnRestartServer.Location = new System.Drawing.Point(366, 19);
             this.btnRestartServer.Name = "btnRestartServer";
             this.btnRestartServer.Size = new System.Drawing.Size(97, 26);
             this.btnRestartServer.TabIndex = 0;
@@ -404,7 +404,7 @@ namespace ArgoServerQuery
             // 
             this.btnSendStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSendStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSendStatus.Location = new System.Drawing.Point(122, 20);
+            this.btnSendStatus.Location = new System.Drawing.Point(122, 19);
             this.btnSendStatus.Name = "btnSendStatus";
             this.btnSendStatus.Size = new System.Drawing.Size(88, 26);
             this.btnSendStatus.TabIndex = 1;
@@ -447,40 +447,42 @@ namespace ArgoServerQuery
             this.playersListView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.playersListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.plvColPlayers,
-            this.plvColScore,
-            this.plvColTime});
+            this.plvColKills,
+            this.plvColDeaths});
             this.playersListView.ContextMenuStrip = this.contextMenuPlayers;
             this.playersListView.FullRowSelect = true;
-            listViewGroup3.Header = "Counter-Terrorists";
-            listViewGroup3.Name = "groupCT";
-            listViewGroup4.Header = "Terrorists";
-            listViewGroup4.Name = "groupT";
+            listViewGroup1.Header = "Terrorists";
+            listViewGroup1.Name = "groupT";
+            listViewGroup2.Header = "Counter-Terrorists";
+            listViewGroup2.Name = "groupCT";
             this.playersListView.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup3,
-            listViewGroup4});
+            listViewGroup1,
+            listViewGroup2});
             this.playersListView.HideSelection = false;
-            this.playersListView.Location = new System.Drawing.Point(1031, 590);
+            this.playersListView.Location = new System.Drawing.Point(1031, 561);
             this.playersListView.MultiSelect = false;
             this.playersListView.Name = "playersListView";
             this.playersListView.ShowItemToolTips = true;
-            this.playersListView.Size = new System.Drawing.Size(341, 245);
+            this.playersListView.Size = new System.Drawing.Size(341, 274);
+            this.playersListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.playersListView.TabIndex = 11;
             this.playersListView.UseCompatibleStateImageBehavior = false;
             this.playersListView.View = System.Windows.Forms.View.Details;
+            this.playersListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.plvColumnClick);
             // 
             // plvColPlayers
             // 
             this.plvColPlayers.Text = "Players";
             this.plvColPlayers.Width = 160;
             // 
-            // plvColScore
+            // plvColKills
             // 
-            this.plvColScore.Text = "Score";
+            this.plvColKills.Text = "Kills";
             // 
-            // plvColTime
+            // plvColDeaths
             // 
-            this.plvColTime.Text = "Time";
-            this.plvColTime.Width = 115;
+            this.plvColDeaths.Text = "Deaths";
+            this.plvColDeaths.Width = 117;
             // 
             // contextMenuPlayers
             // 
@@ -660,6 +662,11 @@ namespace ArgoServerQuery
             this.openToolStripMenuItem.Text = "Open Server List";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
+            // fileStripSeparator
+            // 
+            this.fileStripSeparator.Name = "fileStripSeparator";
+            this.fileStripSeparator.Size = new System.Drawing.Size(156, 6);
+            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
@@ -688,6 +695,13 @@ namespace ArgoServerQuery
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // serverListLocationToolStripMenuItem
+            // 
+            this.serverListLocationToolStripMenuItem.Name = "serverListLocationToolStripMenuItem";
+            this.serverListLocationToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.serverListLocationToolStripMenuItem.Text = "Server List Location";
+            this.serverListLocationToolStripMenuItem.Click += new System.EventHandler(this.serverListLocationToolStripMenuItem_Click);
             // 
             // mnuServers
             // 
@@ -1149,18 +1163,6 @@ namespace ArgoServerQuery
             this.tsMenu.TabIndex = 20;
             this.tsMenu.Visible = false;
             // 
-            // fileStripSeparator
-            // 
-            this.fileStripSeparator.Name = "fileStripSeparator";
-            this.fileStripSeparator.Size = new System.Drawing.Size(156, 6);
-            // 
-            // serverListLocationToolStripMenuItem
-            // 
-            this.serverListLocationToolStripMenuItem.Name = "serverListLocationToolStripMenuItem";
-            this.serverListLocationToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
-            this.serverListLocationToolStripMenuItem.Text = "Server List Location";
-            this.serverListLocationToolStripMenuItem.Click += new System.EventHandler(this.serverListLocationToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1235,8 +1237,8 @@ namespace ArgoServerQuery
         private System.Windows.Forms.ListView playersListView;
         private System.Windows.Forms.Button btnUpdatePlayers;
         private System.Windows.Forms.ColumnHeader plvColPlayers;
-        private System.Windows.Forms.ColumnHeader plvColScore;
-        private System.Windows.Forms.ColumnHeader plvColTime;
+        private System.Windows.Forms.ColumnHeader plvColKills;
+        private System.Windows.Forms.ColumnHeader plvColDeaths;
         private System.Windows.Forms.ContextMenuStrip contextMenuPlayers;
         private System.Windows.Forms.ToolStripMenuItem banPlayerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem banServersTSToolStripMenuItem;
@@ -1313,7 +1315,6 @@ namespace ArgoServerQuery
         private System.Windows.Forms.ToolStripSeparator toolStripSeparatorCmd;
         private System.Windows.Forms.ToolStripMenuItem selectAllCmdMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparatorCmd2;
-        private System.Windows.Forms.ToolStripButton toolBtnScoreToggle;
         private System.Windows.Forms.ToolStripMenuItem mnuRconAll;
         private System.Windows.Forms.ToolStripMenuItem copyPlayerMenuItem;
         private System.Windows.Forms.ToolStripSeparator mnuPlayerListSeparator;
@@ -1322,6 +1323,7 @@ namespace ArgoServerQuery
         private System.Windows.Forms.ToolStripMenuItem copySteamIDPlayerMenuItem;
         private System.Windows.Forms.ToolStripSeparator fileStripSeparator;
         private System.Windows.Forms.ToolStripMenuItem serverListLocationToolStripMenuItem;
+        public System.Windows.Forms.ToolStripButton toolBtnScoreToggle;
     }
 }
 

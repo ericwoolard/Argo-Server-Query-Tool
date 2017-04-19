@@ -120,6 +120,7 @@
     </Compile>
     <Compile Include="PassBox.cs" />
     <Compile Include="PasswordStorage.cs" />
+    <Compile Include="PlayerModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

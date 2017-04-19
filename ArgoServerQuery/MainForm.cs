@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -161,7 +162,7 @@ namespace ArgoServerQuery
             else
             {
                 e.Result = Query.bgUpdater(toUpdate); // Query.bgUpdater() sends queries to each server in the list and
-                Thread.Sleep(750);                   // returns all updated info to bgWorker_RunWorkerCompleted()
+                Thread.Sleep(1000);                   // returns all updated info to bgWorker_RunWorkerCompleted()
             }
         }
 
@@ -192,20 +193,20 @@ namespace ArgoServerQuery
                         {
                             lvMainView.Items[pos].UseItemStyleForSubItems = false;
 
-                            if (server.serverInfo.Address != lvMainView.Items[pos].SubItems[2].Text)
+                            if (server.getServerInfo().Address != lvMainView.Items[pos].SubItems[2].Text)
                             {
-                                lvMainView.Items[pos].SubItems[2].Text = server.serverInfo.Address;
+                                lvMainView.Items[pos].SubItems[2].Text = server.getServerInfo().Address;
                             }
-                            if (server.serverInfo.Name != lvMainView.Items[pos].SubItems[3].Text)
+                            if (server.getServerInfo().Name != lvMainView.Items[pos].SubItems[3].Text)
                             {
-                                lvMainView.Items[pos].SubItems[3].Text = server.serverInfo.Name;
+                                lvMainView.Items[pos].SubItems[3].Text = server.getServerInfo().Name;
                             }
 
-                            lvMainView.Items[pos].SubItems[1].Text = Convert.ToString(server.serverInfo.Ping) + "ms";
+                            lvMainView.Items[pos].SubItems[1].Text = Convert.ToString(server.getServerInfo().Ping) + "ms";
                             lvMainView.Items[pos].SubItems[4].ForeColor = Color.Red;
-                            lvMainView.Items[pos].SubItems[4].Text = server.serverInfo.Map;
+                            lvMainView.Items[pos].SubItems[4].Text = server.getServerInfo().Map;
 
-                            if (server.serverInfo.Players > 0)
+                            if (server.getServerInfo().Players > 0)
                             {
                                 lvMainView.Items[pos].SubItems[5].ForeColor = Color.ForestGreen;
                             }
@@ -214,13 +215,13 @@ namespace ArgoServerQuery
                                 lvMainView.Items[pos].SubItems[5].ForeColor = Color.Empty;
                             }
 
-                            lvMainView.Items[pos].SubItems[5].Text = $"{server.serverInfo.Players}/{server.serverInfo.MaxPlayers}";
+                            lvMainView.Items[pos].SubItems[5].Text = $"{server.getServerInfo().Players}/{server.getServerInfo().MaxPlayers}";
 
-                            if (server.serverInfo.GameVersion != lvMainView.Items[pos].SubItems[6].Text)
+                            if (server.getServerInfo().GameVersion != lvMainView.Items[pos].SubItems[6].Text)
                             {
-                                lvMainView.Items[pos].SubItems[6].Text = server.serverInfo.GameVersion;
+                                lvMainView.Items[pos].SubItems[6].Text = server.getServerInfo().GameVersion;
                             }
-                            lvMainView.Items[pos].SubItems[7].Text = server.score;
+                            lvMainView.Items[pos].SubItems[7].Text = server.getScore();
 
                             lvMainView.Items[pos].BackColor = Color.Empty;
                             pos++;
@@ -651,25 +652,53 @@ namespace ArgoServerQuery
                 string addr = lvMainView.SelectedItems[0].SubItems[2].Text;
                 JArray playerInfo = Query.getPlayerInfo(addr);
 
-                if (playerInfo != null)
+                if (playerInfo != null && playerInfo.Count == 2)
                 {
                     playersListView.Items.Clear();
+                    List<string[]> players = new List<string[]>();
 
-                    foreach (var jToken in playerInfo)
+                    foreach (JToken key in playerInfo.First<JToken>())
                     {
-                        var player = (JObject) jToken;
-                        string name = Convert.ToString(player["Name"]);
+                        string[] playerData_T = {(string)key["name"], (string)key["team"], (string)key["frags"], (string)key["deaths"]};
+                        players.Add(playerData_T);
+                    }
 
-                        string rawTime = Convert.ToString(player["Time"]);
-                        string time = rawTime.Remove(rawTime.Length - 8);
-                        string[] score_time = { Convert.ToString(player["Score"]), time };
+                    foreach (JToken key in playerInfo.Last<JToken>())
+                    {
+                        string[] playerData_CT = {(string)key["name"], (string)key["team"], (string)key["frags"], (string)key["deaths"]};
+                        players.Add(playerData_CT);
+                    }
 
-                        playersListView.Items.Add(Convert.ToString(player["Name"])).SubItems.AddRange(score_time);
+                    int totalPlayers = players.Count;
+                    for (int i = 0; i < totalPlayers; i++)
+                    {
+                        string team = players[i][1];
+                        string[] k_d = { players[i][2], players[i][3] };
+                        switch (team)
+                        {
+                            case "T":
+                                var group_T = playersListView.Groups["groupT"];
+                                var item_T = new ListViewItem { Text = players[i][0], Group = group_T };
+                                playersListView.Items.Add(item_T).SubItems.AddRange(k_d);
+                                break;
+                            case "CT":
+                                var group_CT = playersListView.Groups["groupCT"];
+                                var item_CT = new ListViewItem { Text = players[i][0], Group = group_CT };
+                                playersListView.Items.Add(item_CT).SubItems.AddRange(k_d);
+                                break;
+                        }
                     }
                 }
                 else
                 {
-                    string err = "Error fetching players...Make sure host_players_show is set to 2.";
+                    string err;
+                    if (playerInfo == null)
+                    {
+                        err = "Error! Couldn't fetch players...Is the ASQT Pug Stats plugin loaded? (sm plugins list)";
+                        showErrors(err);
+                        return;
+                    }
+                    err = "Error parsing teams. Resulting team count was not equal to 2";
                     showErrors(err);
                 }
             }
@@ -1242,6 +1271,14 @@ namespace ArgoServerQuery
             }
         }
 
+        // ColumnClick event handler for playerListView columns to provide sorting
+        private void plvColumnClick(object o, ColumnClickEventArgs e)
+        {
+            // Set the ListViewItemSorter property to a new ListViewItemComparer 
+            // object and use it to sort the ListView.
+            this.playersListView.ListViewItemSorter = new ListViewItemComparer(e.Column);
+        }
+
         public void showErrors(string str)
         {
             lblErrors.Text = str;
@@ -1258,6 +1295,30 @@ namespace ArgoServerQuery
 
 
 
+        // Implements the sorting used by the playersListView when 
+        // clicking on a column header
+        private class ListViewItemComparer : IComparer
+        {
+            private int col;
+            public ListViewItemComparer()
+            {
+                col = 0;
+            }
+            public ListViewItemComparer(int column)
+            {
+                col = column;
+            }
+            public int Compare(object x, object y)
+            {
+                if (col == 0)
+                {
+                    return String.Compare(((ListViewItem)x).SubItems[col].Text, ((ListViewItem)y).SubItems[col].Text);
+                }
+                return String.Compare(((ListViewItem)y).SubItems[col].Text, ((ListViewItem)x).SubItems[col].Text);
+            }
+        }
+
+        // ListView subclass to enable optimized double buffering
         public class BufferedListView : ListView
         {
             public BufferedListView()
