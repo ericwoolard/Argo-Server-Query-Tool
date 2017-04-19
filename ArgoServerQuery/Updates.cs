@@ -8,15 +8,25 @@ using QueryMaster.GameServer;
 
 namespace ArgoServerQuery
 {
-    class Updates
+    public class Updates
     {
-        public ServerInfo serverInfo { get; set; }
-        public string score;
+        private ServerInfo serverInfo { get; set; }
+        private string score;
 
         public Updates(ServerInfo svInfo, string sc)
         {
             this.serverInfo = svInfo;
             this.score = sc;
+        }
+
+        public ServerInfo getServerInfo()
+        {
+            return this.serverInfo;
+        }
+
+        public string getScore()
+        {
+            return this.score;
         }
     }
 }
