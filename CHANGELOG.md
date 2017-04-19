@@ -1,3 +1,28 @@
+<a id="1.0.9.1"></a>
+## 2017-04-18, Version 1.0.9.1
+
+* Rewrote the code to populate player lists. Will now group players by team and show kills/deaths
+* Added the ability to sort the players list by clicking on a column tab
+* New PlayerModel.cs class to serve as a model for the new player list 
+* Added QueryMaster binaries to repository
+
+  * #### Commits -
+  * [[`b05b4c7`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b05b4c70bb857c03086e1ad926c8f2c13722cb11#diff-da89dea23b3514c02526b9280d9a0ef9R250)] - Changes to Query.cs for new players list, retrieves players by team with their kills/deaths
+  * [[`b05b4c7`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b05b4c70bb857c03086e1ad926c8f2c13722cb11#diff-aab2f5f19398d09ad8cc6d58bb3f8966R652)] - Changes to MainForm to implement new players list model
+  * [[`b05b4c7`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/b05b4c70bb857c03086e1ad926c8f2c13722cb11#diff-aab2f5f19398d09ad8cc6d58bb3f8966R1274)] - Sort players list by clicking on a column tab
+  * [[`2fd224a`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/2fd224a090065e2b64200f7a3e4eee568cbe11eb)] - New PlayerModel class for the new players list
+  
+  
+### Fixes
+
+* Minor improvements to the Updates class
+* Various bug fixes with new players list
+
+  * #### Commits -
+  * [[`f27c2bc`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/f27c2bc5242d2888e8346ccf8e0ef577782f44be)] - Minor improvements to Updates.cs
+
+---
+
 <a id="1.0.8.7"></a>
 ## 2017-04-15, Version 1.0.8.7
 
