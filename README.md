@@ -16,7 +16,10 @@ Once completed, a public branch will be offered that will allow you to easily cu
 * [QueryMaster](https://querymaster.codeplex.com/) - .NET library to query/control any Source/GoldSource server.
 * [System.Data.SQLite](https://system.data.sqlite.org/index.html/doc/trunk/www/index.wiki) - An ADO.NET provider for SQLite.
 * [TS3QueryLib](https://ts3querylib.codeplex.com/) - a type safe library for querying over the server query port.
-* [GetPugScore](https://github.com/ericwoolard/CS-GO-GetPugScore) - (Optional) This plugin was created by me to allow us to retrieve the current score for a game. It simply registers an admin command `getpugscore` and ASQT uses this to update the current score of a match. 
+* [ASQT-PugStats](https://github.com/ericwoolard/ASQT-Pug-Stats) - (Optional) I created this plugin to allow us to retrieve the current score for a game. It eventually evolved to have 2 additional commands which can be used by ASQT. 
+  * `getpugscore` - responds with the current score of the match in the format `T's = 0, CT's = 0`
+  * `getplayers` - returns a list of all players along with which team they're on and kill/death count. Used by ASQT to build the players list when clicking 'Update players'
+  * `getplayerip <#userid|name>` - Returns the IP address of the player. Used by the r/globaloffensive modteam to track players when necessary, as their CS:GO/TS names aren't always the same
 
 ### About ASQT
 
