@@ -24,7 +24,7 @@ using QueryMaster.GameServer;                                                   
 
 namespace ArgoServerQuery
 {
-    class Query
+    public class Query
     {
         // private static Game appId;
         private const int appId = 730;
