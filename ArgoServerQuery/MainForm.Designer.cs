@@ -65,8 +65,8 @@ namespace ArgoServerQuery
             this.btnClearOutput = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.RichTextBox();
             this.playersListView = new System.Windows.Forms.ListView();
-            this.plvColPlayers = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.plvColKills = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.plvColPlayers = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.plvColDeaths = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuPlayers = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyPlayerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -446,8 +446,8 @@ namespace ArgoServerQuery
             // 
             this.playersListView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.playersListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.plvColPlayers,
             this.plvColKills,
+            this.plvColPlayers,
             this.plvColDeaths});
             this.playersListView.ContextMenuStrip = this.contextMenuPlayers;
             this.playersListView.FullRowSelect = true;
@@ -464,20 +464,21 @@ namespace ArgoServerQuery
             this.playersListView.Name = "playersListView";
             this.playersListView.ShowItemToolTips = true;
             this.playersListView.Size = new System.Drawing.Size(341, 274);
-            this.playersListView.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.playersListView.Sorting = System.Windows.Forms.SortOrder.Descending;
             this.playersListView.TabIndex = 11;
             this.playersListView.UseCompatibleStateImageBehavior = false;
             this.playersListView.View = System.Windows.Forms.View.Details;
-            this.playersListView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.plvColumnClick);
-            // 
-            // plvColPlayers
-            // 
-            this.plvColPlayers.Text = "Players";
-            this.plvColPlayers.Width = 160;
             // 
             // plvColKills
             // 
+            this.plvColKills.DisplayIndex = 1;
             this.plvColKills.Text = "Kills";
+            // 
+            // plvColPlayers
+            // 
+            this.plvColPlayers.DisplayIndex = 0;
+            this.plvColPlayers.Text = "Players";
+            this.plvColPlayers.Width = 160;
             // 
             // plvColDeaths
             // 

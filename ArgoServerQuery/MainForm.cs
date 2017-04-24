@@ -24,6 +24,9 @@ namespace ArgoServerQuery
         // This instance of BackgroundWorker is used to update server info in the UI on a background thread
         private BackgroundWorker bgWorker = new BackgroundWorker();
 
+        // This background worker is used to test if each server is alive
+        private BackgroundWorker pingWorker = new BackgroundWorker();
+
         // Path to programs base directory in Local AppData
         private static string _APP_PATH = Application.LocalUserAppDataPath;
 
@@ -90,58 +93,15 @@ namespace ArgoServerQuery
                 }
             }
 
-            // Hook up the handlers for our BackgroundWorker
+            // Hook up the handlers for our main BackgroundWorker
             bgWorker.DoWork += new DoWorkEventHandler(bgWorker_DoWork);
             bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgWorker_RunWorkerCompleted);
-
             // RunWorkerAsync() starts the BackgroundWorker and fires the DoWork() event handler
             bgWorker.RunWorkerAsync();
-        }
 
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-            if (!String.IsNullOrEmpty(Properties.Settings.Default.rconPW) 
-                && !String.IsNullOrEmpty(Properties.Settings.Default.key) 
-                && !String.IsNullOrEmpty(Properties.Settings.Default.IV))
-            {
-                txtRconPW.Text = Query.decryptRcon();
-            }
-
-            if (!String.IsNullOrEmpty(Properties.Settings.Default.region))
-            {
-                string region = Properties.Settings.Default.region;
-                switch (region)
-                {
-                    case "EU":
-                        comboRegion.SelectedItem = "EU";
-                        break;
-                    case "NA":
-                        comboRegion.SelectedItem = "NA";
-                        break;
-                    case "AU/NZ":
-                        comboRegion.SelectedItem = "AU/NZ";
-                        break;
-                }
-            }  
-        }
-
-        private void MainForm_Shown(object sender, EventArgs e)
-        {
-            // For the lolz, only show on the first run. 'firstRun' is initialized to true in settings.
-            if (Properties.Settings.Default.firstRun == true)
-            {
-                string text = "Hi, I am an Albanian virus but because of poor technology in my country, " +
-                              "unfortunately I am not able to harm your computer. Please be so kind to " +
-                              "delete one of your important files yourself and then forward me to other " +
-                              "users. Many thank for your cooperation! Best regards, Albanian virus.";
-                string caption = "Virus Alert!";
-                MessageBoxButtons button = MessageBoxButtons.OK;
-                MessageBoxIcon icon = MessageBoxIcon.Warning;
-                DialogResult result = MessageBox.Show(text, caption, button, icon);
-
-                Properties.Settings.Default.firstRun = false;
-                Properties.Settings.Default.Save();
-            }
+            pingWorker.DoWork += new DoWorkEventHandler(pingWorker_DoWork);
+            pingWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(pingWorker_RunWorkerCompleted);
+            pingWorker.RunWorkerAsync();
         }
 
         //-------------------------------------------------------------------------------------------------//
@@ -149,7 +109,7 @@ namespace ArgoServerQuery
         //- GUI controls in this method is not thread-safe and will throw an exception. Once this finishes //
         //------------- updating the server info, it will fire the RunWorkerCompleted() event. ------------//
         //-------------------------------------------------------------------------------------------------//
-        void bgWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void bgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             // SQLite.bgUpdates() returns a list of all server IP's in the current server list
             List<string> toUpdate = SQLite.bgUpdates();
@@ -161,6 +121,7 @@ namespace ArgoServerQuery
             }
             else
             {
+                //loadPingWorker(toUpdate);
                 e.Result = Query.bgUpdater(toUpdate); // Query.bgUpdater() sends queries to each server in the list and
                 Thread.Sleep(1000);                   // returns all updated info to bgWorker_RunWorkerCompleted()
             }
@@ -171,7 +132,7 @@ namespace ArgoServerQuery
         //- here is thread-safe. Report the results of our background work and use it to update ---//
         //--------------- the server listView object with the updated server info. ----------------//
         //-----------------------------------------------------------------------------------------//
-        void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void bgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Error != null)
             {
@@ -228,7 +189,7 @@ namespace ArgoServerQuery
                         }
                         catch (NullReferenceException)
                         {
-                            lvMainView.Items[pos].BackColor = Color.IndianRed;
+                            Console.WriteLine($"Null return for server #{pos+1}");
                             pos++;
                             continue;
                         }
@@ -243,8 +204,96 @@ namespace ArgoServerQuery
             bgWorker.RunWorkerAsync(); // Start the bgWorker again after its finished updating the server list
         }
 
-        
-        private int slot;
+        private void pingWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            List<string> addresses = SQLite.bgUpdates();
+
+            if (!addresses.Any())
+            {
+                Console.WriteLine("No servers to update.");
+                Thread.Sleep(2000);
+            }
+            else
+            {
+                //loadPingWorker(toUpdate);
+                //e.Result = Query.bgUpdater(addresses);
+                PingCheck pingCheck = new PingCheck(addresses);
+                e.Result = pingCheck.sendCheck();
+                Thread.Sleep(3000);
+            }
+        }
+
+        private void pingWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                MessageBox.Show(e.Error.Message);
+            }
+
+            List<int> deadList = (List<int>) e.Result;
+            foreach (ListViewItem svIndex in lvMainView.Items)
+            {
+                svIndex.BackColor = Color.Empty;
+            }
+
+            if (deadList != null)
+            {
+                foreach (int failed in deadList)
+                {
+                    if (failed != -1)
+                    {
+                        lvMainView.Items[failed].BackColor = Color.IndianRed;
+                    }
+                }
+            }
+            pingWorker.RunWorkerAsync();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(Properties.Settings.Default.rconPW) 
+                && !String.IsNullOrEmpty(Properties.Settings.Default.key) 
+                && !String.IsNullOrEmpty(Properties.Settings.Default.IV))
+            {
+                txtRconPW.Text = Query.decryptRcon();
+            }
+
+            if (!String.IsNullOrEmpty(Properties.Settings.Default.region))
+            {
+                string region = Properties.Settings.Default.region;
+                switch (region)
+                {
+                    case "EU":
+                        comboRegion.SelectedItem = "EU";
+                        break;
+                    case "NA":
+                        comboRegion.SelectedItem = "NA";
+                        break;
+                    case "AU/NZ":
+                        comboRegion.SelectedItem = "AU/NZ";
+                        break;
+                }
+            }  
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            // For the lolz, only show on the first run. 'firstRun' is initialized to true in settings.
+            if (Properties.Settings.Default.firstRun == true)
+            {
+                string text = "Hi, I am an Albanian virus but because of poor technology in my country, " +
+                              "unfortunately I am not able to harm your computer. Please be so kind to " +
+                              "delete one of your important files yourself and then forward me to other " +
+                              "users. Many thank for your cooperation! Best regards, Albanian virus.";
+                string caption = "Virus Alert!";
+                MessageBoxButtons button = MessageBoxButtons.OK;
+                MessageBoxIcon icon = MessageBoxIcon.Warning;
+                DialogResult result = MessageBox.Show(text, caption, button, icon);
+
+                Properties.Settings.Default.firstRun = false;
+                Properties.Settings.Default.Save();
+            }
+        }
 
         // Event handler for adding a new server to the server list
         private void mnuServersAdd_Click(object sender, EventArgs e)
@@ -294,7 +343,7 @@ namespace ArgoServerQuery
 
             if (lvMainView.Items.Count != 0)
             {
-                slot = lvMainView.Items.Count + 1;
+                int slot = lvMainView.Items.Count + 1;
 
                 // There are a few of these throughout this code. Each null element acts
                 // as a blueprint to set up the layout for each subitem/cell in the list
@@ -305,7 +354,7 @@ namespace ArgoServerQuery
             }
             else if (lvMainView.Items.Count == 0)
             {
-                slot++;
+                int slot = 1;
                 string[] addrInsert = { "", addr, "", "", "", "", "", "" };
                 lvMainView.Items.Add(Convert.ToString(slot)).SubItems.AddRange(addrInsert);
                 SQLite.addAddress(addr);
@@ -669,25 +718,29 @@ namespace ArgoServerQuery
                         players.Add(playerData_CT);
                     }
 
+                    List<ListViewItem> t_Players = new List<ListViewItem>();
+                    List<ListViewItem> ct_Players = new List<ListViewItem>();
                     int totalPlayers = players.Count;
                     for (int i = 0; i < totalPlayers; i++)
                     {
                         string team = players[i][1];
-                        string[] k_d = { players[i][2], players[i][3] };
+                        string[] name_deaths = { players[i][0], players[i][3] };
                         switch (team)
                         {
                             case "T":
                                 var group_T = playersListView.Groups["groupT"];
-                                var item_T = new ListViewItem { Text = players[i][0], Group = group_T };
-                                playersListView.Items.Add(item_T).SubItems.AddRange(k_d);
+                                var item_T = new ListViewItem { Text = players[i][2], Group = group_T, SubItems = { name_deaths[0], name_deaths[1] }};
+                                t_Players.Add(item_T);
                                 break;
                             case "CT":
                                 var group_CT = playersListView.Groups["groupCT"];
-                                var item_CT = new ListViewItem { Text = players[i][0], Group = group_CT };
-                                playersListView.Items.Add(item_CT).SubItems.AddRange(k_d);
+                                var item_CT = new ListViewItem { Text = players[i][2], Group = group_CT, SubItems = { name_deaths[0], name_deaths[1] }};
+                                ct_Players.Add(item_CT);
                                 break;
                         }
                     }
+                    playersListView.Items.AddRange(t_Players.OrderByDescending(x => x.Text).ToArray());
+                    playersListView.Items.AddRange(ct_Players.OrderByDescending(x => x.Text).ToArray());
                 }
                 else
                 {
@@ -708,7 +761,7 @@ namespace ArgoServerQuery
         {
             if (playersListView.SelectedItems.Count == 1)
             {
-                string playerName = playersListView.SelectedItems[0].SubItems[0].Text;
+                string playerName = playersListView.SelectedItems[0].SubItems[1].Text;
                 System.Windows.Forms.Clipboard.SetText(playerName);
             }
         }
@@ -717,7 +770,7 @@ namespace ArgoServerQuery
         {
             if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)
             {
-                string playerName = Regex.Escape(playersListView.SelectedItems[0].SubItems[0].Text);
+                string playerName = Regex.Escape(playersListView.SelectedItems[0].SubItems[1].Text);
                 string svAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
                 string pattern = $"(.{playerName}.)(.STEAM_)([0-1]:[0-1]:[0-9]+)";
 
@@ -754,7 +807,7 @@ namespace ArgoServerQuery
 
             if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)
             {
-                string player = playersListView.SelectedItems[0].Text;
+                string player = playersListView.SelectedItems[0].SubItems[1].Text;
                 string addr = lvMainView.SelectedItems[0].SubItems[2].Text;
 
                 InputBoxItem[] items = new InputBoxItem[]
@@ -810,7 +863,6 @@ namespace ArgoServerQuery
                                 grammar = "servers";
                                 break;
                         }
-
                         progressBar.Hide();
                         result = $"Successfully banned \"{player}\" from {adjusted} servers. (Failed on {failed} {grammar}).";
                         showErrors(result);
@@ -834,7 +886,7 @@ namespace ArgoServerQuery
         {
             if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)
             {
-                string player = playersListView.SelectedItems[0].Text;
+                string player = playersListView.SelectedItems[0].SubItems[1].Text;
                 string addr = lvMainView.SelectedItems[0].SubItems[2].Text;
 
                 string kickReason = Microsoft.VisualBasic.Interaction.InputBox("Tell 'em why they were kicked, or leave blank to skip.",
@@ -1271,14 +1323,6 @@ namespace ArgoServerQuery
             }
         }
 
-        // ColumnClick event handler for playerListView columns to provide sorting
-        private void plvColumnClick(object o, ColumnClickEventArgs e)
-        {
-            // Set the ListViewItemSorter property to a new ListViewItemComparer 
-            // object and use it to sort the ListView.
-            this.playersListView.ListViewItemSorter = new ListViewItemComparer(e.Column);
-        }
-
         public void showErrors(string str)
         {
             lblErrors.Text = str;
@@ -1295,28 +1339,6 @@ namespace ArgoServerQuery
 
 
 
-        // Implements the sorting used by the playersListView when 
-        // clicking on a column header
-        private class ListViewItemComparer : IComparer
-        {
-            private int col;
-            public ListViewItemComparer()
-            {
-                col = 0;
-            }
-            public ListViewItemComparer(int column)
-            {
-                col = column;
-            }
-            public int Compare(object x, object y)
-            {
-                if (col == 0)
-                {
-                    return String.Compare(((ListViewItem)x).SubItems[col].Text, ((ListViewItem)y).SubItems[col].Text);
-                }
-                return String.Compare(((ListViewItem)y).SubItems[col].Text, ((ListViewItem)x).SubItems[col].Text);
-            }
-        }
 
         // ListView subclass to enable optimized double buffering
         public class BufferedListView : ListView
