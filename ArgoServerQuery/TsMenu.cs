@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ArgoServerQuery
 {
-    public partial class TsMenu : UserControl
+    public sealed partial class TsMenu : UserControl
     {
         public TsMenu()
         {
@@ -61,10 +54,12 @@ namespace ArgoServerQuery
 
         private void btnTsSave_Click(object sender, EventArgs e)
         {
-            string addr = txtTsAddress.Text;
-            string user = txtSQUser.Text;
             string pw = txtSQPassword.Text;
-            string port = txtSQPort.Text;
+
+            Properties.Settings.Default.ts3Addr = txtTsAddress.Text;
+            Properties.Settings.Default.ts3SQUser = txtSQUser.Text;
+            Properties.Settings.Default.ts3SQPort = txtSQPort.Text;
+            Properties.Settings.Default.Save();
 
             try
             {
@@ -84,9 +79,6 @@ namespace ArgoServerQuery
                     string base64 = Convert.ToBase64String(encrypted);
 
                     Properties.Settings.Default.ts3SQPW = base64;
-                    Properties.Settings.Default.ts3Addr = addr;
-                    Properties.Settings.Default.ts3SQUser = user;
-                    Properties.Settings.Default.ts3SQPort = port;
                     Properties.Settings.Default.Save();
 
                     lblTsSaved.Show();

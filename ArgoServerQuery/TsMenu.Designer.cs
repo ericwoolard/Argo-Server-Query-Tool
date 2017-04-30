@@ -1,6 +1,6 @@
 ﻿namespace ArgoServerQuery
 {
-    partial class TsMenu
+    sealed partial class TsMenu
     {
         /// <summary> 
         /// Required designer variable.
