@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 //-------------------------------------------------------------------------------//
@@ -18,7 +17,7 @@ using TS3QueryLib.Core.Server.Responses;                                        
 
 namespace ArgoServerQuery
 {
-    class TS3Query
+    public class TS3Query
     {
         private const uint CID_NA = 9;        // NA Community-Night Channel-ID
         private const uint CID_EU = 8;        // EU Community-Night Channel-ID

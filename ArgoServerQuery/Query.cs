@@ -1,16 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -77,7 +68,7 @@ namespace ArgoServerQuery
                     var serverInfo = server.GetInfo();
 
                     // If score check is disabled, skip it
-                    if (Properties.Settings.Default.disableScore == true)
+                    if (Properties.Settings.Default.disableScore)
                     {
                         score = "Disabled";
                         results.Add(new Updates(serverInfo, score));
@@ -114,7 +105,7 @@ namespace ArgoServerQuery
                         results.Add(new Updates(serverInfo, score));
                     }
                 }
-            };
+            }
 
             return results;
         }
@@ -142,7 +133,7 @@ namespace ArgoServerQuery
                 Updates su = new Updates(serverInfo, score);
                 return su;
                 // return serverInfo;
-            };
+            }
         }
 
         public static string sendRcon(string address, string cmd)

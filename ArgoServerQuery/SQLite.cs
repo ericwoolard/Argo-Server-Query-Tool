@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 //---------------------------------------------------------------------------------//
 //------------- System.Data.SQLite is an ADO.NET provider for SQLite. -------------//
 // Find it at: https://system.data.sqlite.org/index.html/doc/trunk/www/index.wiki -//
