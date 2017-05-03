@@ -775,6 +775,30 @@ namespace ArgoServerQuery
             }
         }
 
+        private void copyPlayerIpMenuItem_Click(object sender, EventArgs e)
+        {
+            if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)
+            {
+                string playerName = playersListView.SelectedItems[0].SubItems[1].Text;
+                string cmd = $"getplayerip {playerName}";
+                string svAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
+
+                string response = Query.sendRcon(svAddr, cmd);
+
+                if (String.IsNullOrEmpty(response))
+                {
+                    const string err = "Error! Either the server failed to respond or you've entered an invalid RCON password.";
+                    showErrors(err);
+                }
+                else
+                {
+                    string[] split = response.Split(':');
+                    string ip = split[1].Trim();
+                    Clipboard.SetText(ip);
+                }
+            }
+        }
+
         private void copySteamIDPlayerMenuItem_Click(object sender, EventArgs e)
         {
             if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)

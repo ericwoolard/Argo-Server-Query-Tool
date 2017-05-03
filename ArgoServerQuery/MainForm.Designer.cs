@@ -71,6 +71,7 @@ namespace ArgoServerQuery
             this.contextMenuPlayers = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyPlayerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copySteamIDPlayerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewProfileBrowser = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuPlayerListSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.banPlayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.banServersTSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -145,7 +146,7 @@ namespace ArgoServerQuery
             this.lblRegion = new System.Windows.Forms.Label();
             this.lblTS3 = new System.Windows.Forms.Label();
             this.tsMenu = new ArgoServerQuery.TsMenu();
-            this.viewProfileBrowser = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyPlayerIpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuServer.SuspendLayout();
             this.rconGroupBox.SuspendLayout();
             this.optGroupBox.SuspendLayout();
@@ -490,6 +491,7 @@ namespace ArgoServerQuery
             // 
             this.contextMenuPlayers.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyPlayerMenuItem,
+            this.copyPlayerIpMenuItem,
             this.copySteamIDPlayerMenuItem,
             this.viewProfileBrowser,
             this.mnuPlayerListSeparator,
@@ -497,7 +499,7 @@ namespace ArgoServerQuery
             this.banServersTSToolStripMenuItem,
             this.kickPlayerToolStripMenuItem});
             this.contextMenuPlayers.Name = "contextMenuPlayers";
-            this.contextMenuPlayers.Size = new System.Drawing.Size(205, 164);
+            this.contextMenuPlayers.Size = new System.Drawing.Size(205, 186);
             // 
             // copyPlayerMenuItem
             // 
@@ -512,6 +514,13 @@ namespace ArgoServerQuery
             this.copySteamIDPlayerMenuItem.Size = new System.Drawing.Size(204, 22);
             this.copySteamIDPlayerMenuItem.Text = "Copy SteamID";
             this.copySteamIDPlayerMenuItem.Click += new System.EventHandler(this.copySteamIDPlayerMenuItem_Click);
+            // 
+            // viewProfileBrowser
+            // 
+            this.viewProfileBrowser.Name = "viewProfileBrowser";
+            this.viewProfileBrowser.Size = new System.Drawing.Size(204, 22);
+            this.viewProfileBrowser.Text = "View Profile in Browser";
+            this.viewProfileBrowser.Click += new System.EventHandler(this.viewProfileBrowser_Click);
             // 
             // mnuPlayerListSeparator
             // 
@@ -1166,12 +1175,12 @@ namespace ArgoServerQuery
             this.tsMenu.TabIndex = 20;
             this.tsMenu.Visible = false;
             // 
-            // viewProfileBrowser
+            // copyPlayerIpMenuItem
             // 
-            this.viewProfileBrowser.Name = "viewProfileBrowser";
-            this.viewProfileBrowser.Size = new System.Drawing.Size(204, 22);
-            this.viewProfileBrowser.Text = "View Profile in Browser";
-            this.viewProfileBrowser.Click += new System.EventHandler(this.viewProfileBrowser_Click);
+            this.copyPlayerIpMenuItem.Name = "copyPlayerIpMenuItem";
+            this.copyPlayerIpMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.copyPlayerIpMenuItem.Text = "Copy Player IP";
+            this.copyPlayerIpMenuItem.Click += new System.EventHandler(this.copyPlayerIpMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1335,6 +1344,7 @@ namespace ArgoServerQuery
         private System.Windows.Forms.ToolStripMenuItem serverListLocationToolStripMenuItem;
         public System.Windows.Forms.ToolStripButton toolBtnScoreToggle;
         private System.Windows.Forms.ToolStripMenuItem viewProfileBrowser;
+        private System.Windows.Forms.ToolStripMenuItem copyPlayerIpMenuItem;
     }
 }
 
