@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
@@ -240,9 +238,20 @@ namespace ArgoServerQuery
             {
                 foreach (int failed in deadList)
                 {
-                    if (failed != -1)
+                    try
                     {
-                        lvMainView.Items[failed].BackColor = Color.IndianRed;
+                        if (failed != -1)
+                        {
+                            lvMainView.Items[failed].BackColor = Color.IndianRed;
+                        }
+                    }
+                    catch (IndexOutOfRangeException ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        continue;
                     }
                 }
             }
@@ -456,7 +465,7 @@ namespace ArgoServerQuery
 
                     if (String.IsNullOrEmpty(rconResp))
                     {
-                        const string err = "RCON Error! Authentication failed. Make sure the RCON password is correct.";
+                        const string err = "Error! Either the server failed to respond or you've entered an invalid RCON password.";
                         showErrors(err);
                     }
                     else
@@ -492,7 +501,7 @@ namespace ArgoServerQuery
             if (comboCmd.SelectedText.Length > 0)
             {
                 string text = comboCmd.SelectedText;
-                System.Windows.Forms.Clipboard.SetText(text);
+                Clipboard.SetText(text);
             }
         }
 
@@ -500,14 +509,14 @@ namespace ArgoServerQuery
         {
             if (comboCmd.Text.Length > 0)
             {
-                string paste = System.Windows.Forms.Clipboard.GetText();
+                string paste = Clipboard.GetText();
                 string existing = comboCmd.Text;
                 comboCmd.Text = existing + paste;
                 comboCmd.SelectionStart = comboCmd.Text.Length;
             }
             else
             {
-                string paste = System.Windows.Forms.Clipboard.GetText();
+                string paste = Clipboard.GetText();
                 comboCmd.Text = paste;
                 comboCmd.SelectionStart = comboCmd.Text.Length;
             }
@@ -602,7 +611,7 @@ namespace ArgoServerQuery
             if (lvMainView.SelectedItems.Count == 1)
             {
                 string addr = lvMainView.SelectedItems[0].SubItems[2].Text;
-                System.Windows.Forms.Clipboard.SetText(addr);
+                Clipboard.SetText(addr);
             }
         }
 
@@ -611,7 +620,7 @@ namespace ArgoServerQuery
             if (lvMainView.SelectedItems.Count == 1)
             {
                 string map = lvMainView.SelectedItems[0].SubItems[4].Text;
-                System.Windows.Forms.Clipboard.SetText(map);
+                Clipboard.SetText(map);
             }
         }
 
@@ -762,7 +771,7 @@ namespace ArgoServerQuery
             if (playersListView.SelectedItems.Count == 1)
             {
                 string playerName = playersListView.SelectedItems[0].SubItems[1].Text;
-                System.Windows.Forms.Clipboard.SetText(playerName);
+                Clipboard.SetText(playerName);
             }
         }
 
@@ -772,30 +781,60 @@ namespace ArgoServerQuery
             {
                 string playerName = Regex.Escape(playersListView.SelectedItems[0].SubItems[1].Text);
                 string svAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
-                string pattern = $"(.{playerName}.)(.STEAM_)([0-1]:[0-1]:[0-9]+)";
-
-                const string cmd = "status";
                 const string err = "Failed to reach the server...";
                 string matchErr = $"Could not find a regex match for the SteamID of \"{playerName}\" on the server.";
-                
-                string rconResp = Query.sendStatus(svAddr, cmd);
 
-                if (String.IsNullOrEmpty(rconResp))
+                string response = ServerTools.copySteamID(playerName, svAddr);
+
+                if (String.IsNullOrEmpty(response))
                 {
                     showErrors(err);
                 }
+                else if (response == matchErr)
+                {
+                    showErrors(matchErr);
+                }
                 else
                 {
-                    var match = Regex.Match(rconResp, pattern);
-                    if (!String.IsNullOrEmpty(match.Groups[0].Value))
-                    {
-                        string copy = (match.Groups[2].Value + match.Groups[3].Value).Trim();
-                        System.Windows.Forms.Clipboard.SetText(copy);
-                    }
-                    else
-                    {
-                        showErrors(matchErr);
-                    }
+                    Clipboard.SetText(response);
+                }
+            }
+        }
+
+        private void viewProfileBrowser_Click(object sender, EventArgs e)
+        {
+            if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)
+            {
+                string playerName = Regex.Escape(playersListView.SelectedItems[0].SubItems[1].Text);
+                string svAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
+                const string err = "Failed to reach the server...";
+                string matchErr = $"Could not find a regex match for the SteamID of \"{playerName}\" on the server.";
+
+                string response = ServerTools.copySteamID(playerName, svAddr);
+
+                if (String.IsNullOrEmpty(response))
+                {
+                    showErrors(err);
+                    return;
+                }
+                if (response == matchErr)
+                {
+                    showErrors(matchErr);
+                    return;
+                }
+
+                try
+                {
+                    string[] idComponents = response.Split(':');
+                    int Y = Convert.ToInt16(idComponents[1]);
+                    int Z = Convert.ToInt32(idComponents[2]);
+                    int convert = (Z * 2) + Y;
+                    string profileURL = $"https://steamcommunity.com/profiles/[U:1:{convert}]";
+                    Process.Start(profileURL);
+                }
+                catch (FormatException ex)
+                {
+                    showErrors(ex.Message);
                 }
             }
         }
@@ -808,7 +847,6 @@ namespace ArgoServerQuery
             if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)
             {
                 string player = playersListView.SelectedItems[0].SubItems[1].Text;
-                string addr = lvMainView.SelectedItems[0].SubItems[2].Text;
 
                 InputBoxItem[] items = new InputBoxItem[]
                 {
@@ -836,7 +874,7 @@ namespace ArgoServerQuery
                     progressBar.Show();
                     int num = 0;
                     int failed = 0;
-                    string result = "";
+                    string result;
 
                     for (int i = 0; i < lvMainView.Items.Count; i++)
                     {
@@ -852,7 +890,7 @@ namespace ArgoServerQuery
                     if (failed > 0)
                     {
                         int adjusted = num - failed;
-                        string grammar = "";
+                        string grammar;
 
                         switch (failed)
                         {
@@ -1053,7 +1091,7 @@ namespace ArgoServerQuery
                     progressBar.Show();
                     int num = 0;
                     int failed = 0;
-                    string result = "";
+                    string result;
 
                     for (int i=0; i < lvMainView.Items.Count; i++)
                     {
@@ -1069,7 +1107,7 @@ namespace ArgoServerQuery
                     if (failed > 0)
                     {
                         int adjusted = num - failed;
-                        string grammar = "";
+                        string grammar;
 
                         switch (failed)
                         {
@@ -1283,19 +1321,19 @@ namespace ArgoServerQuery
                     switch (selection)
                     {
                         case "Enable Modal Message":
-                            TS3Query.modalMessage(msgMode = true);
+                            TS3Query.modalMessage(true);
                             break;
                         case "Disable Modal Message":
-                            TS3Query.modalMessage(msgMode);
+                            TS3Query.modalMessage(false);
                             break;
                         case "Move Servers Channel To Top":
                             TS3Query.moveSvParent(region);
                             break;
                         case "Mute RTP Channel":
-                            TS3Query.muteUnmuteRTP(chState = true);
+                            TS3Query.muteUnmuteRTP(true);
                             break;
                         case "Unmute RTP Channel":
-                            TS3Query.muteUnmuteRTP(chState);
+                            TS3Query.muteUnmuteRTP(false);
                             break;
                     }
                     comboTS3.SelectedIndex = -1;

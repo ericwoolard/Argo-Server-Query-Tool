@@ -145,6 +145,7 @@ namespace ArgoServerQuery
             this.lblRegion = new System.Windows.Forms.Label();
             this.lblTS3 = new System.Windows.Forms.Label();
             this.tsMenu = new ArgoServerQuery.TsMenu();
+            this.viewProfileBrowser = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuServer.SuspendLayout();
             this.rconGroupBox.SuspendLayout();
             this.optGroupBox.SuspendLayout();
@@ -490,12 +491,13 @@ namespace ArgoServerQuery
             this.contextMenuPlayers.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyPlayerMenuItem,
             this.copySteamIDPlayerMenuItem,
+            this.viewProfileBrowser,
             this.mnuPlayerListSeparator,
             this.banPlayerToolStripMenuItem,
             this.banServersTSToolStripMenuItem,
             this.kickPlayerToolStripMenuItem});
             this.contextMenuPlayers.Name = "contextMenuPlayers";
-            this.contextMenuPlayers.Size = new System.Drawing.Size(205, 120);
+            this.contextMenuPlayers.Size = new System.Drawing.Size(205, 164);
             // 
             // copyPlayerMenuItem
             // 
@@ -1164,6 +1166,13 @@ namespace ArgoServerQuery
             this.tsMenu.TabIndex = 20;
             this.tsMenu.Visible = false;
             // 
+            // viewProfileBrowser
+            // 
+            this.viewProfileBrowser.Name = "viewProfileBrowser";
+            this.viewProfileBrowser.Size = new System.Drawing.Size(204, 22);
+            this.viewProfileBrowser.Text = "View Profile in Browser";
+            this.viewProfileBrowser.Click += new System.EventHandler(this.viewProfileBrowser_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1325,6 +1334,7 @@ namespace ArgoServerQuery
         private System.Windows.Forms.ToolStripSeparator fileStripSeparator;
         private System.Windows.Forms.ToolStripMenuItem serverListLocationToolStripMenuItem;
         public System.Windows.Forms.ToolStripButton toolBtnScoreToggle;
+        private System.Windows.Forms.ToolStripMenuItem viewProfileBrowser;
     }
 }
 

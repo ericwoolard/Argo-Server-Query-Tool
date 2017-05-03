@@ -4,7 +4,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ArgoServerQuery
 {
@@ -32,6 +34,25 @@ namespace ArgoServerQuery
                     }
                 }
             }
+        }
+
+        public static string copySteamID(string name, string addr)
+        {
+            const string cmd = "status";
+            string pattern = $"(.{name}.)(.STEAM_)([0-1]:[0-1]:[0-9]+)";
+            string matchErr = $"Could not find a regex match for the SteamID of \"{name}\" on the server.";
+
+            string rconResp = Query.sendStatus(addr, cmd);
+
+            if (String.IsNullOrEmpty(rconResp))
+            {
+                return null;
+            }
+
+            var match = Regex.Match(rconResp, pattern);
+            var matchVal = match.Groups[0].Value;
+
+            return !String.IsNullOrEmpty(matchVal) ? (match.Groups[2].Value + match.Groups[3].Value).Trim() : matchErr;
         }
     }
 }
