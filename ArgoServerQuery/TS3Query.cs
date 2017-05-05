@@ -164,6 +164,45 @@ namespace ArgoServerQuery
             }
         }
 
+        public static void addBan(string ip, TimeSpan? duration, string reason = "")
+        {
+            // Get the host address, username and port for the ServerQuery Login
+            Dictionary<string, string> config = getTSInfo();
+            if (config == null) return;
+
+            string sqPW = getSQPassword();
+            ushort port;
+
+            Regex regex = new Regex(@"^[0-9]+$");
+            if (regex.IsMatch(config["port"]))
+            {
+                port = Convert.ToUInt16(config["port"]);
+            }
+            else
+            {
+                string msg = "ERROR: Invalid port. Port number may contain numbers 1-9 only.";
+                string cap = "Error";
+                errorMSG(msg, cap);
+                return;
+            }
+
+            // Establish a connection with the TS3 server
+            using (QueryRunner QR = new QueryRunner(new SyncTcpDispatcher(config["addr"], port)))
+            {
+                if (loginAndUse(QR, config, sqPW) != null)
+                {
+                    if (duration != null)
+                    {
+                        QR.AddBanRule(ip, "", "", duration, reason);
+                    }
+                    else
+                    {
+                        QR.AddBanRule(ip, "", "",null, reason);
+                    }
+                }
+            }
+        }
+
         private static QueryRunner loginAndUse(QueryRunner runner, Dictionary<string, string> cfg, string rcon)
         {
             SimpleResponse loginResponse = runner.Login(cfg["user"], rcon);
