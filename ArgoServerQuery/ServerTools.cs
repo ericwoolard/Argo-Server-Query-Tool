@@ -66,7 +66,7 @@ namespace ArgoServerQuery
             }
             if (response == "[SM] No matching client was found.")
             {
-                return null;
+                return response;
             }
 
             string[] split = response.Split(':');
