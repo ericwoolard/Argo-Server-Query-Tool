@@ -54,5 +54,24 @@ namespace ArgoServerQuery
 
             return !String.IsNullOrEmpty(matchVal) ? (match.Groups[2].Value + match.Groups[3].Value).Trim() : matchErr;
         }
+
+        public static string copyPlayerIP(string name, string addr)
+        {
+            string cmd = $"getplayerip {name}";
+
+            string response = Query.sendRcon(addr, cmd);
+            if (String.IsNullOrEmpty(response))
+            {
+                return null;
+            }
+            if (response == "[SM] No matching client was found.")
+            {
+                return null;
+            }
+
+            string[] split = response.Split(':');
+            string ip = split[1].Trim();
+            return ip;
+        }
     }
 }
