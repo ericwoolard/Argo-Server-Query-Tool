@@ -151,9 +151,10 @@ namespace ArgoServerQuery
             this.tsMenu = new ArgoServerQuery.TsMenu();
             this.customTabControl = new System.Windows.Forms.CustomTabControl();
             this.tabConsole = new System.Windows.Forms.TabPage();
-            this.tabRules = new System.Windows.Forms.TabPage();
-            this.txtChat = new System.Windows.Forms.RichTextBox();
+            this.tabChat = new System.Windows.Forms.TabPage();
             this.txtSendChat = new System.Windows.Forms.TextBox();
+            this.txtChat = new System.Windows.Forms.RichTextBox();
+            this.btnSendChat = new System.Windows.Forms.Button();
             this.contextMenuServer.SuspendLayout();
             this.rconGroupBox.SuspendLayout();
             this.toolsGroupBox.SuspendLayout();
@@ -164,7 +165,7 @@ namespace ArgoServerQuery
             this.contextMenuCmd.SuspendLayout();
             this.customTabControl.SuspendLayout();
             this.tabConsole.SuspendLayout();
-            this.tabRules.SuspendLayout();
+            this.tabChat.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvMainView
@@ -1210,7 +1211,7 @@ namespace ArgoServerQuery
             // customTabControl
             // 
             this.customTabControl.Controls.Add(this.tabConsole);
-            this.customTabControl.Controls.Add(this.tabRules);
+            this.customTabControl.Controls.Add(this.tabChat);
             this.customTabControl.DisplayStyle = System.Windows.Forms.TabStyle.Rounded;
             // 
             // 
@@ -1250,17 +1251,27 @@ namespace ArgoServerQuery
             this.tabConsole.TabIndex = 0;
             this.tabConsole.Text = "Console";
             // 
-            // tabRules
+            // tabChat
             // 
-            this.tabRules.BackColor = System.Drawing.Color.Gainsboro;
-            this.tabRules.Controls.Add(this.txtSendChat);
-            this.tabRules.Controls.Add(this.txtChat);
-            this.tabRules.Location = new System.Drawing.Point(4, 23);
-            this.tabRules.Name = "tabRules";
-            this.tabRules.Padding = new System.Windows.Forms.Padding(3);
-            this.tabRules.Size = new System.Drawing.Size(865, 446);
-            this.tabRules.TabIndex = 1;
-            this.tabRules.Text = "Rules";
+            this.tabChat.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabChat.Controls.Add(this.btnSendChat);
+            this.tabChat.Controls.Add(this.txtSendChat);
+            this.tabChat.Controls.Add(this.txtChat);
+            this.tabChat.Location = new System.Drawing.Point(4, 23);
+            this.tabChat.Name = "tabChat";
+            this.tabChat.Padding = new System.Windows.Forms.Padding(3);
+            this.tabChat.Size = new System.Drawing.Size(865, 446);
+            this.tabChat.TabIndex = 1;
+            this.tabChat.Text = "Chat";
+            // 
+            // txtSendChat
+            // 
+            this.txtSendChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtSendChat.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSendChat.Location = new System.Drawing.Point(0, 420);
+            this.txtSendChat.Name = "txtSendChat";
+            this.txtSendChat.Size = new System.Drawing.Size(759, 22);
+            this.txtSendChat.TabIndex = 1;
             // 
             // txtChat
             // 
@@ -1274,14 +1285,16 @@ namespace ArgoServerQuery
             this.txtChat.TabIndex = 0;
             this.txtChat.Text = "";
             // 
-            // txtSendChat
+            // btnSendChat
             // 
-            this.txtSendChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtSendChat.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSendChat.Location = new System.Drawing.Point(0, 419);
-            this.txtSendChat.Name = "txtSendChat";
-            this.txtSendChat.Size = new System.Drawing.Size(743, 21);
-            this.txtSendChat.TabIndex = 1;
+            this.btnSendChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSendChat.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSendChat.Location = new System.Drawing.Point(765, 414);
+            this.btnSendChat.Name = "btnSendChat";
+            this.btnSendChat.Size = new System.Drawing.Size(94, 32);
+            this.btnSendChat.TabIndex = 2;
+            this.btnSendChat.Text = "SEND";
+            this.btnSendChat.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -1327,8 +1340,8 @@ namespace ArgoServerQuery
             this.contextMenuCmd.ResumeLayout(false);
             this.customTabControl.ResumeLayout(false);
             this.tabConsole.ResumeLayout(false);
-            this.tabRules.ResumeLayout(false);
-            this.tabRules.PerformLayout();
+            this.tabChat.ResumeLayout(false);
+            this.tabChat.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1451,11 +1464,12 @@ namespace ArgoServerQuery
         private System.Windows.Forms.ToolStripMenuItem copyPlayerIpMenuItem;
         private System.Windows.Forms.CustomTabControl customTabControl;
         private System.Windows.Forms.TabPage tabConsole;
-        private System.Windows.Forms.TabPage tabRules;
+        private System.Windows.Forms.TabPage tabChat;
         private System.Windows.Forms.ContextMenuStrip contextMenuTxtOutput;
         private System.Windows.Forms.ToolStripMenuItem menuItemCopyTxtOutput;
         private System.Windows.Forms.TextBox txtSendChat;
         private System.Windows.Forms.RichTextBox txtChat;
+        private System.Windows.Forms.Button btnSendChat;
     }
 }
 

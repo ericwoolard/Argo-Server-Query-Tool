@@ -1511,10 +1511,5 @@ namespace ArgoServerQuery
                 SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             }
         }
-
-        private void rulesGroupBox_Enter(object sender, EventArgs e)
-        {
-
-        }
     }
 }
