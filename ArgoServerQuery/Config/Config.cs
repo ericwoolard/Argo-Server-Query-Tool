@@ -3,7 +3,6 @@
     public class Config
     {
 
-        /// <remarks/>
         [System.SerializableAttribute()]
         [System.ComponentModel.DesignerCategoryAttribute("code")]
         [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
@@ -17,7 +16,6 @@
 
             private object channelIdField;
 
-            /// <remarks/>
             public object tsAddress
             {
                 get
@@ -30,7 +28,6 @@
                 }
             }
 
-            /// <remarks/>
             public object user
             {
                 get
@@ -43,7 +40,6 @@
                 }
             }
 
-            /// <remarks/>
             public object channelId
             {
                 get
