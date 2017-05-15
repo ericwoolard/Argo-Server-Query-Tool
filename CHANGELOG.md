@@ -1,10 +1,8 @@
 <a id="1.0.9.2"></a>
-## 2017-04-21, Version 1.0.9.2
+## 2017-05-14, Version 1.0.9.2
 
 * The 'Ban Player From All Servers And TS' feature has been finished and is now working
-* Added a new tab to the console section to view a list of server rules. From the list you can:
-  * Edit and save the value of any server rule
-  * Save the list of rules to a local text file 
+* Added a new tab to the console section for viewing a stream of server chat (to be completed soon)
 * Added a new context menu item to player lists to view a players profile in your browser
 * Added a new context menu item to player lists to copy the players IP address
 * Added a new context menu item to the output text box to copy selected text
@@ -12,15 +10,19 @@
 * Renamed Options GroupBox to Tools
 
   * #### Commits -
+  * [[`c8320b3`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/c8320b3af7924f3c23227cd9e262a60cef18a5e6#diff-aab2f5f19398d09ad8cc6d58bb3f8966R955)] - Completed 'Ban Player From All Servers And TS' feature
+  * [[`3b276dc`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/3b276dc57cc89d0ef2e6babea22343bd0a66c9b0)] - New method in TS3Query to add a new ban record
   * [[`d586883`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/d58688358ee9c345943317c8a8f20ed00f42313a#diff-aab2f5f19398d09ad8cc6d58bb3f8966R804)] - View player profile in browser
   * [[`ff8890f`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/ff8890fbf4ff664bb1f6a1d608333aa99ee07e87)] - Copy player IP address
 
 ### Fixes
 
+* Removed the temporary failsafe on score checks
 * Improved server status check by handling ping separate from updates. Fixes incorrect offline status
 * Fixed a bug in new players list when sorting by column. Players list now auto-sorts by kills in desc order
 
   * #### Commits -
+  * [[`38e81c9`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/38e81c9916f7e4768eb25ed857eb9eca44b689c3) - Removed temporary score check failsafe
   * [[`79c8caf`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/79c8caf61326171cdabd0a75b1d11e2d3543db9d)] - New PingCheck class for determining server status
   * [[`33ed25c`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/33ed25c4389e6f761edb56059b3da98c478d16fa#diff-aab2f5f19398d09ad8cc6d58bb3f8966R102)] - BackgroundWorker for ping check
   * [[`33ed25c`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/33ed25c4389e6f761edb56059b3da98c478d16fa#diff-aab2f5f19398d09ad8cc6d58bb3f8966R721)] - Improvements for new player list
@@ -29,9 +31,6 @@
 
 * Several code cleanups
 * Organized project models to new models folder
-
-  * #### Commits -
-
 
 ---
 
