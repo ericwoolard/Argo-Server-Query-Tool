@@ -77,28 +77,17 @@ namespace ArgoServerQuery
                     }
                     else if (!String.IsNullOrEmpty(pw))
                     {
-                        if (rconFailCount < 1)
+                        score = getPugScore(server, pw);
+                        if (score.Contains("Bad"))
                         {
-                            score = getPugScore(server, pw);
-                            if (score.Contains("Bad"))
-                            {
-                                score = "Bad password..";
-                                Console.WriteLine("Bad pass..");
-                                rconFailCount++;
-                                results.Add(new UpdatesModel(serverInfo, score));
-                            }
-                            else
-                            {
-                                results.Add(new UpdatesModel(serverInfo, score));
-                            }
-                        }
-                        else if (rconFailCount > 0)
-                        {
-                            Properties.Settings.Default.disableScore = true;
-                            Properties.Settings.Default.Save();
-                            score = "Disabled.";
+                            score = "Bad password..";
+                            Console.WriteLine("Bad pass..");
+                            rconFailCount++;
                             results.Add(new UpdatesModel(serverInfo, score));
-                            rconFailCount = 0;
+                        }
+                        else
+                        {
+                            results.Add(new UpdatesModel(serverInfo, score));
                         }
                     }
                     else
