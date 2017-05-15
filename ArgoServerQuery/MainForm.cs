@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -11,6 +12,9 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Security.Cryptography;
 using System.Windows.Forms.VisualStyles;
+using ArgoServerQuery.Models;
+using QueryMaster;
+using QueryMaster.GameServer;
 
 namespace ArgoServerQuery
 {
@@ -140,13 +144,13 @@ namespace ArgoServerQuery
             {
                 // Explicitly cast the list of Updates objects holding new
                 // server info after returning from DoWorkEventArgs
-                List<Updates> castObj = (List<Updates>)e.Result;
+                List<UpdatesModel> castObj = (List<UpdatesModel>)e.Result;
                 if (castObj != null)
                 {
                     int pos = 0;
                     // Iterate over each instance of Updates in castObj and update
                     // the server list with new info from properties of each
-                    foreach (Updates server in castObj)
+                    foreach (UpdatesModel server in castObj)
                     {
                         try
                         {
@@ -703,6 +707,14 @@ namespace ArgoServerQuery
             txtOutput.ScrollToCaret();
         }
 
+        private void menuItemCopyTxtOutput_Click(object sender, EventArgs e)
+        {
+            if (txtOutput.SelectedText.Length > 0)
+            {
+                Clipboard.SetText(txtOutput.SelectedText);
+            }
+        }
+
         private void btnUpdatePlayers_Click(object sender, EventArgs e)
         {
             if (lvMainView.SelectedItems.Count == 1)
@@ -780,21 +792,22 @@ namespace ArgoServerQuery
             if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)
             {
                 string playerName = playersListView.SelectedItems[0].SubItems[1].Text;
-                string cmd = $"getplayerip {playerName}";
                 string svAddr = lvMainView.SelectedItems[0].SubItems[2].Text;
-
-                string response = Query.sendRcon(svAddr, cmd);
+                string response = ServerTools.copyPlayerIP(playerName, svAddr);
 
                 if (String.IsNullOrEmpty(response))
                 {
                     const string err = "Error! Either the server failed to respond or you've entered an invalid RCON password.";
                     showErrors(err);
                 }
+                else if (response == "[SM] No matching client was found.")
+                {
+                    const string err = "Error! No matching client was found.";
+                    showErrors(err);
+                }
                 else
                 {
-                    string[] split = response.Split(':');
-                    string ip = split[1].Trim();
-                    Clipboard.SetText(ip);
+                    Clipboard.SetText(response);
                 }
             }
         }
@@ -865,11 +878,11 @@ namespace ArgoServerQuery
 
         private void banPlayerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Regex to validate input for ban length
-            Regex regex = new Regex(@"^[0-9]+$");
-
             if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)
             {
+                // Regex to validate input for ban length
+                Regex regex = new Regex(@"^[0-9]+$");
+
                 string player = playersListView.SelectedItems[0].SubItems[1].Text;
 
                 InputBoxItem[] items = new InputBoxItem[]
@@ -941,7 +954,95 @@ namespace ArgoServerQuery
 
         private void banServersTSToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (playersListView.SelectedItems.Count == 1 && lvMainView.SelectedItems.Count == 1)
+            {
+                // Regex to validate input for ban length
+                Regex regex = new Regex(@"^[0-9]+$");
 
+                string player = playersListView.SelectedItems[0].SubItems[1].Text;
+                string addr = lvMainView.SelectedItems[0].SubItems[2].Text;
+
+                InputBoxItem[] items = new InputBoxItem[]
+                {
+                    new InputBoxItem("Length of ban in minutes (0 for perm):", ""),
+                    new InputBoxItem("Ban reason (leave blank to skip):", false)
+                };
+
+                InputBox input = InputBox.Show("Ban Player From Server", items, InputBoxButtons.OKCancel);
+
+                if (input.Result == InputBoxResult.OK)
+                {
+                    string banLength = input.Items["Length of ban in minutes (0 for perm):"];
+                    string banReason = input.Items["Ban reason (leave blank to skip):"];
+
+                    if (!regex.IsMatch(banLength))
+                    {
+                        string text = "Invalid ban length. Did you fuck up? -___-";
+                        string caption = "Oops";
+                        MessageBoxButtons button = MessageBoxButtons.OK;
+                        MessageBoxIcon icon = MessageBoxIcon.Error;
+                        DialogResult dialogResult = MessageBox.Show(text, caption, button, icon);
+                        return;
+                    }
+
+                    progressBar.Show();
+                    int num = 0;
+                    int failed = 0;
+                    string result;
+
+                    for (int i = 0; i < lvMainView.Items.Count; i++)
+                    {
+                        progressBar.PerformStep();
+                        string res = Query.banPlayerFromServer(lvMainView.Items[i].SubItems[2].Text, player, banLength, banReason);
+                        if (String.IsNullOrEmpty(res))
+                        {
+                            failed++;
+                        }
+                        num++;
+                    }
+
+                    string ip = ServerTools.copyPlayerIP(player, addr);
+                    if (!String.IsNullOrEmpty(ip))
+                    {
+                        double lenMinutes = Convert.ToDouble(banLength);
+                        if (lenMinutes > 0)
+                        {
+                            TimeSpan duration = TimeSpan.FromMinutes(lenMinutes);
+                            TS3Query.addBan(ip, duration, banReason);
+                        }
+                        else if (lenMinutes < 1)
+                        {
+                            TimeSpan? duration = null;
+                            TS3Query.addBan(ip, duration, banReason);
+                        }
+                    }
+
+                    if (failed > 0)
+                    {
+                        int adjusted = num - failed;
+                        string grammar;
+
+                        switch (failed)
+                        {
+                            case 1:
+                                grammar = "server";
+                                break;
+                            default:
+                                grammar = "servers";
+                                break;
+                        }
+                        progressBar.Hide();
+                        result = $"Successfully banned \"{player}\" from {adjusted} servers and from TeamSpeak. (Failed on {failed} {grammar}).";
+                        showErrors(result);
+                    }
+                    else
+                    {
+                        progressBar.Hide();
+                        result = $"Successfully banned \"{player}\" from {num} servers and from TeamSpeak.";
+                        showErrors(result);
+                    }
+                }
+            }
         }
 
         private void kickPlayerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1409,6 +1510,11 @@ namespace ArgoServerQuery
             {
                 SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             }
+        }
+
+        private void rulesGroupBox_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

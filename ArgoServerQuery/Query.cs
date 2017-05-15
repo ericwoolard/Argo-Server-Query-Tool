@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography;
 using System.Windows.Forms;
+using ArgoServerQuery.Models;
 using Newtonsoft.Json;
 //--------------------------------------------------------------------------------//
 //- QueryMaster is a .NET library to query/control any Source/GoldSource server. -//
@@ -44,9 +46,9 @@ namespace ArgoServerQuery
 
         // This method is used by our background worker to query each server on the 
         // background thread and update the server info in the list
-        public static List<Updates> bgUpdater(List<string> addresses)
+        public static List<UpdatesModel> bgUpdater(List<string> addresses)
         {
-            List<Updates> results = new List<Updates>();
+            List<UpdatesModel> results = new List<UpdatesModel>();
             string pw = decryptRcon();
 
             foreach (string address in addresses)
@@ -71,7 +73,7 @@ namespace ArgoServerQuery
                     if (Properties.Settings.Default.disableScore)
                     {
                         score = "Disabled";
-                        results.Add(new Updates(serverInfo, score));
+                        results.Add(new UpdatesModel(serverInfo, score));
                     }
                     else if (!String.IsNullOrEmpty(pw))
                     {
@@ -83,11 +85,11 @@ namespace ArgoServerQuery
                                 score = "Bad password..";
                                 Console.WriteLine("Bad pass..");
                                 rconFailCount++;
-                                results.Add(new Updates(serverInfo, score));
+                                results.Add(new UpdatesModel(serverInfo, score));
                             }
                             else
                             {
-                                results.Add(new Updates(serverInfo, score));
+                                results.Add(new UpdatesModel(serverInfo, score));
                             }
                         }
                         else if (rconFailCount > 0)
@@ -95,14 +97,14 @@ namespace ArgoServerQuery
                             Properties.Settings.Default.disableScore = true;
                             Properties.Settings.Default.Save();
                             score = "Disabled.";
-                            results.Add(new Updates(serverInfo, score));
+                            results.Add(new UpdatesModel(serverInfo, score));
                             rconFailCount = 0;
                         }
                     }
                     else
                     {
                         score = "No RCON PW";
-                        results.Add(new Updates(serverInfo, score));
+                        results.Add(new UpdatesModel(serverInfo, score));
                     }
                 }
             }
@@ -130,7 +132,7 @@ namespace ArgoServerQuery
 
                 score = !String.IsNullOrEmpty(pw) ? getPugScore(server, pw) : "Bad RCON PW";
 
-                Updates su = new Updates(serverInfo, score);
+                UpdatesModel su = new UpdatesModel(serverInfo, score);
                 return su;
                 // return serverInfo;
             }
@@ -354,20 +356,59 @@ namespace ArgoServerQuery
 
         public static string banPlayerFromServer(string address, string player, string length, string reason = "")
         {
-            string fullCmd = "";
+            string fullCmd;
+            string response;
 
-            if (!String.IsNullOrEmpty(reason))
-            {
-                fullCmd = $"sm_ban {player} {length} {reason}";
-            }
-            else if (String.IsNullOrEmpty(reason))
+            if (String.IsNullOrEmpty(reason))
             {
                 fullCmd = $"sm_ban {player} {length}";
+                response = rcon2All(address, fullCmd);
+                return response;
             }
 
-            string response = rcon2All(address, fullCmd);
+            fullCmd = $"sm_ban {player} {length} {reason}";
+            response = rcon2All(address, fullCmd);
             return response;
         }
+
+        public static ReadOnlyCollection<RulesModel> getServerRules(string address)
+        {
+            Tuple<string, UInt16> addr = splitAddr(address);
+            string addrIP = addr.Item1;
+            UInt16 port = addr.Item2;
+            string pw = decryptRcon();
+
+            var server = ServerQuery.GetServerInstance(
+                (Game)appId,
+                addrIP,
+                port,
+                throwExceptions: false,
+                retries: retries,
+                sendTimeout: 2000,
+                receiveTimeout: 2000);
+
+            try
+            {
+                if (server.GetControl(pw))
+                {
+                    //var rules = server.GetRules(x => Console.WriteLine("Fetching Server Rules, Attempt " + x));
+                    Rules rulesInstance = new Rules(server);
+                    ReadOnlyCollection<RulesModel> rules = rulesInstance.GetRules();
+                    server.Dispose();
+                    if (rules.Count > 0)
+                    {
+                        return rules;
+                    }
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
 
         internal static string decryptRcon()
         {

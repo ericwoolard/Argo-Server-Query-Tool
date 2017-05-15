@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using QueryMaster;
@@ -15,15 +18,24 @@ namespace ArgoServerQuery
     {
 
         private const int appId = 730;
-        private const int retries = 0;
-        private const int timeout = 2000;
+        private const int retries = 10;
+        private const int timeout = 20000;
+        private const UInt16 localPort = 7140;
+
+        //Client uses as receive udp client
+        private static UdpClient Client = new UdpClient(localPort);
+
+        private static string svIP;
+        private static UInt16 svPort;
 
 
-        public static void getChats(string ip, RichTextBox txtBox)
+        public static void getChats(string ip, RichTextBox box)
         {
             Tuple<string, UInt16> addr = splitAddr(ip);
             string addrIP = addr.Item1;
+            svIP = addrIP;
             UInt16 port = addr.Item2;
+            svPort = port;
             string rconPW = decryptRcon();
 
             var server = ServerQuery.GetServerInstance(
@@ -31,30 +43,82 @@ namespace ArgoServerQuery
                 addrIP,
                 port,
                 throwExceptions: false,
-                retries: retries);
+                retries: retries,
+                sendTimeout: timeout,
+                receiveTimeout: timeout);
 
-            addLogAddr(ref server, rconPW, txtBox);
-
-            using (Logs logger = server.GetLogs(port))
+            try
             {
-                LogEvents chatEvents = logger.GetEventsInstance();
-                //chatEvents.
+                Client.BeginReceive(new AsyncCallback(recv), null);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
             }
 
+            /*addLogAddr(server, rconPW, txtBox);
+            Logs logger = server.GetLogs(localPort);
+
+            using (logger)
+            {
+                LogEvents playerKill = logger.GetEventsInstance();
+                playerKill.PlayerKilled += PlayerKilledEvent;
+
+                logger.Listen(x => Console.WriteLine(x));
+                logger.Start();
+            }*/
         }
 
-        private static Server addLogAddr(ref Server sv, string pw, RichTextBox txtBox)
+        private static void recv(IAsyncResult res)
         {
-            string extIp = new WebClient().DownloadString("http://icanhazip.com");
-            string addAddr = $"logaddress_add {extIp}";
+            IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Parse(svIP), svPort);
+            byte[] received = Client.EndReceive(res, ref RemoteIpEndPoint);
+
+            //Process codes
+
+            Console.WriteLine(Encoding.UTF8.GetString(received));
+            Client.BeginReceive(new AsyncCallback(recv), null);
+        }
+
+
+        private static void PlayerKilledEvent(object sender, KillEventArgs args)
+        {
+            DateTime time = args.Timestamp;
+            LogPlayerInfo player = args.Player;
+            LogPlayerInfo victim = args.Victim;
+            string team = player.Team;
+            string weapon = args.Weapon;
+            Console.WriteLine(Convert.ToString(time, CultureInfo.InvariantCulture) + " " + victim + " was killed by " + player + " on " + team + " with " + weapon);
+        }
+
+        private static void ChatEventsOnPlayerInjured(object sender, InjureEventArgs injureEventArgs)
+        {
+            DateTime time = injureEventArgs.Timestamp;
+            string chatMsg = injureEventArgs.Damage;
+            Console.WriteLine(Convert.ToString(time, CultureInfo.InvariantCulture) + chatMsg);
+        }
+
+        private static void ChatEventsOnSay(object sender, ChatEventArgs chatEventArgs)
+        {
+            DateTime time = chatEventArgs.Timestamp;
+            string chatMsg = chatEventArgs.Message;
+            Console.WriteLine(Convert.ToString(time, CultureInfo.InvariantCulture) + chatMsg);
+        }
+
+        private static Server addLogAddr(Server sv, string pw, RichTextBox txtBox)
+        {
+            string extIP = new WebClient().DownloadString("http://icanhazip.com");
+            extIP = extIP.TrimEnd('\r', '\n');
+
+            string addAddr = "logaddress_add " + extIP + ":" + Convert.ToString(localPort);
             string startTime = DateTime.Now.ToString("HH:mm:ss");
 
             if (sv.GetControl(pw))
             {
                 string response = sv.Rcon.SendCommand(addAddr);
-                string txtOutput = $"\n...\n...\n...\n...\n...\n...\n...\n...{startTime}: {addAddr.ToUpper()}\n{response}\n\n";
+                string txtOutput = $"\n...\n...\n...\n...\n...\n...\n...\n...\n{startTime}: {addAddr.ToUpper()}\n{response}\n\n";
                 txtBox.AppendText(txtOutput);
-                return sv;
+                return sv; 
             }
 
             return null;

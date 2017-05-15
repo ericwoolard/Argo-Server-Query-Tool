@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace ArgoServerQuery
+namespace ArgoServerQuery.Models
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class PlayerModel

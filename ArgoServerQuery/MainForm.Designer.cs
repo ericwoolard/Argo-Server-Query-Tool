@@ -58,18 +58,21 @@ namespace ArgoServerQuery
             this.lblRconSaved = new System.Windows.Forms.Label();
             this.chkRconShow = new System.Windows.Forms.CheckBox();
             this.btnRconSave = new System.Windows.Forms.Button();
-            this.optGroupBox = new System.Windows.Forms.GroupBox();
+            this.toolsGroupBox = new System.Windows.Forms.GroupBox();
             this.btnUpdatePlayers = new System.Windows.Forms.Button();
             this.btnRestartServer = new System.Windows.Forms.Button();
             this.btnSendStatus = new System.Windows.Forms.Button();
             this.btnClearOutput = new System.Windows.Forms.Button();
             this.txtOutput = new System.Windows.Forms.RichTextBox();
+            this.contextMenuTxtOutput = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuItemCopyTxtOutput = new System.Windows.Forms.ToolStripMenuItem();
             this.playersListView = new System.Windows.Forms.ListView();
             this.plvColKills = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.plvColPlayers = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.plvColDeaths = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuPlayers = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.copyPlayerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyPlayerIpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copySteamIDPlayerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewProfileBrowser = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuPlayerListSeparator = new System.Windows.Forms.ToolStripSeparator();
@@ -81,9 +84,9 @@ namespace ArgoServerQuery
             this.btnNewServerList = new System.Windows.Forms.Button();
             this.openFile = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.chkTS3 = new System.Windows.Forms.CheckBox();
             this.comboRegion = new System.Windows.Forms.ComboBox();
             this.comboTS3 = new System.Windows.Forms.ComboBox();
+            this.chkTS3 = new System.Windows.Forms.CheckBox();
             this.mnuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -146,21 +149,28 @@ namespace ArgoServerQuery
             this.lblRegion = new System.Windows.Forms.Label();
             this.lblTS3 = new System.Windows.Forms.Label();
             this.tsMenu = new ArgoServerQuery.TsMenu();
-            this.copyPlayerIpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.customTabControl = new System.Windows.Forms.CustomTabControl();
+            this.tabConsole = new System.Windows.Forms.TabPage();
+            this.tabRules = new System.Windows.Forms.TabPage();
+            this.txtChat = new System.Windows.Forms.RichTextBox();
+            this.txtSendChat = new System.Windows.Forms.TextBox();
             this.contextMenuServer.SuspendLayout();
             this.rconGroupBox.SuspendLayout();
-            this.optGroupBox.SuspendLayout();
+            this.toolsGroupBox.SuspendLayout();
+            this.contextMenuTxtOutput.SuspendLayout();
             this.contextMenuPlayers.SuspendLayout();
             this.mnuMainStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.contextMenuCmd.SuspendLayout();
+            this.customTabControl.SuspendLayout();
+            this.tabConsole.SuspendLayout();
+            this.tabRules.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvMainView
             // 
             this.lvMainView.AllowColumnReorder = true;
-            this.lvMainView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.lvMainView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvMainView.BackColor = System.Drawing.SystemColors.Window;
             this.lvMainView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -182,7 +192,7 @@ namespace ArgoServerQuery
             this.lvMainView.Location = new System.Drawing.Point(12, 65);
             this.lvMainView.MultiSelect = false;
             this.lvMainView.Name = "lvMainView";
-            this.lvMainView.Size = new System.Drawing.Size(1360, 367);
+            this.lvMainView.Size = new System.Drawing.Size(1360, 314);
             this.lvMainView.TabIndex = 1;
             this.lvMainView.UseCompatibleStateImageBehavior = false;
             this.lvMainView.View = System.Windows.Forms.View.Details;
@@ -292,7 +302,7 @@ namespace ArgoServerQuery
             // 
             this.btnSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSend.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSend.Location = new System.Drawing.Point(791, 803);
+            this.btnSend.Location = new System.Drawing.Point(765, 414);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(94, 32);
             this.btnSend.TabIndex = 4;
@@ -319,7 +329,7 @@ namespace ArgoServerQuery
             this.rconGroupBox.Controls.Add(this.chkRconShow);
             this.rconGroupBox.Controls.Add(this.txtRconPW);
             this.rconGroupBox.Controls.Add(this.btnRconSave);
-            this.rconGroupBox.Location = new System.Drawing.Point(903, 438);
+            this.rconGroupBox.Location = new System.Drawing.Point(903, 408);
             this.rconGroupBox.Name = "rconGroupBox";
             this.rconGroupBox.Size = new System.Drawing.Size(469, 51);
             this.rconGroupBox.TabIndex = 7;
@@ -362,20 +372,20 @@ namespace ArgoServerQuery
             this.btnRconSave.UseVisualStyleBackColor = true;
             this.btnRconSave.Click += new System.EventHandler(this.btnRconSave_Click);
             // 
-            // optGroupBox
+            // toolsGroupBox
             // 
-            this.optGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.optGroupBox.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.optGroupBox.Controls.Add(this.btnUpdatePlayers);
-            this.optGroupBox.Controls.Add(this.btnRestartServer);
-            this.optGroupBox.Controls.Add(this.btnSendStatus);
-            this.optGroupBox.Controls.Add(this.btnClearOutput);
-            this.optGroupBox.Location = new System.Drawing.Point(903, 495);
-            this.optGroupBox.Name = "optGroupBox";
-            this.optGroupBox.Size = new System.Drawing.Size(469, 60);
-            this.optGroupBox.TabIndex = 8;
-            this.optGroupBox.TabStop = false;
-            this.optGroupBox.Text = "Options";
+            this.toolsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.toolsGroupBox.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.toolsGroupBox.Controls.Add(this.btnUpdatePlayers);
+            this.toolsGroupBox.Controls.Add(this.btnRestartServer);
+            this.toolsGroupBox.Controls.Add(this.btnSendStatus);
+            this.toolsGroupBox.Controls.Add(this.btnClearOutput);
+            this.toolsGroupBox.Location = new System.Drawing.Point(903, 474);
+            this.toolsGroupBox.Name = "toolsGroupBox";
+            this.toolsGroupBox.Size = new System.Drawing.Size(469, 60);
+            this.toolsGroupBox.TabIndex = 8;
+            this.toolsGroupBox.TabStop = false;
+            this.toolsGroupBox.Text = "Tools";
             // 
             // btnUpdatePlayers
             // 
@@ -426,23 +436,38 @@ namespace ArgoServerQuery
             this.btnClearOutput.TabIndex = 0;
             this.btnClearOutput.Text = "Clear Output";
             this.toolTip1.SetToolTip(this.btnClearOutput, "Clear all console output");
-            this.btnClearOutput.UseVisualStyleBackColor = false;
+            this.btnClearOutput.UseVisualStyleBackColor = true;
             this.btnClearOutput.Click += new System.EventHandler(this.btnClearOutput_Click);
             // 
             // txtOutput
             // 
             this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOutput.ContextMenuStrip = this.contextMenuTxtOutput;
             this.txtOutput.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtOutput.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtOutput.Location = new System.Drawing.Point(12, 438);
+            this.txtOutput.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtOutput.Location = new System.Drawing.Point(0, 0);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.ReadOnly = true;
             this.txtOutput.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.txtOutput.Size = new System.Drawing.Size(873, 358);
+            this.txtOutput.Size = new System.Drawing.Size(865, 413);
             this.txtOutput.TabIndex = 10;
             this.txtOutput.Text = "";
             this.txtOutput.TextChanged += new System.EventHandler(this.txtOutput_TextChanged);
+            // 
+            // contextMenuTxtOutput
+            // 
+            this.contextMenuTxtOutput.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItemCopyTxtOutput});
+            this.contextMenuTxtOutput.Name = "contextMenuTxtOutput";
+            this.contextMenuTxtOutput.Size = new System.Drawing.Size(103, 26);
+            // 
+            // menuItemCopyTxtOutput
+            // 
+            this.menuItemCopyTxtOutput.Name = "menuItemCopyTxtOutput";
+            this.menuItemCopyTxtOutput.Size = new System.Drawing.Size(102, 22);
+            this.menuItemCopyTxtOutput.Text = "Copy";
+            this.menuItemCopyTxtOutput.Click += new System.EventHandler(this.menuItemCopyTxtOutput_Click);
             // 
             // playersListView
             // 
@@ -461,11 +486,11 @@ namespace ArgoServerQuery
             listViewGroup1,
             listViewGroup2});
             this.playersListView.HideSelection = false;
-            this.playersListView.Location = new System.Drawing.Point(1031, 561);
+            this.playersListView.Location = new System.Drawing.Point(1031, 570);
             this.playersListView.MultiSelect = false;
             this.playersListView.Name = "playersListView";
             this.playersListView.ShowItemToolTips = true;
-            this.playersListView.Size = new System.Drawing.Size(341, 274);
+            this.playersListView.Size = new System.Drawing.Size(341, 291);
             this.playersListView.Sorting = System.Windows.Forms.SortOrder.Descending;
             this.playersListView.TabIndex = 11;
             this.playersListView.UseCompatibleStateImageBehavior = false;
@@ -499,7 +524,7 @@ namespace ArgoServerQuery
             this.banServersTSToolStripMenuItem,
             this.kickPlayerToolStripMenuItem});
             this.contextMenuPlayers.Name = "contextMenuPlayers";
-            this.contextMenuPlayers.Size = new System.Drawing.Size(205, 186);
+            this.contextMenuPlayers.Size = new System.Drawing.Size(205, 164);
             // 
             // copyPlayerMenuItem
             // 
@@ -507,6 +532,13 @@ namespace ArgoServerQuery
             this.copyPlayerMenuItem.Size = new System.Drawing.Size(204, 22);
             this.copyPlayerMenuItem.Text = "Copy Player Name";
             this.copyPlayerMenuItem.Click += new System.EventHandler(this.copyPlayerMenuItem_Click);
+            // 
+            // copyPlayerIpMenuItem
+            // 
+            this.copyPlayerIpMenuItem.Name = "copyPlayerIpMenuItem";
+            this.copyPlayerIpMenuItem.Size = new System.Drawing.Size(204, 22);
+            this.copyPlayerIpMenuItem.Text = "Copy Player IP";
+            this.copyPlayerIpMenuItem.Click += new System.EventHandler(this.copyPlayerIpMenuItem_Click);
             // 
             // copySteamIDPlayerMenuItem
             // 
@@ -598,20 +630,6 @@ namespace ArgoServerQuery
             // 
             this.toolTip1.AutomaticDelay = 750;
             // 
-            // chkTS3
-            // 
-            this.chkTS3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkTS3.Appearance = System.Windows.Forms.Appearance.Button;
-            this.chkTS3.AutoSize = true;
-            this.chkTS3.Image = global::ArgoServerQuery.Properties.Resources.TeamSpeak;
-            this.chkTS3.Location = new System.Drawing.Point(1334, 26);
-            this.chkTS3.Name = "chkTS3";
-            this.chkTS3.Size = new System.Drawing.Size(38, 38);
-            this.chkTS3.TabIndex = 18;
-            this.toolTip1.SetToolTip(this.chkTS3, "Show TS3 config");
-            this.chkTS3.UseVisualStyleBackColor = true;
-            this.chkTS3.CheckedChanged += new System.EventHandler(this.chkTS3_CheckedChanged);
-            // 
             // comboRegion
             // 
             this.comboRegion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -648,6 +666,20 @@ namespace ArgoServerQuery
             this.comboTS3.TabIndex = 26;
             this.toolTip1.SetToolTip(this.comboTS3, "TS3 Command List");
             this.comboTS3.SelectedIndexChanged += new System.EventHandler(this.comboTS3_SelectedIndexChanged);
+            // 
+            // chkTS3
+            // 
+            this.chkTS3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkTS3.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkTS3.AutoSize = true;
+            this.chkTS3.Image = global::ArgoServerQuery.Properties.Resources.TeamSpeak;
+            this.chkTS3.Location = new System.Drawing.Point(1334, 26);
+            this.chkTS3.Name = "chkTS3";
+            this.chkTS3.Size = new System.Drawing.Size(38, 38);
+            this.chkTS3.TabIndex = 18;
+            this.toolTip1.SetToolTip(this.chkTS3, "Show TS3 config");
+            this.chkTS3.UseVisualStyleBackColor = true;
+            this.chkTS3.CheckedChanged += new System.EventHandler(this.chkTS3_CheckedChanged);
             // 
             // mnuFile
             // 
@@ -821,7 +853,7 @@ namespace ArgoServerQuery
             this.lblErrors.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblErrors.Font = new System.Drawing.Font("Segoe UI", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblErrors.ForeColor = System.Drawing.Color.Red;
-            this.lblErrors.Location = new System.Drawing.Point(9, 838);
+            this.lblErrors.Location = new System.Drawing.Point(9, 864);
             this.lblErrors.Name = "lblErrors";
             this.lblErrors.Size = new System.Drawing.Size(776, 23);
             this.lblErrors.TabIndex = 19;
@@ -829,7 +861,7 @@ namespace ArgoServerQuery
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(12, 838);
+            this.progressBar.Location = new System.Drawing.Point(12, 863);
             this.progressBar.MarqueeAnimationSpeed = 17;
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(159, 16);
@@ -905,9 +937,9 @@ namespace ArgoServerQuery
             this.comboCmd.ContextMenuStrip = this.contextMenuCmd;
             this.comboCmd.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboCmd.FormattingEnabled = true;
-            this.comboCmd.Location = new System.Drawing.Point(12, 808);
+            this.comboCmd.Location = new System.Drawing.Point(0, 420);
             this.comboCmd.Name = "comboCmd";
-            this.comboCmd.Size = new System.Drawing.Size(773, 23);
+            this.comboCmd.Size = new System.Drawing.Size(759, 23);
             this.comboCmd.TabIndex = 22;
             this.comboCmd.KeyDown += new System.Windows.Forms.KeyEventHandler(this.comboCmd_KeyDown);
             // 
@@ -1175,24 +1207,93 @@ namespace ArgoServerQuery
             this.tsMenu.TabIndex = 20;
             this.tsMenu.Visible = false;
             // 
-            // copyPlayerIpMenuItem
+            // customTabControl
             // 
-            this.copyPlayerIpMenuItem.Name = "copyPlayerIpMenuItem";
-            this.copyPlayerIpMenuItem.Size = new System.Drawing.Size(204, 22);
-            this.copyPlayerIpMenuItem.Text = "Copy Player IP";
-            this.copyPlayerIpMenuItem.Click += new System.EventHandler(this.copyPlayerIpMenuItem_Click);
+            this.customTabControl.Controls.Add(this.tabConsole);
+            this.customTabControl.Controls.Add(this.tabRules);
+            this.customTabControl.DisplayStyle = System.Windows.Forms.TabStyle.Rounded;
+            // 
+            // 
+            // 
+            this.customTabControl.DisplayStyleProvider.BorderColor = System.Drawing.Color.Transparent;
+            this.customTabControl.DisplayStyleProvider.BorderColorHot = System.Drawing.Color.Transparent;
+            this.customTabControl.DisplayStyleProvider.BorderColorSelected = System.Drawing.Color.Transparent;
+            this.customTabControl.DisplayStyleProvider.CloserColor = System.Drawing.Color.DarkGray;
+            this.customTabControl.DisplayStyleProvider.FocusTrack = false;
+            this.customTabControl.DisplayStyleProvider.HotTrack = true;
+            this.customTabControl.DisplayStyleProvider.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.customTabControl.DisplayStyleProvider.Opacity = 1F;
+            this.customTabControl.DisplayStyleProvider.Overlap = 0;
+            this.customTabControl.DisplayStyleProvider.Padding = new System.Drawing.Point(6, 3);
+            this.customTabControl.DisplayStyleProvider.Radius = 10;
+            this.customTabControl.DisplayStyleProvider.ShowTabCloser = false;
+            this.customTabControl.DisplayStyleProvider.TextColor = System.Drawing.SystemColors.ControlText;
+            this.customTabControl.DisplayStyleProvider.TextColorDisabled = System.Drawing.SystemColors.ControlDark;
+            this.customTabControl.DisplayStyleProvider.TextColorSelected = System.Drawing.SystemColors.ControlText;
+            this.customTabControl.HotTrack = true;
+            this.customTabControl.Location = new System.Drawing.Point(12, 385);
+            this.customTabControl.Name = "customTabControl";
+            this.customTabControl.SelectedIndex = 0;
+            this.customTabControl.Size = new System.Drawing.Size(873, 473);
+            this.customTabControl.TabIndex = 27;
+            // 
+            // tabConsole
+            // 
+            this.tabConsole.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabConsole.Controls.Add(this.txtOutput);
+            this.tabConsole.Controls.Add(this.btnSend);
+            this.tabConsole.Controls.Add(this.comboCmd);
+            this.tabConsole.Location = new System.Drawing.Point(4, 23);
+            this.tabConsole.Name = "tabConsole";
+            this.tabConsole.Padding = new System.Windows.Forms.Padding(3);
+            this.tabConsole.Size = new System.Drawing.Size(865, 446);
+            this.tabConsole.TabIndex = 0;
+            this.tabConsole.Text = "Console";
+            // 
+            // tabRules
+            // 
+            this.tabRules.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabRules.Controls.Add(this.txtSendChat);
+            this.tabRules.Controls.Add(this.txtChat);
+            this.tabRules.Location = new System.Drawing.Point(4, 23);
+            this.tabRules.Name = "tabRules";
+            this.tabRules.Padding = new System.Windows.Forms.Padding(3);
+            this.tabRules.Size = new System.Drawing.Size(865, 446);
+            this.tabRules.TabIndex = 1;
+            this.tabRules.Text = "Rules";
+            // 
+            // txtChat
+            // 
+            this.txtChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtChat.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtChat.Location = new System.Drawing.Point(0, 0);
+            this.txtChat.Name = "txtChat";
+            this.txtChat.ReadOnly = true;
+            this.txtChat.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
+            this.txtChat.Size = new System.Drawing.Size(865, 413);
+            this.txtChat.TabIndex = 0;
+            this.txtChat.Text = "";
+            // 
+            // txtSendChat
+            // 
+            this.txtSendChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtSendChat.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSendChat.Location = new System.Drawing.Point(0, 419);
+            this.txtSendChat.Name = "txtSendChat";
+            this.txtSendChat.Size = new System.Drawing.Size(743, 21);
+            this.txtSendChat.TabIndex = 1;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Gainsboro;
-            this.ClientSize = new System.Drawing.Size(1384, 861);
+            this.ClientSize = new System.Drawing.Size(1384, 887);
+            this.Controls.Add(this.customTabControl);
             this.Controls.Add(this.comboTS3);
             this.Controls.Add(this.lblTS3);
             this.Controls.Add(this.lblRegion);
             this.Controls.Add(this.comboRegion);
-            this.Controls.Add(this.comboCmd);
             this.Controls.Add(this.tsMenu);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.lvMainView);
@@ -1203,10 +1304,8 @@ namespace ArgoServerQuery
             this.Controls.Add(this.comboServerList);
             this.Controls.Add(this.lblServerList);
             this.Controls.Add(this.playersListView);
-            this.Controls.Add(this.txtOutput);
-            this.Controls.Add(this.optGroupBox);
+            this.Controls.Add(this.toolsGroupBox);
             this.Controls.Add(this.rconGroupBox);
-            this.Controls.Add(this.btnSend);
             this.Controls.Add(this.mnuMainStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.mnuMainStrip;
@@ -1218,13 +1317,18 @@ namespace ArgoServerQuery
             this.contextMenuServer.ResumeLayout(false);
             this.rconGroupBox.ResumeLayout(false);
             this.rconGroupBox.PerformLayout();
-            this.optGroupBox.ResumeLayout(false);
+            this.toolsGroupBox.ResumeLayout(false);
+            this.contextMenuTxtOutput.ResumeLayout(false);
             this.contextMenuPlayers.ResumeLayout(false);
             this.mnuMainStrip.ResumeLayout(false);
             this.mnuMainStrip.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.contextMenuCmd.ResumeLayout(false);
+            this.customTabControl.ResumeLayout(false);
+            this.tabConsole.ResumeLayout(false);
+            this.tabRules.ResumeLayout(false);
+            this.tabRules.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1245,7 +1349,7 @@ namespace ArgoServerQuery
         private System.Windows.Forms.ColumnHeader colScore;
         private System.Windows.Forms.TextBox txtRconPW;
         private System.Windows.Forms.GroupBox rconGroupBox;
-        private System.Windows.Forms.GroupBox optGroupBox;
+        private System.Windows.Forms.GroupBox toolsGroupBox;
         private System.Windows.Forms.Button btnClearOutput;
         private System.Windows.Forms.Button btnSendStatus;
         private System.Windows.Forms.Button btnRestartServer;
@@ -1345,6 +1449,13 @@ namespace ArgoServerQuery
         public System.Windows.Forms.ToolStripButton toolBtnScoreToggle;
         private System.Windows.Forms.ToolStripMenuItem viewProfileBrowser;
         private System.Windows.Forms.ToolStripMenuItem copyPlayerIpMenuItem;
+        private System.Windows.Forms.CustomTabControl customTabControl;
+        private System.Windows.Forms.TabPage tabConsole;
+        private System.Windows.Forms.TabPage tabRules;
+        private System.Windows.Forms.ContextMenuStrip contextMenuTxtOutput;
+        private System.Windows.Forms.ToolStripMenuItem menuItemCopyTxtOutput;
+        private System.Windows.Forms.TextBox txtSendChat;
+        private System.Windows.Forms.RichTextBox txtChat;
     }
 }
 

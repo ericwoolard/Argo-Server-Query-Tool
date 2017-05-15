@@ -75,9 +75,19 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.BZip2, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ExternalBin\Ionic.BZip2.dll</HintPath>
+    </Reference>
+    <Reference Include="JacksonSoft.CustomTabControl">
+      <HintPath>CleanerTabControl\JacksonSoft.CustomTabControl.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>ExternalBin\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ObjectListView">
+      <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
     </Reference>
     <Reference Include="QueryMaster">
       <HintPath>ExternalBin\QueryMaster.dll</HintPath>
@@ -89,6 +99,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>SQLite\System.Data.SQLite.dll</HintPath>
     </Reference>
+    <Reference Include="System.Design" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -111,6 +122,7 @@
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
     <Compile Include="AdminChat.cs" />
+    <Compile Include="Config\Config.cs" />
     <Compile Include="InputBox.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -118,10 +130,13 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\ConnectionInfo.cs" />
+    <Compile Include="Models\RulesModel.cs" />
+    <Compile Include="Parser.cs" />
     <Compile Include="PassBox.cs" />
     <Compile Include="PasswordStorage.cs" />
     <Compile Include="PingCheck.cs" />
-    <Compile Include="PlayerModel.cs" />
+    <Compile Include="Models\PlayerModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -131,6 +146,8 @@
     </Compile>
     <Compile Include="Query.cs" />
     <Compile Include="RegionsStruct.cs" />
+    <Compile Include="Rules.cs" />
+    <Compile Include="ServerSocket.cs" />
     <Compile Include="ToolStripRenderer.cs" />
     <Compile Include="TsMenu.cs">
       <SubType>UserControl</SubType>
@@ -138,11 +155,12 @@
     <Compile Include="TsMenu.Designer.cs">
       <DependentUpon>TsMenu.cs</DependentUpon>
     </Compile>
-    <Compile Include="Updates.cs" />
+    <Compile Include="Models\UpdatesModel.cs" />
     <Compile Include="ServerTools.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SQLite.cs" />
     <Compile Include="TS3Query.cs" />
+    <Compile Include="UdpQuery.cs" />
     <Compile Include="Utils.cs" />
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
@@ -220,6 +238,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="argo.ico" />
+    <None Include="Resources\refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
