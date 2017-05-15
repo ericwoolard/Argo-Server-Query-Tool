@@ -22,7 +22,7 @@
 * Fixed a bug in new players list when sorting by column. Players list now auto-sorts by kills in desc order
 
   * #### Commits -
-  * [[`38e81c9`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/38e81c9916f7e4768eb25ed857eb9eca44b689c3) - Removed temporary score check failsafe
+  * [[`38e81c9`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/38e81c9916f7e4768eb25ed857eb9eca44b689c3)] - Removed temporary score check failsafe
   * [[`79c8caf`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/79c8caf61326171cdabd0a75b1d11e2d3543db9d)] - New PingCheck class for determining server status
   * [[`33ed25c`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/33ed25c4389e6f761edb56059b3da98c478d16fa#diff-aab2f5f19398d09ad8cc6d58bb3f8966R102)] - BackgroundWorker for ping check
   * [[`33ed25c`](https://github.com/ericwoolard/Argo-Server-Query-Tool/commit/33ed25c4389e6f761edb56059b3da98c478d16fa#diff-aab2f5f19398d09ad8cc6d58bb3f8966R721)] - Improvements for new player list
