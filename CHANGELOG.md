@@ -6,7 +6,7 @@
 * Added a new context menu item to player lists to view a players profile in your browser
 * Added a new context menu item to player lists to copy the players IP address
 * Added a new context menu item to the output text box to copy selected text
-* Decreased height of main server list ListView and increased size of Console/Rules area
+* Decreased height of main server list ListView and increased size of Console/Chat area
 * Renamed Options GroupBox to Tools
 
   * #### Commits -
