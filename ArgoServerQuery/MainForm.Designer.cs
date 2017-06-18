@@ -55,6 +55,7 @@ namespace ArgoServerQuery
             this.btnSend = new System.Windows.Forms.Button();
             this.txtRconPW = new System.Windows.Forms.TextBox();
             this.rconGroupBox = new System.Windows.Forms.GroupBox();
+            this.tsMenu = new ArgoServerQuery.TsMenu();
             this.lblRconSaved = new System.Windows.Forms.Label();
             this.chkRconShow = new System.Windows.Forms.CheckBox();
             this.btnRconSave = new System.Windows.Forms.Button();
@@ -148,16 +149,17 @@ namespace ArgoServerQuery
             this.clearCmdMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblRegion = new System.Windows.Forms.Label();
             this.lblTS3 = new System.Windows.Forms.Label();
-            this.tsMenu = new ArgoServerQuery.TsMenu();
             this.customTabControl = new System.Windows.Forms.CustomTabControl();
             this.tabConsole = new System.Windows.Forms.TabPage();
             this.tabChat = new System.Windows.Forms.TabPage();
+            this.chkChatLog = new System.Windows.Forms.CheckBox();
+            this.btnSendChat = new System.Windows.Forms.Button();
             this.txtSendChat = new System.Windows.Forms.TextBox();
             this.txtChat = new System.Windows.Forms.RichTextBox();
-            this.btnSendChat = new System.Windows.Forms.Button();
+            this.optPanel = new System.Windows.Forms.Panel();
+            this.lblOptions = new System.Windows.Forms.Label();
             this.contextMenuServer.SuspendLayout();
             this.rconGroupBox.SuspendLayout();
-            this.toolsGroupBox.SuspendLayout();
             this.contextMenuTxtOutput.SuspendLayout();
             this.contextMenuPlayers.SuspendLayout();
             this.mnuMainStrip.SuspendLayout();
@@ -166,6 +168,7 @@ namespace ArgoServerQuery
             this.customTabControl.SuspendLayout();
             this.tabConsole.SuspendLayout();
             this.tabChat.SuspendLayout();
+            this.optPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // lvMainView
@@ -173,7 +176,7 @@ namespace ArgoServerQuery
             this.lvMainView.AllowColumnReorder = true;
             this.lvMainView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvMainView.BackColor = System.Drawing.SystemColors.Window;
+            this.lvMainView.BackColor = System.Drawing.Color.Silver;
             this.lvMainView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colNum,
             this.colPing,
@@ -317,7 +320,7 @@ namespace ArgoServerQuery
             this.txtRconPW.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtRconPW.Location = new System.Drawing.Point(6, 19);
             this.txtRconPW.Name = "txtRconPW";
-            this.txtRconPW.Size = new System.Drawing.Size(207, 22);
+            this.txtRconPW.Size = new System.Drawing.Size(237, 22);
             this.txtRconPW.TabIndex = 6;
             this.toolTip1.SetToolTip(this.txtRconPW, "Password for all servers in current list");
             this.txtRconPW.UseSystemPasswordChar = true;
@@ -325,7 +328,7 @@ namespace ArgoServerQuery
             // rconGroupBox
             // 
             this.rconGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.rconGroupBox.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.rconGroupBox.BackColor = System.Drawing.Color.DimGray;
             this.rconGroupBox.Controls.Add(this.lblRconSaved);
             this.rconGroupBox.Controls.Add(this.chkRconShow);
             this.rconGroupBox.Controls.Add(this.txtRconPW);
@@ -337,11 +340,21 @@ namespace ArgoServerQuery
             this.rconGroupBox.TabStop = false;
             this.rconGroupBox.Text = "Rcon Password";
             // 
+            // tsMenu
+            // 
+            this.tsMenu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.tsMenu.BackColor = System.Drawing.Color.Gray;
+            this.tsMenu.Location = new System.Drawing.Point(1084, 65);
+            this.tsMenu.Name = "tsMenu";
+            this.tsMenu.Size = new System.Drawing.Size(300, 390);
+            this.tsMenu.TabIndex = 20;
+            this.tsMenu.Visible = false;
+            // 
             // lblRconSaved
             // 
             this.lblRconSaved.AutoSize = true;
             this.lblRconSaved.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblRconSaved.Location = new System.Drawing.Point(375, 22);
+            this.lblRconSaved.Location = new System.Drawing.Point(405, 23);
             this.lblRconSaved.Name = "lblRconSaved";
             this.lblRconSaved.Size = new System.Drawing.Size(50, 13);
             this.lblRconSaved.TabIndex = 11;
@@ -353,7 +366,7 @@ namespace ArgoServerQuery
             this.chkRconShow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.chkRconShow.AutoSize = true;
             this.chkRconShow.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkRconShow.Location = new System.Drawing.Point(225, 23);
+            this.chkRconShow.Location = new System.Drawing.Point(249, 23);
             this.chkRconShow.Name = "chkRconShow";
             this.chkRconShow.Size = new System.Drawing.Size(53, 17);
             this.chkRconShow.TabIndex = 10;
@@ -365,7 +378,7 @@ namespace ArgoServerQuery
             // 
             this.btnRconSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRconSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRconSave.Location = new System.Drawing.Point(284, 16);
+            this.btnRconSave.Location = new System.Drawing.Point(308, 16);
             this.btnRconSave.Name = "btnRconSave";
             this.btnRconSave.Size = new System.Drawing.Size(82, 26);
             this.btnRconSave.TabIndex = 9;
@@ -376,12 +389,8 @@ namespace ArgoServerQuery
             // toolsGroupBox
             // 
             this.toolsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.toolsGroupBox.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.toolsGroupBox.Controls.Add(this.btnUpdatePlayers);
-            this.toolsGroupBox.Controls.Add(this.btnRestartServer);
-            this.toolsGroupBox.Controls.Add(this.btnSendStatus);
-            this.toolsGroupBox.Controls.Add(this.btnClearOutput);
-            this.toolsGroupBox.Location = new System.Drawing.Point(903, 474);
+            this.toolsGroupBox.BackColor = System.Drawing.Color.DimGray;
+            this.toolsGroupBox.Location = new System.Drawing.Point(775, 348);
             this.toolsGroupBox.Name = "toolsGroupBox";
             this.toolsGroupBox.Size = new System.Drawing.Size(469, 60);
             this.toolsGroupBox.TabIndex = 8;
@@ -392,7 +401,7 @@ namespace ArgoServerQuery
             // 
             this.btnUpdatePlayers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUpdatePlayers.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnUpdatePlayers.Location = new System.Drawing.Point(238, 19);
+            this.btnUpdatePlayers.Location = new System.Drawing.Point(235, 25);
             this.btnUpdatePlayers.Name = "btnUpdatePlayers";
             this.btnUpdatePlayers.Size = new System.Drawing.Size(100, 26);
             this.btnUpdatePlayers.TabIndex = 2;
@@ -405,7 +414,7 @@ namespace ArgoServerQuery
             // 
             this.btnRestartServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRestartServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRestartServer.Location = new System.Drawing.Point(366, 19);
+            this.btnRestartServer.Location = new System.Drawing.Point(358, 25);
             this.btnRestartServer.Name = "btnRestartServer";
             this.btnRestartServer.Size = new System.Drawing.Size(97, 26);
             this.btnRestartServer.TabIndex = 0;
@@ -417,7 +426,7 @@ namespace ArgoServerQuery
             // 
             this.btnSendStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSendStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSendStatus.Location = new System.Drawing.Point(122, 19);
+            this.btnSendStatus.Location = new System.Drawing.Point(124, 25);
             this.btnSendStatus.Name = "btnSendStatus";
             this.btnSendStatus.Size = new System.Drawing.Size(88, 26);
             this.btnSendStatus.TabIndex = 1;
@@ -431,7 +440,7 @@ namespace ArgoServerQuery
             this.btnClearOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClearOutput.BackColor = System.Drawing.SystemColors.ControlLight;
             this.btnClearOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClearOutput.Location = new System.Drawing.Point(6, 19);
+            this.btnClearOutput.Location = new System.Drawing.Point(13, 25);
             this.btnClearOutput.Name = "btnClearOutput";
             this.btnClearOutput.Size = new System.Drawing.Size(88, 26);
             this.btnClearOutput.TabIndex = 0;
@@ -585,6 +594,7 @@ namespace ArgoServerQuery
             // 
             this.lblServerList.AutoSize = true;
             this.lblServerList.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblServerList.ForeColor = System.Drawing.SystemColors.Control;
             this.lblServerList.Location = new System.Drawing.Point(15, 35);
             this.lblServerList.Name = "lblServerList";
             this.lblServerList.Size = new System.Drawing.Size(68, 17);
@@ -1181,6 +1191,7 @@ namespace ArgoServerQuery
             this.lblRegion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblRegion.AutoSize = true;
             this.lblRegion.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRegion.ForeColor = System.Drawing.SystemColors.Control;
             this.lblRegion.Location = new System.Drawing.Point(955, 35);
             this.lblRegion.Name = "lblRegion";
             this.lblRegion.Size = new System.Drawing.Size(49, 17);
@@ -1192,21 +1203,12 @@ namespace ArgoServerQuery
             this.lblTS3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTS3.AutoSize = true;
             this.lblTS3.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTS3.ForeColor = System.Drawing.SystemColors.Control;
             this.lblTS3.Location = new System.Drawing.Point(1102, 35);
             this.lblTS3.Name = "lblTS3";
             this.lblTS3.Size = new System.Drawing.Size(29, 17);
             this.lblTS3.TabIndex = 25;
             this.lblTS3.Text = "TS3";
-            // 
-            // tsMenu
-            // 
-            this.tsMenu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tsMenu.BackColor = System.Drawing.Color.Gray;
-            this.tsMenu.Location = new System.Drawing.Point(1084, 65);
-            this.tsMenu.Name = "tsMenu";
-            this.tsMenu.Size = new System.Drawing.Size(300, 390);
-            this.tsMenu.TabIndex = 20;
-            this.tsMenu.Visible = false;
             // 
             // customTabControl
             // 
@@ -1240,10 +1242,11 @@ namespace ArgoServerQuery
             // 
             // tabConsole
             // 
-            this.tabConsole.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabConsole.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.tabConsole.Controls.Add(this.txtOutput);
             this.tabConsole.Controls.Add(this.btnSend);
             this.tabConsole.Controls.Add(this.comboCmd);
+            this.tabConsole.Controls.Add(this.toolsGroupBox);
             this.tabConsole.Location = new System.Drawing.Point(4, 23);
             this.tabConsole.Name = "tabConsole";
             this.tabConsole.Padding = new System.Windows.Forms.Padding(3);
@@ -1253,7 +1256,8 @@ namespace ArgoServerQuery
             // 
             // tabChat
             // 
-            this.tabChat.BackColor = System.Drawing.Color.Gainsboro;
+            this.tabChat.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.tabChat.Controls.Add(this.chkChatLog);
             this.tabChat.Controls.Add(this.btnSendChat);
             this.tabChat.Controls.Add(this.txtSendChat);
             this.tabChat.Controls.Add(this.txtChat);
@@ -1264,26 +1268,20 @@ namespace ArgoServerQuery
             this.tabChat.TabIndex = 1;
             this.tabChat.Text = "Chat";
             // 
-            // txtSendChat
+            // chkChatLog
             // 
-            this.txtSendChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtSendChat.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSendChat.Location = new System.Drawing.Point(0, 420);
-            this.txtSendChat.Name = "txtSendChat";
-            this.txtSendChat.Size = new System.Drawing.Size(759, 22);
-            this.txtSendChat.TabIndex = 1;
-            // 
-            // txtChat
-            // 
-            this.txtChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtChat.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtChat.Location = new System.Drawing.Point(0, 0);
-            this.txtChat.Name = "txtChat";
-            this.txtChat.ReadOnly = true;
-            this.txtChat.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-            this.txtChat.Size = new System.Drawing.Size(865, 413);
-            this.txtChat.TabIndex = 0;
-            this.txtChat.Text = "";
+            this.chkChatLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkChatLog.Appearance = System.Windows.Forms.Appearance.Button;
+            this.chkChatLog.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkChatLog.ForeColor = System.Drawing.Color.Green;
+            this.chkChatLog.Location = new System.Drawing.Point(667, 414);
+            this.chkChatLog.Name = "chkChatLog";
+            this.chkChatLog.Size = new System.Drawing.Size(94, 32);
+            this.chkChatLog.TabIndex = 3;
+            this.chkChatLog.Text = "START";
+            this.chkChatLog.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.chkChatLog.UseVisualStyleBackColor = true;
+            this.chkChatLog.CheckedChanged += new System.EventHandler(this.chkChatLog_CheckedChanged);
             // 
             // btnSendChat
             // 
@@ -1296,18 +1294,65 @@ namespace ArgoServerQuery
             this.btnSendChat.Text = "SEND";
             this.btnSendChat.UseVisualStyleBackColor = true;
             // 
+            // txtSendChat
+            // 
+            this.txtSendChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtSendChat.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSendChat.Location = new System.Drawing.Point(0, 420);
+            this.txtSendChat.Name = "txtSendChat";
+            this.txtSendChat.Size = new System.Drawing.Size(661, 22);
+            this.txtSendChat.TabIndex = 1;
+            // 
+            // txtChat
+            // 
+            this.txtChat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.txtChat.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtChat.Location = new System.Drawing.Point(0, 0);
+            this.txtChat.Name = "txtChat";
+            this.txtChat.ReadOnly = true;
+            this.txtChat.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
+            this.txtChat.Size = new System.Drawing.Size(865, 413);
+            this.txtChat.TabIndex = 0;
+            this.txtChat.Text = "";
+            this.txtChat.TextChanged += new System.EventHandler(this.txtChat_TextChanged);
+            // 
+            // optPanel
+            // 
+            this.optPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(80)))), ((int)(((byte)(80)))));
+            this.optPanel.Controls.Add(this.lblOptions);
+            this.optPanel.Controls.Add(this.btnClearOutput);
+            this.optPanel.Controls.Add(this.btnRestartServer);
+            this.optPanel.Controls.Add(this.btnSendStatus);
+            this.optPanel.Controls.Add(this.btnUpdatePlayers);
+            this.optPanel.Location = new System.Drawing.Point(903, 496);
+            this.optPanel.Name = "optPanel";
+            this.optPanel.Size = new System.Drawing.Size(469, 59);
+            this.optPanel.TabIndex = 28;
+            // 
+            // lblOptions
+            // 
+            this.lblOptions.AutoSize = true;
+            this.lblOptions.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblOptions.ForeColor = System.Drawing.SystemColors.Control;
+            this.lblOptions.Location = new System.Drawing.Point(10, 1);
+            this.lblOptions.Name = "lblOptions";
+            this.lblOptions.Size = new System.Drawing.Size(49, 15);
+            this.lblOptions.TabIndex = 3;
+            this.lblOptions.Text = "Options";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.BackColor = System.Drawing.Color.Gainsboro;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.ClientSize = new System.Drawing.Size(1384, 887);
+            this.Controls.Add(this.tsMenu);
+            this.Controls.Add(this.optPanel);
             this.Controls.Add(this.customTabControl);
             this.Controls.Add(this.comboTS3);
             this.Controls.Add(this.lblTS3);
             this.Controls.Add(this.lblRegion);
             this.Controls.Add(this.comboRegion);
-            this.Controls.Add(this.tsMenu);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.lvMainView);
             this.Controls.Add(this.lblErrors);
@@ -1317,7 +1362,6 @@ namespace ArgoServerQuery
             this.Controls.Add(this.comboServerList);
             this.Controls.Add(this.lblServerList);
             this.Controls.Add(this.playersListView);
-            this.Controls.Add(this.toolsGroupBox);
             this.Controls.Add(this.rconGroupBox);
             this.Controls.Add(this.mnuMainStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1330,7 +1374,6 @@ namespace ArgoServerQuery
             this.contextMenuServer.ResumeLayout(false);
             this.rconGroupBox.ResumeLayout(false);
             this.rconGroupBox.PerformLayout();
-            this.toolsGroupBox.ResumeLayout(false);
             this.contextMenuTxtOutput.ResumeLayout(false);
             this.contextMenuPlayers.ResumeLayout(false);
             this.mnuMainStrip.ResumeLayout(false);
@@ -1342,6 +1385,8 @@ namespace ArgoServerQuery
             this.tabConsole.ResumeLayout(false);
             this.tabChat.ResumeLayout(false);
             this.tabChat.PerformLayout();
+            this.optPanel.ResumeLayout(false);
+            this.optPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1470,6 +1515,9 @@ namespace ArgoServerQuery
         private System.Windows.Forms.TextBox txtSendChat;
         private System.Windows.Forms.RichTextBox txtChat;
         private System.Windows.Forms.Button btnSendChat;
+        private System.Windows.Forms.CheckBox chkChatLog;
+        private System.Windows.Forms.Panel optPanel;
+        private System.Windows.Forms.Label lblOptions;
     }
 }
 

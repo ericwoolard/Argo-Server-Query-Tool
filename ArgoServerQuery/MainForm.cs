@@ -10,7 +10,10 @@ using System.Diagnostics;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Forms.VisualStyles;
 using ArgoServerQuery.Models;
 using QueryMaster;
@@ -171,7 +174,8 @@ namespace ArgoServerQuery
 
                             if (server.getServerInfo().Players > 0)
                             {
-                                lvMainView.Items[pos].SubItems[5].ForeColor = Color.ForestGreen;
+                                lvMainView.Items[pos].SubItems[5].Font = new Font(lvMainView.Font, FontStyle.Bold);
+                                lvMainView.Items[pos].SubItems[5].ForeColor = Color.FromArgb(255,0,120,0);
                             }
                             else
                             {
@@ -702,6 +706,12 @@ namespace ArgoServerQuery
         }
 
         private void txtOutput_TextChanged(object sender, EventArgs e)
+        {
+            txtOutput.SelectionStart = txtOutput.Text.Length;
+            txtOutput.ScrollToCaret();
+        }
+
+        private void txtChat_TextChanged(object sender, EventArgs e)
         {
             txtOutput.SelectionStart = txtOutput.Text.Length;
             txtOutput.ScrollToCaret();
@@ -1483,6 +1493,35 @@ namespace ArgoServerQuery
             {
                 string addr = lvMainView.SelectedItems[0].SubItems[2].Text;
                 //AdminChat.getChats(addr, txtOutput);
+                //getChats(addr);
+            }
+        }
+
+        private void chkChatLog_CheckedChanged(object sender, EventArgs e)
+        {
+            if (lvMainView.SelectedItems.Count == 1
+                && !String.IsNullOrEmpty(Properties.Settings.Default.key)
+                && !String.IsNullOrEmpty(Properties.Settings.Default.IV)
+                && !String.IsNullOrEmpty(Properties.Settings.Default.rconPW))
+            {
+                string addr = lvMainView.SelectedItems[0].SubItems[2].Text;
+                switch (chkChatLog.Checked)
+                {
+                    case true:
+                        chkChatLog.Text = "STOP";
+                        chkChatLog.ForeColor = Color.Red;
+                        getChats(addr);
+                        break;
+                    case false:
+                        chkChatLog.Text = "START";
+                        chkChatLog.ForeColor = Color.Green;
+                        stopLogging();
+                        break;
+                }
+            }
+            else
+            {
+                chkChatLog.CheckState = CheckState.Unchecked;
             }
         }
 
@@ -1499,6 +1538,203 @@ namespace ArgoServerQuery
             };
             timer.Start();
         }
+
+
+        private Socket Client;
+        private UdpClient udpClient;
+        private Thread receiveThread;
+        private const int appId = 730;
+        private const int retries = 10;
+        private const int timeout = 20000;
+        private const UInt16 localPort = 51483;
+        //private const UInt16 localPort = 7130;
+        private string svIP;
+        private UInt16 svPort;
+        private readonly int BufferSize = 1400;
+        private byte[] recvData;
+
+        private void getChats(string ip)
+        {
+            Tuple<string, UInt16> addr = splitAddr(ip);
+            string addrIP = addr.Item1;
+            svIP = addrIP;
+            UInt16 port = addr.Item2;
+            svPort = port;
+            string rconPW = decryptRcon();
+
+            using (var server = ServerQuery.GetServerInstance(
+                (Game)appId,
+                addrIP,
+                port,
+                throwExceptions: false,
+                retries: retries,
+                sendTimeout: timeout,
+                receiveTimeout: timeout))
+            {
+                addLogAddr(server, rconPW);
+            }
+
+            /*receiveThread = new Thread(() =>
+            {
+                while (true)
+                {
+                    IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Parse(svIP), svPort);
+                    var dataGram = Client.Receive(ref RemoteIpEndPoint);
+
+                    txtChat.BeginInvoke(
+                        new Action<IPEndPoint, string>(UpdateMessages),
+                        RemoteIpEndPoint,
+                        Encoding.UTF8.GetString(dataGram));
+                }
+            });
+            receiveThread.IsBackground = true;
+            receiveThread.Start();*/
+
+            recvData = new byte[BufferSize];
+            Client = new Socket(AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Dgram, ProtocolType.Udp);
+            Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            Client.Bind(new IPEndPoint(IPAddress.Any, localPort));
+
+            IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Parse(svIP), svPort);
+            EndPoint remoteEP = new IPEndPoint(IPAddress.Parse(svIP), svPort);
+            Client.BeginReceive(recvData, 0, recvData.Length, SocketFlags.None, DataReceived, null);
+
+            //Client.BeginReceive(recvData, 0, recvData.Length, SocketFlags.None, DataReceived, null);
+            //Client.BeginReceive(DataReceived, null);
+        }
+
+        private void UpdateMessages(IPEndPoint sender, string message)
+        {
+            //txtChat.Text += $"{sender} | {message}\r\n";
+            txtChat.AppendText($"{message} \n\n");
+        }
+
+        private void DataReceived(IAsyncResult ar)
+        {
+            EndPoint remoteEP = new IPEndPoint(IPAddress.Parse(svIP), svPort);
+            IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Parse(svIP), svPort);
+            byte[] data;
+            int bytesRecv = 0;
+            try
+            {
+                bytesRecv = Client.EndReceive(ar);
+            }
+            catch (ObjectDisposedException)
+            {
+                return; // Connection closed
+            }
+
+            if (bytesRecv >= 7)
+            {
+                string logLine = Encoding.UTF8.GetString(recvData, 7, bytesRecv - 7);
+                //Client.BeginReceive(recvData, 0, recvData.Length, SocketFlags.None, DataReceived, null);
+                Client.BeginReceiveFrom(recvData, 0, recvData.Length, SocketFlags.None, ref remoteEP, DataReceived, null);
+
+                // Send the data to the UI thread
+                txtChat.BeginInvoke((Action<string>)DataReceivedUI, logLine);
+            }
+            else
+            {
+                Client.BeginReceiveFrom(recvData, 0, recvData.Length, SocketFlags.None, ref remoteEP, DataReceived, null);
+                //Client.BeginReceive(recvData, 0, recvData.Length, SocketFlags.None, DataReceived, null);
+            }
+        }
+
+        Regex chatCapture = new Regex("^\\d{2}\\/\\d{2}\\/\\d{4} - \\d{2}:\\d{2}:\\d{2}: \"(.+)<(\\d+)><(.+)><(.+)>\"(?: (say(?:_team)?) \"(.*)\")?.*?$");
+        private void DataReceivedUI(string data)
+        {
+            /*if (data.Contains(" say \""))
+            {
+                txtChat.SelectionColor = Color.Crimson;
+                txtChat.AppendText("ALL CHAT - ");
+                txtChat.SelectionColor = txtChat.ForeColor;
+                txtChat.AppendText($"{data} \n\n");
+            }
+            else if (data.Contains("\" say_team \""))
+            {
+                txtChat.SelectionColor = Color.Crimson;
+                txtChat.AppendText("TEAM CHAT - ");
+                txtChat.SelectionColor = txtChat.ForeColor;
+                txtChat.AppendText($"{data} \n\n");
+            }*/
+            txtChat.AppendText($"{data} \n\n");
+        }
+
+        private Server addLogAddr(Server sv, string pw)
+        {
+            string extIP = new WebClient().DownloadString("http://icanhazip.com");
+            extIP = extIP.TrimEnd('\r', '\n');
+
+            string addAddr = "logaddress_add " + extIP + ":" + Convert.ToString(localPort);
+            string startTime = DateTime.Now.ToString("HH:mm:ss");
+
+            if (sv.GetControl(pw))
+            {
+                string echoRes = sv.Rcon.SendCommand("echo Starting logs!");
+                string enableRes = sv.Rcon.SendCommand("log on");
+                string response = sv.Rcon.SendCommand(addAddr);
+                string txtResponse = $"\n...\n...\n...\n...\n...\n...\n{startTime}: {addAddr.ToUpper()}\n{echoRes}\n{enableRes}\n{response}\n\n";
+                txtChat.AppendText(txtResponse);
+                return sv;
+            }
+
+            return null;
+        }
+
+        private void stopLogging()
+        {
+            Client?.Close();
+        }
+
+        private Tuple<string, UInt16> splitAddr(string address)
+        {
+            string[] split = address.Split(':');
+            if (split.Length != 2)
+            {
+                throw new FormatException("Invalid address");
+            }
+            else
+            {
+                string hostIP = split[0];
+                ushort hostPort = Convert.ToUInt16(split[1]);
+
+                return Tuple.Create(hostIP, hostPort);
+            }
+        }
+
+        internal static string decryptRcon()
+        {
+            if (!String.IsNullOrEmpty(Properties.Settings.Default.key)
+                && !String.IsNullOrEmpty(Properties.Settings.Default.IV)
+                && !String.IsNullOrEmpty(Properties.Settings.Default.rconPW))
+            {
+                try
+                {
+                    using (RijndaelManaged aesDecrypt = new RijndaelManaged())
+                    {
+                        aesDecrypt.Key = Convert.FromBase64String(Properties.Settings.Default.key);
+                        aesDecrypt.IV = Convert.FromBase64String(Properties.Settings.Default.IV);
+                        byte[] encrypted = Convert.FromBase64String(Properties.Settings.Default.rconPW);
+
+                        return PasswordStorage.DecryptStringFromBytes(encrypted, aesDecrypt.Key, aesDecrypt.IV);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: {0}", ex.Message);
+                    string message = $"Error attempting to decrypt RCON Info. \n\nINFO: {ex.Message} \n\nSRC: {ex.Source}";
+                    string cap = "Error";
+                    MessageBoxIcon icon = MessageBoxIcon.Error;
+                    MessageBoxButtons btn = MessageBoxButtons.OK;
+                    MessageBox.Show(message, cap, btn, icon);
+                    return "";
+                }
+            }
+
+            return null;
+        }
+
+
 
 
 
