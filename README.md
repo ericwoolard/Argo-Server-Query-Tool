@@ -27,7 +27,7 @@ Argo Server Query Tool was created for the r/globaloffensive subreddit modteam, 
 
 If you have questions, suggestions etc feel free to also contact me on [Reddit](https://www.reddit.com/user/zebradolphin5/) or [Steam](http://steamcommunity.com/id/warlordtv/)!
 
-![Main Window](https://i.imgur.com/YUvb2YT.png)
+![Main Window](http://i.imgur.com/TX6IaJ8.png)
 
 ## Features
 
