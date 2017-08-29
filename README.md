@@ -31,7 +31,7 @@ If you have questions, suggestions etc feel free to also contact me on [Reddit](
 
 ## Features
 
-* Create multiple server lists and view live updates for Ping, Map, Players, Version, and Score (if using getpugscore plugin)
+* Create multiple server lists and view live updates for Ping, Map, Players, Version, and Score (if using ASQT-PugStats plugin)
 * Send RCON commands to any server, or all servers in the list at once (useful for loading a map on all servers at once)
 * Easily kick/ban any player from a server and/or TeamSpeak through the player list section
 * Add info to a server by right clicking>Add Info to easily keep track of your servers
